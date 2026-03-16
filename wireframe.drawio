@@ -1,0 +1,1103 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.6.1" pages="2">
+  <diagram name="Página-1" id="GOLsDLfpMCd5c4AoUkzg">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-5" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1970" width="1970" x="98" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-6" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-7" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-8" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Descubre la verdad detrás de cada titular." vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-22" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FakeNews Insight utiliza Inteligencia Artificial y Procesamiento de Lenguaje Natural para detectar desinformación en tiempo real. Analiza textos, enlaces y navega con confianza." vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-24" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="90" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-25" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="735" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-26" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="1370" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-27" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Análisis inteligente al instante&lt;/b&gt;:&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Pega un texto o la URL de una noticia y nuestro modelo predictivo te devolverá un porcentaje de fiabilidad en milisegundos.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="115" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-28" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Integración en tu navegador:&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;No interrumpas tu lectura. Analiza la veracidad de los artículos directamente desde X (Twitter) o tu periódico digital favorito con nuestra extensión ligera.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="765" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-29" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Tu Historial y Estadísticas&lt;/b&gt;:&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Crea tu cuenta para guardar tus análisis, revisar tu historial de consultas y visualizar métricas globales sobre las tendencias de desinformación.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="1395" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-31" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;whiteSpace=wrap;labelBackgroundColor=none;" value="Empieza ahora" vertex="1">
+          <mxGeometry height="50" width="430" x="772.5" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-33" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="Desarrollado con tecnología de vanguardia." vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="Ht59GKKtHTZFMe_OyhB0-34" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Una plataforma construida sobre una arquitectura moderna y segura, utilizando modelos de aprendizaje automático entrenados con miles de artículos reales." vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-1" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="97.5" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-2" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 1: Introduce la información.&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;(Pega un texto dudoso o el enlace de un artículo).&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="122.5" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-3" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="737.5" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-4" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 2: La IA procesa los datos.&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Nuestra API analiza los patrones lingüísticos y el contexto&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="767.5" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-5" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="1372.5" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-6" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 3: Obtén el veredicto.&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;(Recibe un indicador visual claro: Fiable o falso)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="1402.5" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-27" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="560" y="1900" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-205" parent="Ht59GKKtHTZFMe_OyhB0-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Una plataforma que va más allá." vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1590" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-206" parent="Ht59GKKtHTZFMe_OyhB0-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=30;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Integra nuestro modelo en tu aplicación o analiza noticias de forma masiva con Ultra." vertex="1">
+          <mxGeometry height="60" width="1218" x="396" y="1670" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-7" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;fontSize=10;" value="" vertex="1">
+          <mxGeometry height="1300" width="1970" x="2110" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-8" parent="WVOzojK8waf3j5KLMjec-7" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-9" parent="WVOzojK8waf3j5KLMjec-7" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-10" parent="WVOzojK8waf3j5KLMjec-7" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Bienvenido a FakeNews Insight" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-11" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FakeNews Insight utiliza Inteligencia Artificial y Procesamiento de Lenguaje Natural para detectar desinformación en tiempo real. Analiza textos, enlaces y navega con confianza." vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-18" parent="WVOzojK8waf3j5KLMjec-7" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;whiteSpace=wrap;labelBackgroundColor=none;" value="Empieza ahora" vertex="1">
+          <mxGeometry height="50" width="430" x="770" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-20" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=20;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Al continuar, aceptas los términos y condiciones" vertex="1">
+          <mxGeometry height="60" width="850" x="540" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-32" parent="WVOzojK8waf3j5KLMjec-7" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="780" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-33" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Continuar con Google" vertex="1">
+          <mxGeometry height="30" width="320" x="845" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-35" parent="WVOzojK8waf3j5KLMjec-7" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="780" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-36" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Continuar con Apple" vertex="1">
+          <mxGeometry height="30" width="325" x="840" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-37" parent="WVOzojK8waf3j5KLMjec-7" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-39" parent="WVOzojK8waf3j5KLMjec-7" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="780" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-40" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Continuar con GitHub" vertex="1">
+          <mxGeometry height="30" width="335" x="830" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-43" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Introduce tu email" vertex="1">
+          <mxGeometry height="30" width="335" x="820" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-44" parent="WVOzojK8waf3j5KLMjec-7" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-45" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Introduce tu contraseña" vertex="1">
+          <mxGeometry height="30" width="335" x="830" y="955" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-46" parent="WVOzojK8waf3j5KLMjec-7" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Inicia sesión" vertex="1">
+          <mxGeometry height="20" width="377.5" x="798.75" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-47" parent="WVOzojK8waf3j5KLMjec-7" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="No tienes cuenta? Registrate&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 204, 204));&quot;&gt; &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(204, 255, 255));&quot;&gt;&lt;font style=&quot;&quot;&gt;aqu&lt;/font&gt;í&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="390" x="792.5" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-48" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1300" width="1970" x="4135" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-49" parent="WVOzojK8waf3j5KLMjec-48" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-50" parent="WVOzojK8waf3j5KLMjec-48" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-51" parent="WVOzojK8waf3j5KLMjec-48" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Bienvenido a FakeNews Insight" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-52" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FakeNews Insight utiliza Inteligencia Artificial y Procesamiento de Lenguaje Natural para detectar desinformación en tiempo real. Analiza textos, enlaces y navega con confianza." vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-53" parent="WVOzojK8waf3j5KLMjec-48" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;whiteSpace=wrap;labelBackgroundColor=none;" value="Empieza ahora" vertex="1">
+          <mxGeometry height="50" width="430" x="760" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-54" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=20;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Al continuar, aceptas los términos y condiciones" vertex="1">
+          <mxGeometry height="60" width="850" x="570" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-55" parent="WVOzojK8waf3j5KLMjec-48" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-56" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Introduce tu nombre de usuario" vertex="1">
+          <mxGeometry height="30" width="335" x="817.5" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-57" parent="WVOzojK8waf3j5KLMjec-48" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-58" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Introduce tu contraseña" vertex="1">
+          <mxGeometry height="30" width="325" x="822.5" y="775" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-60" parent="WVOzojK8waf3j5KLMjec-48" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-61" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Repite la contraseña" vertex="1">
+          <mxGeometry height="30" width="335" x="820" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-65" parent="WVOzojK8waf3j5KLMjec-48" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Regístrate" vertex="1">
+          <mxGeometry height="20" width="377.5" x="798.75" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-66" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Ya tienes cuenta? Inicia sesión&amp;nbsp;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(204, 255, 255));&quot;&gt;&lt;font style=&quot;&quot;&gt;aqu&lt;/font&gt;í&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="390" x="790" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-48" parent="WVOzojK8waf3j5KLMjec-48" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="430" x="770" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-49" parent="WVOzojK8waf3j5KLMjec-48" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Introduce tu email" vertex="1">
+          <mxGeometry height="30" width="320" x="835" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-67" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1580" width="1970" x="120" y="2350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-68" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-69" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-70" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Selecciona una opción y empieza a analizar" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-79" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-82" parent="WVOzojK8waf3j5KLMjec-67" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-87" parent="WVOzojK8waf3j5KLMjec-67" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="1510" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-93" parent="WVOzojK8waf3j5KLMjec-67" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="60" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-94" parent="WVOzojK8waf3j5KLMjec-93" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-95" parent="WVOzojK8waf3j5KLMjec-93" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-96" parent="WVOzojK8waf3j5KLMjec-93" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-59" parent="WVOzojK8waf3j5KLMjec-93" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-97" parent="WVOzojK8waf3j5KLMjec-93" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-99" edge="1" parent="WVOzojK8waf3j5KLMjec-93" source="WVOzojK8waf3j5KLMjec-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="WVOzojK8waf3j5KLMjec-97">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-100" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="740" width="890" x="570" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-101" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Texto" vertex="1">
+          <mxGeometry height="50" width="270" x="570" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-103" parent="WVOzojK8waf3j5KLMjec-67" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Pega o escribe la noticia..." vertex="1">
+          <mxGeometry height="60" width="850" x="320" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-266" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="URL" vertex="1">
+          <mxGeometry height="50" width="270" x="880" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-267" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Lotes - CSV" vertex="1">
+          <mxGeometry height="50" width="270" x="1182" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-1" parent="WVOzojK8waf3j5KLMjec-67" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Analizar" vertex="1">
+          <mxGeometry height="50" width="530" x="760" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-53" parent="WVOzojK8waf3j5KLMjec-67" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1770" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-143" parent="WVOzojK8waf3j5KLMjec-67" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Admin" vertex="1">
+          <mxGeometry height="40" width="150" x="1630" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-104" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1580" width="1970" x="2260" y="2338" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-105" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-106" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-107" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Introduce tu noticia y deja que el modelo haga el resto" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-108" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-109" parent="WVOzojK8waf3j5KLMjec-104" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-110" parent="WVOzojK8waf3j5KLMjec-104" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="560" y="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-117" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="130" width="890" x="570" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-120" parent="WVOzojK8waf3j5KLMjec-104" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Pega o escribe la URL.." vertex="1">
+          <mxGeometry height="60" width="850" x="320" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-268" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Texto" vertex="1">
+          <mxGeometry height="50" width="270" x="590" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-269" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="URL" vertex="1">
+          <mxGeometry height="50" width="270" x="890" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-270" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Lotes - CSV" vertex="1">
+          <mxGeometry height="50" width="270" x="1190" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-2" parent="WVOzojK8waf3j5KLMjec-104" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Analizar" vertex="1">
+          <mxGeometry height="50" width="530" x="770" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-55" parent="WVOzojK8waf3j5KLMjec-104" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1750" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-71" parent="WVOzojK8waf3j5KLMjec-104" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="70" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-72" parent="63ncsKK74AN3U9KOn1mh-71" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-73" parent="63ncsKK74AN3U9KOn1mh-71" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-74" parent="63ncsKK74AN3U9KOn1mh-71" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-75" parent="63ncsKK74AN3U9KOn1mh-71" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-76" parent="63ncsKK74AN3U9KOn1mh-71" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-77" edge="1" parent="63ncsKK74AN3U9KOn1mh-71" source="63ncsKK74AN3U9KOn1mh-76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-121" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1580" width="1970" x="6430" y="2340" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-122" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-123" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-124" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Tus estadísticas usando FakeNews Insight:" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-125" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-126" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-127" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="1510" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-134" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="190" width="480" x="100" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-137" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares --- REAL" vertex="1">
+          <mxGeometry height="60" width="330" x="175" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-138" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Última noticia analizada&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="190" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-139" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total noticias analizadas:&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="830" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-141" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=85;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;27&lt;/b&gt;" vertex="1">
+          <mxGeometry height="140" width="380" x="815" y="625" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-142" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Distribución noticias analizadas:&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="1430" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-143" parent="WVOzojK8waf3j5KLMjec-121" style="verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;strokeWidth=1;shape=mxgraph.mockup.graphics.pieChart;strokeColor=#008cff;parts=10,20,35;partColors=#e0e0e0,#d0d0d0,#c0c0c0,#b0b0b0,#a0a0a0;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="330" width="415" x="1390" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-144" parent="WVOzojK8waf3j5KLMjec-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=32;fontColor=#0000ff;" value="Historial completo de noticias analizadas" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-160" parent="WVOzojK8waf3j5KLMjec-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="330" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-161" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares --- REAL" vertex="1">
+          <mxGeometry height="30" width="1110" x="440" y="1215" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-162" parent="WVOzojK8waf3j5KLMjec-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="330" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-163" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares --- FAKE" vertex="1">
+          <mxGeometry height="30" width="1110" x="440" y="1295" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-164" parent="WVOzojK8waf3j5KLMjec-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="330" y="1360" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-165" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares --- REAL" vertex="1">
+          <mxGeometry height="30" width="1110" x="440" y="1375" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-166" parent="WVOzojK8waf3j5KLMjec-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="330" y="1440" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-167" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares --- FAKE" vertex="1">
+          <mxGeometry height="30" width="1110" x="440" y="1455" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-57" parent="WVOzojK8waf3j5KLMjec-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1730" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-87" parent="WVOzojK8waf3j5KLMjec-121" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="60" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-88" parent="63ncsKK74AN3U9KOn1mh-87" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-89" parent="63ncsKK74AN3U9KOn1mh-87" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-90" parent="63ncsKK74AN3U9KOn1mh-87" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-91" parent="63ncsKK74AN3U9KOn1mh-87" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-92" parent="63ncsKK74AN3U9KOn1mh-87" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-93" edge="1" parent="63ncsKK74AN3U9KOn1mh-87" source="63ncsKK74AN3U9KOn1mh-92" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-92">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-168" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1580" width="2050" x="8510" y="2340" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-169" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-170" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-171" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=40;fontColor=#0000ff;" value="Analiza en tiempo real con PRO, ve más allá con ULTRA" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-172" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-173" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-174" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="580" y="1510" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-198" parent="WVOzojK8waf3j5KLMjec-168" style="swimlane;startSize=120;fontSize=25;" value="Plan Pro- 2,99€/mes" vertex="1">
+          <mxGeometry height="680" width="480" x="765" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-201" parent="WVOzojK8waf3j5KLMjec-198" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=26;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="- Sin límite diario de análisis de noticias&lt;div&gt;-Acceso al último modeo disponible&lt;/div&gt;&lt;div&gt;-Acceso a historial y estadísticas personales&lt;/div&gt;&lt;div&gt;-Acceso a la extensión de navegador, para visualizar fake news en tiempo real mientras navegas por tus páginas favoritas.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="440" x="10" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-197" parent="WVOzojK8waf3j5KLMjec-168" style="swimlane;startSize=120;fontSize=25;" value="Plan Free - 0€/mes" vertex="1">
+          <mxGeometry height="680" width="480" x="220" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-200" parent="WVOzojK8waf3j5KLMjec-197" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=26;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="- Analiza hasta 20 noticias por día&lt;div&gt;-Acceso al último modeo disponible&lt;/div&gt;&lt;div&gt;-Acceso a historial y estadísticas personales&lt;/div&gt;&lt;div&gt;-Acceso a la extensión de navegador, para visualizar fake news en tiempo real mientras navegas por tus páginas favoritas.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="440" x="10" y="178" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-199" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Sin pérdidas de tiempo, sin límites." vertex="1">
+          <mxGeometry height="30" width="420" x="790" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-202" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="&lt;font style=&quot;font-size: 26px;&quot;&gt;HAZTE PRO&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="400" x="805" y="1215" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-207" parent="WVOzojK8waf3j5KLMjec-168" style="swimlane;startSize=120;fontSize=25;" value="Plan Ultra- 14,99€/mes" vertex="1">
+          <mxGeometry height="680" width="480" x="1310" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-208" parent="WVOzojK8waf3j5KLMjec-207" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=26;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="- Sin límite diario de análisis de noticias&lt;div&gt;-Acceso al último modeo disponible&lt;/div&gt;&lt;div&gt;-Acceso a historial y estadísticas personales&lt;/div&gt;&lt;div&gt;-Acceso a la extensión de navegador, para visualizar fake news en tiempo real mientras navegas por tus páginas favoritas.&lt;/div&gt;&lt;div&gt;- Análisis masivo de noticias por CSV&lt;/div&gt;&lt;div&gt;-Acceso a API Key personal del modelo&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="440" x="20" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-209" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Para empresas y desarrolladores" vertex="1">
+          <mxGeometry height="30" width="420" x="1330" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-210" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Un plan para el día a día" vertex="1">
+          <mxGeometry height="30" width="310" x="305" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-211" parent="WVOzojK8waf3j5KLMjec-168" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="&lt;font style=&quot;font-size: 26px;&quot;&gt;HAZTE ULTRA&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="400" x="1350" y="1215" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-58" parent="WVOzojK8waf3j5KLMjec-168" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1830" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-94" parent="WVOzojK8waf3j5KLMjec-168" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="65" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-95" parent="63ncsKK74AN3U9KOn1mh-94" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-96" parent="63ncsKK74AN3U9KOn1mh-94" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-97" parent="63ncsKK74AN3U9KOn1mh-94" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-98" parent="63ncsKK74AN3U9KOn1mh-94" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-99" parent="63ncsKK74AN3U9KOn1mh-94" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-100" edge="1" parent="63ncsKK74AN3U9KOn1mh-94" source="63ncsKK74AN3U9KOn1mh-99" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-99">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-212" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1290" width="1970" x="6180" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-213" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-214" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-215" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=31;fontColor=#0000ff;" value="Verificado por FakeNews Insight" vertex="1">
+          <mxGeometry height="50" width="450" x="160" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-228" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Prueba nuestra herramienta" vertex="1">
+          <mxGeometry height="50" width="310" x="680" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-227" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="FALSO - 77% PROBABILIDAD" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-229" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Análisis ID #0281 - Usuario Pepe291" vertex="1">
+          <mxGeometry height="50" width="450" x="733" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-230" parent="WVOzojK8waf3j5KLMjec-212" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="460" width="750" x="610" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-231" parent="WVOzojK8waf3j5KLMjec-212" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Trump Cancela el Especial de José Mota en Medio de Polémica por Declaraciones Inéditas&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Washington D.C. – En una decisión que ha tomado por sorpresa a la industria del entretenimiento y a la esfera política, el expresidente de los Estados Unidos, Donald Trump, ha anunciado la cancelación inmediata del especial televisivo que estaba programado para emitirse en las próximas semanas, y que contaría con la participación del reconocido humorista español José Mota. La noticia, confirmada por fuentes cercanas al equipo del expresidente, ha desatado una ola de especulaciones sobre los motivos reales detrás de esta drástica medida.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="450" width="710" x="620" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-232" parent="WVOzojK8waf3j5KLMjec-212" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="530" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-233" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1570" width="1970" x="4340" y="2338" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-234" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-235" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-236" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Introduce tu noticia y deja que el modelo haga el resto" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-237" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-238" parent="WVOzojK8waf3j5KLMjec-233" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-239" parent="WVOzojK8waf3j5KLMjec-233" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="560" y="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-246" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="130" width="890" x="570" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-249" parent="WVOzojK8waf3j5KLMjec-233" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Arrastra tu archivo o pulsa aquí" vertex="1">
+          <mxGeometry height="37" width="500" x="526" y="536.5" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-271" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Texto" vertex="1">
+          <mxGeometry height="50" width="270" x="580" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-272" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="URL" vertex="1">
+          <mxGeometry height="50" width="270" x="880" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="WVOzojK8waf3j5KLMjec-273" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Lotes - CSV" vertex="1">
+          <mxGeometry height="50" width="270" x="1179" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-3" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Analizar" vertex="1">
+          <mxGeometry height="50" width="530" x="750" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-4" parent="WVOzojK8waf3j5KLMjec-233" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Seleccionar archivo" vertex="1">
+          <mxGeometry height="40" width="190" x="989" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-56" parent="WVOzojK8waf3j5KLMjec-233" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1760" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-80" parent="WVOzojK8waf3j5KLMjec-233" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="75" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-81" parent="63ncsKK74AN3U9KOn1mh-80" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-82" parent="63ncsKK74AN3U9KOn1mh-80" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-83" parent="63ncsKK74AN3U9KOn1mh-80" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-84" parent="63ncsKK74AN3U9KOn1mh-80" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-85" parent="63ncsKK74AN3U9KOn1mh-80" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-86" edge="1" parent="63ncsKK74AN3U9KOn1mh-80" source="63ncsKK74AN3U9KOn1mh-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-85">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-5" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1350" width="1970" x="90" y="4100" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-6" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-7" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-10" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="FALSO - 77% PROBABILIDAD" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-11" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Tenemos los resultados para tu noticia" vertex="1">
+          <mxGeometry height="50" width="450" x="733" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-12" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="Window Title" vertex="1">
+          <mxGeometry height="460" width="750" x="610" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-13" parent="63ncsKK74AN3U9KOn1mh-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Trump Cancela el Especial de José Mota en Medio de Polémica por Declaraciones Inéditas&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Washington D.C. – En una decisión que ha tomado por sorpresa a la industria del entretenimiento y a la esfera política, el expresidente de los Estados Unidos, Donald Trump, ha anunciado la cancelación inmediata del especial televisivo que estaba programado para emitirse en las próximas semanas, y que contaría con la participación del reconocido humorista español José Mota. La noticia, confirmada por fuentes cercanas al equipo del expresidente, ha desatado una ola de especulaciones sobre los motivos reales detrás de esta drástica medida.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="450" width="710" x="620" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-14" parent="63ncsKK74AN3U9KOn1mh-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="530" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-42" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Guarfar en el historial" vertex="1">
+          <mxGeometry height="50" width="190" x="662" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-43" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Generar enlace público" vertex="1">
+          <mxGeometry height="50" width="210" x="892" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-44" parent="63ncsKK74AN3U9KOn1mh-5" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Reportar fallo" vertex="1">
+          <mxGeometry height="50" width="190" x="1140" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-60" parent="63ncsKK74AN3U9KOn1mh-5" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1750" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-64" parent="63ncsKK74AN3U9KOn1mh-5" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="80" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-65" parent="63ncsKK74AN3U9KOn1mh-64" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-66" parent="63ncsKK74AN3U9KOn1mh-64" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-67" parent="63ncsKK74AN3U9KOn1mh-64" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-68" parent="63ncsKK74AN3U9KOn1mh-64" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-69" parent="63ncsKK74AN3U9KOn1mh-64" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-70" edge="1" parent="63ncsKK74AN3U9KOn1mh-64" source="63ncsKK74AN3U9KOn1mh-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-16" edge="1" parent="1" source="63ncsKK74AN3U9KOn1mh-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1361" y="4455" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-101" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1360" width="1970" x="4350" y="4060" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-102" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-103" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-104" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Integra nuestro modelo en tu aplicación" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="288.5" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-105" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-106" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-107" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="610" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-115" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=32;fontColor=#0000ff;" value="Tus API Keys:&amp;nbsp;" vertex="1">
+          <mxGeometry height="50" width="280" x="340" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-116" parent="63ncsKK74AN3U9KOn1mh-101" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1140" x="340" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-118" parent="63ncsKK74AN3U9KOn1mh-101" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1140" x="340" y="566" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-124" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1730" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-125" parent="63ncsKK74AN3U9KOn1mh-101" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="60" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-126" parent="63ncsKK74AN3U9KOn1mh-125" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Analizar&amp;nbsp;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-127" parent="63ncsKK74AN3U9KOn1mh-125" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-128" parent="63ncsKK74AN3U9KOn1mh-125" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-129" parent="63ncsKK74AN3U9KOn1mh-125" style="text;strokeColor=#006EAF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=#1ba1e2;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-130" parent="63ncsKK74AN3U9KOn1mh-125" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-131" edge="1" parent="63ncsKK74AN3U9KOn1mh-125" source="63ncsKK74AN3U9KOn1mh-130" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="63ncsKK74AN3U9KOn1mh-130">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-132" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=32;fontColor=#0000ff;" value="Nº Peticiones" vertex="1">
+          <mxGeometry height="50" width="280" x="1600" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-133" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=36;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="231" vertex="1">
+          <mxGeometry height="30" width="85" x="1697.5" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-134" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=36;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="77" vertex="1">
+          <mxGeometry height="30" width="85" x="1697.5" y="566" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-135" parent="63ncsKK74AN3U9KOn1mh-101" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Genera nueva clave" vertex="1">
+          <mxGeometry height="50" width="520" x="745" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-136" parent="63ncsKK74AN3U9KOn1mh-101" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;Tu nueva API Key:&amp;nbsp;&lt;span style=&quot;font-size: 23px;&quot;&gt;a1b2c33d4e5f6g7h8i9jakblc&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22text%3BspacingTop%3D-5%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dcenter%3BfontSize%3D23%3BfontFamily%3DHelvetica%3BfillColor%3Dnone%3BstrokeColor%3Dnone%3B%22%20value%3D%22a1b2c33d4e5f6g7h8i9jakblc%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%2230%22%20width%3D%22930%22%20x%3D%222605%22%20y%3D%225315%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22text%3BspacingTop%3D-5%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dcenter%3BfontSize%3D23%3BfontFamily%3DHelvetica%3BfillColor%3Dnone%3BstrokeColor%3Dnone%3B%22%20value%3D%22a1b2c33d4e5f6g7h8i9jakblc%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%2230%22%20width%3D%22930%22%20x%3D%222605%22%20y%3D%225315%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22text%3BspacingTop%3D-5%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dcenter%3BfontSize%3D23%3BfontFamily%3DHelvetica%3BfillColor%3Dnone%3BstrokeColor%3Dnone%3B%22%20value%3D%22a1b2c33d4e5f6g7h8i9jakblc%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%2230%22%20width%3D%22930%22%20x%3D%222605%22%20y%3D%225315%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20parent%3D%221%22%20style%3D%22text%3BspacingTop%3D-5%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dcenter%3BfontSize%3D23%3BfontFamily%3DHelvetica%3BfillColor%3Dnone%3BstrokeColor%3Dnone%3B%22%20value%3D%22a1b2c33d4e5f6g7h8i9jakblc%22%20vertex%3D%221%22%3E%3CmxGeometry%20height%3D%2230%22%20width%3D%22930%22%20x%3D%222605%22%20y%3D%225315%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" vertex="1">
+          <mxGeometry height="150" width="480" x="765" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-137" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="a1b2c33d4e5f6g7h8i9jakblc" vertex="1">
+          <mxGeometry height="30" width="355" x="340" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-138" parent="63ncsKK74AN3U9KOn1mh-101" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="a1b2c33d4e5f6g7h8i9jakblc" vertex="1">
+          <mxGeometry height="30" width="340" x="347.5" y="581" as="geometry" />
+        </mxCell>
+        <mxCell id="63ncsKK74AN3U9KOn1mh-139" edge="1" parent="63ncsKK74AN3U9KOn1mh-101" source="63ncsKK74AN3U9KOn1mh-138" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.71;entryY=0.933;entryDx=0;entryDy=0;entryPerimeter=0;" target="63ncsKK74AN3U9KOn1mh-138">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-1" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1350" width="1970" x="2230" y="4070" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-2" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-3" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-5" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Tenemos los resultados para tu lote de noticias" vertex="1">
+          <mxGeometry height="50" width="450" x="733" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-8" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="530" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-12" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1750" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-13" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="80" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-14" parent="qmXE7IJ2WDLsmpGNPHUn-13" style="text;strokeColor=#008CFF;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=#008CFF;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Analizar&amp;nbsp;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-15" parent="qmXE7IJ2WDLsmpGNPHUn-13" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-16" parent="qmXE7IJ2WDLsmpGNPHUn-13" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-17" parent="qmXE7IJ2WDLsmpGNPHUn-13" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-18" parent="qmXE7IJ2WDLsmpGNPHUn-13" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-19" edge="1" parent="qmXE7IJ2WDLsmpGNPHUn-13" source="qmXE7IJ2WDLsmpGNPHUn-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="qmXE7IJ2WDLsmpGNPHUn-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-22" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="525" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-23" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-24" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-25" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-26" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-27" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-28" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-29" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-30" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Noticia" vertex="1">
+          <mxGeometry height="50" width="170" x="170" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-31" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Resultado" vertex="1">
+          <mxGeometry height="50" width="170" x="1615" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-32" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-33" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-34" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="1330" x="150" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-35" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Trump rompe relaciones con España tras la negación de uso de las bases militares&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="1110" x="260" y="955" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-36" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-37" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-38" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-39" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-40" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-41" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="200" x="1600" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-42" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1620" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-43" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1620" y="615" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-44" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1620" y="695" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-45" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1615" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-46" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1615" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-47" parent="qmXE7IJ2WDLsmpGNPHUn-1" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FAKE - 89 %" vertex="1">
+          <mxGeometry height="30" width="170" x="1620" y="955" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-50" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1440" width="1970" x="6420" y="4060" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-51" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-52" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-53" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Hola, {usuario}. Aquí puedes gestionar todo lo relacionado con tu cuenta" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-54" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-55" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="120" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-56" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="550" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-60" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=26;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Inicio" vertex="1">
+          <mxGeometry height="40" width="150" x="1730" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-76" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;span style=&quot;font-size: 28px;&quot;&gt;Cambiar nombre de usuario&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="360" x="460" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-77" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;span style=&quot;font-size: 28px;&quot;&gt;Cambiar contraseña&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="290" x="450" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-79" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;span style=&quot;font-size: 28px;&quot;&gt;Gestionar suscripciones activas&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="450" x="470" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-80" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;span style=&quot;font-size: 28px;&quot;&gt;Borrar cuenta&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="220" x="450" y="1176" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-112" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="437" x="523" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-113" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="437" x="523" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-114" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="437" x="523" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-115" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="437" x="523" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-116" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Button Text" vertex="1">
+          <mxGeometry height="50" width="150" x="1050" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-117" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Button Text" vertex="1">
+          <mxGeometry height="50" width="150" x="1050" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-118" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Cambiar plan" vertex="1">
+          <mxGeometry height="50" width="340" x="550" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-119" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#A50040;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=light-dark(#D80073,#FF0000);whiteSpace=wrap;" value="Dar de baja suscripcion" vertex="1">
+          <mxGeometry height="50" width="340" x="550" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-120" parent="qmXE7IJ2WDLsmpGNPHUn-50" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#A50040;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=light-dark(#D80073,#FF0000);whiteSpace=wrap;" value="Eliminar cuenta" vertex="1">
+          <mxGeometry height="50" width="340" x="550" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-121" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="1810" width="1970" x="8540" y="4060" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-122" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-123" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-124" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Hola, {usuario}. Bienvenido al panel de administrador." vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-125" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=33;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="760" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-127" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="535" y="1740" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-128" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=26;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Inicio" vertex="1">
+          <mxGeometry height="40" width="150" x="1730" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-130" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="290" x="450" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-131" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="" vertex="1">
+          <mxGeometry height="50" width="450" x="470" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-144" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Número de usuarios" vertex="1">
+          <mxGeometry height="50" width="450" x="740" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-145" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total usuarios FREE&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="200" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-177" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;96&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="190" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-178" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total usuarios PRO&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="811" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-179" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(126, 166, 224));&quot;&gt;5&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="795" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-180" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total usuarios ULTRA&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="1380" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-181" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(103, 171, 159));&quot;&gt;1&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="1370" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-182" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Número de llamadas a la API" vertex="1">
+          <mxGeometry height="50" width="450" x="740" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-184" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total peticiones Extensión HOY&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="359" x="811" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-185" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total peticiones API HOY&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="1380" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-183" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;Total peticiones Web HOY&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="200" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-186" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;14&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="195" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-187" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(126, 166, 224));&quot;&gt;53&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="805" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-188" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=70;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;b&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(103, 171, 159));&quot;&gt;133&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="1375" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-189" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="Gestión de usuarios" vertex="1">
+          <mxGeometry height="50" width="450" x="144" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-190" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="970" x="185" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-191" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="970" x="185" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-192" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="970" x="185" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-193" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;Usuario&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="140" x="185" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-194" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=38;fontColor=#0000ff;" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;Plan&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="140" x="1210" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-195" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="210" x="1190" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-196" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="210" x="1190" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-197" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="210" x="1190" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-198" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Cambiar plan" vertex="1">
+          <mxGeometry height="50" width="180" x="1440" y="1305" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-199" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=light-dark(#008CFF,#FF3333);whiteSpace=wrap;" value="Dar de baja" vertex="1">
+          <mxGeometry height="50" width="180" x="1650" y="1305" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-204" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Cambiar plan" vertex="1">
+          <mxGeometry height="50" width="180" x="1440" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-205" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Cambiar plan" vertex="1">
+          <mxGeometry height="50" width="180" x="1440" y="1485" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-206" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=light-dark(#008CFF,#FF3333);whiteSpace=wrap;" value="Dar de baja" vertex="1">
+          <mxGeometry height="50" width="180" x="1650" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-207" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=light-dark(#008CFF,#FF3333);whiteSpace=wrap;" value="Dar de baja" vertex="1">
+          <mxGeometry height="50" width="180" x="1650" y="1485" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-208" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Juan272_" vertex="1">
+          <mxGeometry height="30" width="210" x="170" y="1315" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-210" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Juan272_" vertex="1">
+          <mxGeometry height="30" width="210" x="170" y="1405" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-211" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Juan272_" vertex="1">
+          <mxGeometry height="30" width="210" x="170" y="1495" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-212" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FREE" vertex="1">
+          <mxGeometry height="30" width="210" x="1190" y="1315" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-213" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FREE" vertex="1">
+          <mxGeometry height="30" width="210" x="1190" y="1400" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-214" parent="qmXE7IJ2WDLsmpGNPHUn-121" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="FREE" vertex="1">
+          <mxGeometry height="30" width="210" x="1190" y="1495" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-215" parent="1" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.browserWindow;rSize=0;strokeColor=#666666;strokeColor2=#008cff;strokeColor3=#c4c4c4;mainText=,;recursiveResize=0;" value="" vertex="1">
+          <mxGeometry height="1350" width="1970" x="98" y="5540" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-216" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;fontSize=17;fontColor=#666666;align=left;whiteSpace=wrap;" value="Page 1" vertex="1">
+          <mxGeometry height="26" width="110" x="60" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-217" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.anchor;rSize=0;fontSize=17;fontColor=#666666;align=left;" value="https://www.fakenewsinsight.com" vertex="1">
+          <mxGeometry height="26" width="250" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-219" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.text.alphanumeric;linkText=;html=1;fontStyle=1;fontSize=36;fontColor=#0000ff;" value="Descarga la extensión de navegador y disfruta de PRO al máximo" vertex="1">
+          <mxGeometry height="50" width="450" x="733" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-222" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;span style=&quot;color: rgb(238, 240, 255); font-family: &amp;quot;Google Sans&amp;quot;, Arial, sans-serif; font-size: 16px; text-align: start; background-color: rgb(31, 31, 31);&quot;&gt;® FakeNews Insight 2026&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="850" x="530" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-223" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.buttons.button;strokeColor=#666666;fontColor=#ffffff;mainText=;buttonStyle=round;fontSize=17;fontStyle=1;fillColor=#008cff;whiteSpace=wrap;" value="Accede a la extensión" vertex="1">
+          <mxGeometry height="80" width="290" x="840" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-226" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="Mi Cuenta" vertex="1">
+          <mxGeometry height="40" width="150" x="1750" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-227" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="swimlane;shape=mxgraph.bootstrap.anchor;strokeColor=#666666;fillColor=#ffffff;fontColor=#666666;fontStyle=0;childLayout=stackLayout;horizontal=0;startSize=0;horizontalStack=1;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="70" width="505" x="80" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-228" parent="qmXE7IJ2WDLsmpGNPHUn-227" style="text;strokeColor=default;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.leftButton;rSize=10;fillColor=none;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Analizar&amp;nbsp;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="125" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-229" parent="qmXE7IJ2WDLsmpGNPHUn-227" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="Mi historial" vertex="1">
+          <mxGeometry height="70" width="125" x="125" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-230" parent="qmXE7IJ2WDLsmpGNPHUn-227" style="text;strokeColor=#001DBC;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=#0050ef;fontColor=#ffffff;fontSize=17;fontStyle=1;" value="Hazte pro / Extensión navegador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="250" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-231" parent="qmXE7IJ2WDLsmpGNPHUn-227" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="&lt;div&gt;API Keys&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="125" x="375" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-232" parent="qmXE7IJ2WDLsmpGNPHUn-227" style="text;strokeColor=inherit;align=center;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.mockup.rightButton;rSize=10;fillColor=inherit;fontColor=inherit;fontSize=17;fontStyle=1;" value="" vertex="1">
+          <mxGeometry height="70" width="5" x="500" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-233" edge="1" parent="qmXE7IJ2WDLsmpGNPHUn-227" source="qmXE7IJ2WDLsmpGNPHUn-232" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="qmXE7IJ2WDLsmpGNPHUn-232">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-234" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="60" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-235" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="705" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-236" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="strokeWidth=1;shadow=0;dashed=0;align=center;html=1;shape=mxgraph.mockup.containers.window;align=left;verticalAlign=top;spacingLeft=8;strokeColor2=#008cff;strokeColor3=#c4c4c4;fontColor=#666666;mainText=;fontSize=17;labelBackgroundColor=none;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="270" width="500" x="1340" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-237" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 1: Añade a tus extensiones&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Accede al enlace, descárgala y añadela a tus extensiones&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="85" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-238" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 2: Actívala en la página deseada&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Una vez dentro de tus páginas favoritas, activa la extensión.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="733" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="qmXE7IJ2WDLsmpGNPHUn-239" parent="qmXE7IJ2WDLsmpGNPHUn-215" style="text;spacingTop=-5;whiteSpace=wrap;html=1;align=center;fontSize=23;fontFamily=Helvetica;fillColor=none;strokeColor=none;" value="&lt;div&gt;&lt;b&gt;Paso 3: Analiza en tiempo real&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Con la extensión activa, podrás analizar artículos o noticias directamente desde la página, sin tener que perder tiempo en la web.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="450" x="1365" y="705" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Nhiyu781HXsLY3ag-YBx" name="Página-2">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
