@@ -74,7 +74,10 @@ app = FastAPI(
 """Configuracion CORS para permitir comunicacion frontend-backend."""
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://tfg-informatica-luis-canibano-frontend.onrender.com",
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
