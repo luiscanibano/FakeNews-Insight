@@ -1,0 +1,13 @@
+# Normaliza finales de línea para evitar ruido entre Windows y Linux (Docker/CI)
+* text=auto eol=lf
+
+# Binarios del modelo SVM/TF-IDF (commit normal: ~220KB total)
+*.pkl binary
+
+# Imágenes y otros binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

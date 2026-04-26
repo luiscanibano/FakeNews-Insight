@@ -1,0 +1,80 @@
+/**
+ * @file accessControl.js
+ * @description Modulo utilitario compartido para reglas de acceso, helpers y funciones transversales.
+ */
+
+export const USER_ROLE = {
+  ADMIN: "admin",
+  USER: "user",
+  GUEST: "guest",
+};
+
+export const USER_PLAN = {
+  FREE: "free",
+  PRO: "pro",
+  ULTRA: "ultra",
+};
+
+/** Jerarquia numerica de planes para comparaciones de capacidad por nivel. */
+const PLAN_ORDER = {
+  [USER_PLAN.FREE]: 0,
+  [USER_PLAN.PRO]: 1,
+  [USER_PLAN.ULTRA]: 2,
+};
+
+/** Normaliza un perfil DB a objeto de acceso consistente con defaults de seguridad. */
+export const resolveAccess = (profile) => {
+  if (!profile) {
+    return {
+      role: USER_ROLE.GUEST,
+      plan: USER_PLAN.FREE,
+    };
+  }
+
+  const role = profile.role === USER_ROLE.ADMIN ? USER_ROLE.ADMIN : USER_ROLE.USER;
+  const plan = Object.prototype.hasOwnProperty.call(PLAN_ORDER, profile.plan)
+    ? profile.plan
+    : USER_PLAN.FREE;
+
+  return { role, plan };
+};
+
+/** Comprueba si el plan actual cumple el minimo requerido por funcionalidad. */
+export const hasMinimumPlan = (currentPlan, requiredPlan) =>
+  PLAN_ORDER[currentPlan] >= PLAN_ORDER[requiredPlan];
+
+/** Evalua permisos combinando rol y plan para cada feature de producto. */
+export const canUseFeature = ({ role, plan }, feature) => {
+  if (role === USER_ROLE.ADMIN) {
+    return true;
+  }
+
+  switch (feature) {
+    case "analysis.basic":
+    case "history.basic":
+      return true;
+    case "analysis.bulk":
+      return hasMinimumPlan(plan, USER_PLAN.PRO);
+    case "analysis.api":
+      return hasMinimumPlan(plan, USER_PLAN.ULTRA);
+    default:
+      return false;
+  }
+};
+
+/** Devuelve el cupo mensual maximo de analisis segun nivel de acceso. */
+export const getMonthlyAnalysisLimit = ({ role, plan }) => {
+  if (role === USER_ROLE.ADMIN) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  if (plan === USER_PLAN.PRO) {
+    return 500;
+  }
+
+  if (plan === USER_PLAN.ULTRA) {
+    return 5000;
+  }
+
+  return 30;
+};

@@ -6,6 +6,7 @@
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv
 import joblib
 import json
 import os
@@ -17,7 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import Request as UrlRequest, urlopen
 
 """Descargas silenciosas de recursos NLTK requeridos por el pipeline de limpieza."""
 nltk.download('punkt', quiet=True)
@@ -31,6 +32,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize 
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 
 
 def _load_frontend_env_fallback() -> Dict[str, str]:
@@ -59,6 +61,8 @@ SUPABASE_ANON_KEY = (
     os.getenv("SUPABASE_ANON_KEY", "")
     or _FRONTEND_ENV.get("VITE_SUPABASE_ANON_KEY", "")
 )
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+
 
 """Inicializacion de la aplicacion FastAPI."""
 app = FastAPI(
@@ -75,6 +79,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health")
+def health_check():
+    """Endpoint de healthcheck para Docker, Render y CI/CD."""
+    return {"status": "ok"}
+
 
 """Carga de modelos SVM y TF-IDF al iniciar el servicio."""
 print("Cargando modelo SVM y vectorizador TF-IDF...")
@@ -115,6 +126,17 @@ def _ensure_supabase_config() -> None:
         raise HTTPException(
             status_code=500,
             detail="Falta configuracion de Supabase en backend (SUPABASE_URL y SUPABASE_ANON_KEY).",
+        )
+
+
+def _ensure_supabase_service_config() -> None:
+    """Valida credenciales privilegiadas para escrituras server-to-server de billing."""
+    _ensure_supabase_config()
+
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="Falta SUPABASE_SERVICE_ROLE_KEY en backend para operaciones de billing.",
         )
 
 
@@ -162,7 +184,44 @@ def _supabase_json_request(
         headers["Prefer"] = prefer
 
     payload = json.dumps(body).encode("utf-8") if body is not None else None
-    request = Request(url=url, data=payload, headers=headers, method=method)
+    request = UrlRequest(url=url, data=payload, headers=headers, method=method)
+
+    try:
+        with urlopen(request, timeout=12) as response:
+            return response.status, _parse_json_payload(response.read())
+    except HTTPError as error:
+        return error.code, _parse_json_payload(error.read())
+    except URLError as error:
+        raise HTTPException(status_code=502, detail=f"No se pudo contactar con Supabase: {error}")
+
+
+def _supabase_service_json_request(
+    path: str,
+    *,
+    method: str = "GET",
+    query: Optional[Dict[str, str]] = None,
+    body: Optional[Dict[str, Any]] = None,
+    prefer: Optional[str] = None,
+) -> Tuple[int, Any]:
+    """Ejecuta requests JSON contra Supabase usando service role para saltar RLS de forma segura."""
+    _ensure_supabase_service_config()
+
+    url = f"{SUPABASE_URL}{path}"
+    if query:
+        url = f"{url}?{urlencode(query)}"
+
+    headers = {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+
+    if prefer:
+        headers["Prefer"] = prefer
+
+    payload = json.dumps(body).encode("utf-8") if body is not None else None
+    request = UrlRequest(url=url, data=payload, headers=headers, method=method)
 
     try:
         with urlopen(request, timeout=12) as response:
@@ -512,6 +571,7 @@ def _mark_analysis_run_as_saved(run_id: str, user_id: str, jwt_token: str) -> No
             detail=_extract_detail(payload, "No se pudo actualizar el estado de guardado del analisis."),
         )
 
+
 """Esquemas de entrada para endpoints de prediccion y guardado manual."""
 class NoticiaRequest(BaseModel):
     texto: str
@@ -519,6 +579,8 @@ class NoticiaRequest(BaseModel):
 
 class SaveAnalysisRequest(BaseModel):
     run_id: str
+
+
 
 @app.post("/predecir/")
 def predecir_noticia(
@@ -613,4 +675,56 @@ def guardar_analisis_en_historial(
         "saved": True,
         "already_saved": False,
         "analysis": saved_row,
+    }
+
+
+
+
+class AccountDeleteRequest(BaseModel):
+    confirmation: Optional[str] = None
+
+
+def _delete_supabase_user_with_admin(user_id: str) -> None:
+    """Elimina el usuario en Supabase Auth via Admin API con service role."""
+    status, payload = _supabase_service_json_request(
+        f"/auth/v1/admin/users/{user_id}",
+        method="DELETE",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo eliminar la cuenta en Supabase Auth."),
+        )
+
+
+
+
+@app.post("/account/delete")
+def borrar_cuenta_usuario(
+    payload: AccountDeleteRequest,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Elimina la cuenta del usuario en Supabase Auth (RGPD)."""
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    confirmation = str(payload.confirmation or "").strip().upper()
+    if confirmation != "ELIMINAR":
+        raise HTTPException(
+            status_code=400,
+            detail="Confirma la eliminacion escribiendo ELIMINAR en el campo de confirmacion.",
+        )
+
+    _delete_supabase_user_with_admin(user_id)
+
+    return {
+        "deleted": True,
+        "user_id": user_id,
     }

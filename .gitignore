@@ -1,0 +1,48 @@
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Node / Vite ---
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# --- Env files (NEVER commit secrets) ---
+.env
+.env.local
+.env.*.local
+fakenews-backend/.env
+fakenews-frontend/.env
+
+# --- IDE / OS ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Docker / build artefacts ---
+*.tar
+*.tar.gz
+
+# --- Memoria del agente Copilot (no es código del proyecto) ---
+.copilot/
