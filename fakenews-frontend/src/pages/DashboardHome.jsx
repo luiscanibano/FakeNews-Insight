@@ -1,20 +1,22 @@
 /**
  * @file DashboardHome.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Vista "Inicio" del dashboard. Lee datos del store y los pasa a `DashboardHomeSection`.
  */
 
+import { useOutletContext } from "react-router-dom";
+import { useDashboardStore } from "../store/dashboardStore";
 import DashboardHomeSection from "../components/dashboard/DashboardHomeSection";
 
-/** Pagina Inicio del dashboard: delega render y datos en DashboardHomeSection. */
-function DashboardHome({
-  planLabel,
-  usageMetrics,
-  last30DaysSeries,
-  recentAnalyses,
-  homeLoading,
-  homeError,
-  onStartAnalysis,
-}) {
+/** Pagina Inicio del dashboard. */
+function DashboardHome() {
+  const { planLabel, onStartAnalysis } = useOutletContext();
+
+  const homeLoading = useDashboardStore((state) => state.homeLoading);
+  const homeError = useDashboardStore((state) => state.homeError);
+  const usageMetrics = useDashboardStore((state) => state.usageMetrics);
+  const last30DaysSeries = useDashboardStore((state) => state.last30DaysSeries);
+  const recentAnalyses = useDashboardStore((state) => state.recentAnalyses);
+
   return (
     <DashboardHomeSection
       planLabel={planLabel}

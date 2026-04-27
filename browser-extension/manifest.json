@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "FakeNews Insight",
+  "short_name": "FakeNews",
+  "version": "0.1.0",
+  "description": "Analiza la veracidad de cualquier texto o noticia con IA sin salir del navegador.",
+  "action": {
+    "default_title": "FakeNews Insight",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://*.supabase.co/*",
+    "https://tfg-informatica-luis-canibano-backend.onrender.com/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ]
+}

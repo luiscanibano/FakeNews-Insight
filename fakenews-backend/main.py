@@ -71,13 +71,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
-"""Configuracion CORS para permitir comunicacion frontend-backend."""
+"""Configuracion CORS para permitir comunicacion frontend-backend y extension de navegador.
+
+El regex acepta:
+- Frontend en produccion (Render).
+- Frontend en desarrollo local (Vite).
+- Cualquier extension Chrome/Edge (los IDs MV3 usan caracteres a-p, 32 chars).
+"""
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://tfg-informatica-luis-canibano-frontend.onrender.com",
-        "http://localhost:5173",
-    ],
+    allow_origin_regex=(
+        r"^("
+        r"https://tfg-informatica-luis-canibano-frontend\.onrender\.com"
+        r"|http://localhost:5173"
+        r"|chrome-extension://[a-pA-P0-9]{32}"
+        r")$"
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

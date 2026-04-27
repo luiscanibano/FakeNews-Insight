@@ -1,4 +1,4 @@
-# TFG — Plataforma de detección de Fake News
+# TFG — FakeNews Insight: Plataforma de detección de Fake News
 
 Plataforma web que clasifica noticias como reales o falsas usando un
 modelo SVM + TF-IDF entrenado sobre un corpus en español. Frontend en

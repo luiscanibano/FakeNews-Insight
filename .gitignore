@@ -46,3 +46,11 @@ yarn-error.log*
 
 # --- Memoria del agente Copilot (no es código del proyecto) ---
 .copilot/
+
+# --- Documentación interna (no se versiona) ---
+docs/
+
+# --- Extensión de navegador: overrides locales de configuración ---
+browser-extension/lib/config.local.js
+browser-extension/dist/
+browser-extension/*.zip

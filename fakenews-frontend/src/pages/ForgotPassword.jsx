@@ -9,13 +9,17 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
+import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
 
-/** Clave para persistir el cooldown entre recargas de pagina. */
+/** Clave para persistir el cooldown entre recargas de pagina.
+ */
 const COOLDOWN_STORAGE_KEY = "forgot-password-cooldown-until";
 
-/** Pantalla para solicitar el enlace de recuperacion de contrasena. */
+/** Pantalla para solicitar el enlace de recuperacion de contrasena.
+ */
 function ForgotPassword() {
-  /** Estado local del formulario y de mensajes visuales. */
+  /** Estado local del formulario y de mensajes visuales.
+ */
   const [email, setEmail] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [localError, setLocalError] = useState("");
@@ -36,14 +40,16 @@ function ForgotPassword() {
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
 
-  /** Inicia el bloqueo temporal para evitar reenviar solicitudes de forma inmediata. */
+  /** Inicia el bloqueo temporal para evitar reenviar solicitudes de forma inmediata.
+ */
   const startCooldown = (seconds) => {
     const until = Date.now() + seconds * 1000;
     setCooldownUntil(until);
     window.localStorage.setItem(COOLDOWN_STORAGE_KEY, String(until));
   };
 
-  /** Limpia errores globales al entrar y al salir de la vista. */
+  /** Limpia errores globales al entrar y al salir de la vista.
+ */
   useEffect(() => {
     clearError();
 
@@ -52,7 +58,8 @@ function ForgotPassword() {
     };
   }, [clearError]);
 
-  /** Mantiene un contador en segundos y elimina el cooldown al terminar. */
+  /** Mantiene un contador en segundos y elimina el cooldown al terminar.
+ */
   useEffect(() => {
     if (!cooldownUntil) {
       setCooldownSeconds(0);
@@ -76,7 +83,8 @@ function ForgotPassword() {
     return () => clearInterval(timer);
   }, [cooldownUntil]);
 
-  /** Al escribir, limpia errores previos para no mostrar mensajes obsoletos. */
+  /** Al escribir, limpia errores previos para no mostrar mensajes obsoletos.
+ */
   const handleEmailChange = (event) => {
     if (error) {
       clearError();
@@ -87,7 +95,8 @@ function ForgotPassword() {
     setEmail(event.target.value);
   };
 
-  /** Envia la peticion de recuperacion y gestiona el cooldown segun resultado. */
+  /** Envia la peticion de recuperacion y gestiona el cooldown segun resultado.
+ */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -137,23 +146,9 @@ function ForgotPassword() {
           />
         </div>
 
-        {localError ? (
-          <p className="rounded-xl border border-error/30 bg-error-container/40 px-3 py-2 text-sm text-error" role="alert">
-            {localError}
-          </p>
-        ) : null}
-
-        {error ? (
-          <p className="rounded-xl border border-error/30 bg-error-container/40 px-3 py-2 text-sm text-error" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        {successMessage ? (
-          <p className="rounded-xl border border-primary/25 bg-primary/15 px-3 py-2 text-sm text-primary" role="status">
-            {successMessage}
-          </p>
-        ) : null}
+        <AuthErrorBanner message={localError} />
+        <AuthErrorBanner message={error} />
+        <AuthSuccessBanner message={successMessage} />
 
         <Button
           type="submit"

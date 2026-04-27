@@ -1,35 +1,37 @@
 /**
  * @file DashboardAnalyze.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Vista de analisis: hero + formulario + panel de resultados, alimentada por `useAnalysisFlow`.
  */
 
+import { useOutletContext } from "react-router-dom";
 import DashboardHeroSection from "../components/dashboard/DashboardHeroSection";
 import DashboardAnalysisPanel from "../components/dashboard/DashboardAnalysisPanel";
 import DashboardResultPanel from "../components/dashboard/DashboardResultPanel";
 
 /** Vista principal de analisis que compone hero, formulario y panel de resultados. */
-function DashboardAnalyze({
-  modeOptions,
-  analysisMode,
-  modeTagline,
-  canUseCsvAnalysis,
-  isAnalysing,
-  onModeChange,
-  onSubmit,
-  textPayload,
-  onTextPayloadChange,
-  urlPayload,
-  onUrlPayloadChange,
-  csvFile,
-  fileInputRef,
-  onCsvPick,
-  localError,
-  analysisProgress,
-  result,
-  onSaveResult,
-  isSavingResult,
-  saveResultError,
-}) {
+function DashboardAnalyze() {
+  const { modeOptions, modeTagline, canUseCsvAnalysis, analysisFlow } = useOutletContext();
+
+  const {
+    analysisMode,
+    isAnalysing,
+    handleModeChange,
+    handleSubmit,
+    textPayload,
+    handleTextPayloadChange,
+    urlPayload,
+    handleUrlPayloadChange,
+    csvFile,
+    fileInputRef,
+    handleCsvPick,
+    resolvedError,
+    analysisProgress,
+    result,
+    saveCurrentTextResultToHistory,
+    isSavingTextAnalysis,
+    saveTextAnalysisError,
+  } = analysisFlow;
+
   return (
     <>
       <DashboardHeroSection />
@@ -40,25 +42,25 @@ function DashboardAnalyze({
         modeTagline={modeTagline}
         canUseCsvAnalysis={canUseCsvAnalysis}
         isAnalysing={isAnalysing}
-        onModeChange={onModeChange}
-        onSubmit={onSubmit}
+        onModeChange={handleModeChange}
+        onSubmit={handleSubmit}
         textPayload={textPayload}
-        onTextPayloadChange={onTextPayloadChange}
+        onTextPayloadChange={handleTextPayloadChange}
         urlPayload={urlPayload}
-        onUrlPayloadChange={onUrlPayloadChange}
+        onUrlPayloadChange={handleUrlPayloadChange}
         csvFile={csvFile}
         fileInputRef={fileInputRef}
-        onCsvPick={onCsvPick}
-        localError={localError}
+        onCsvPick={handleCsvPick}
+        localError={resolvedError}
         analysisProgress={analysisProgress}
       />
 
       <DashboardResultPanel
-        result={result}
         isAnalysing={isAnalysing}
-        onSaveResult={onSaveResult}
-        isSavingResult={isSavingResult}
-        saveResultError={saveResultError}
+        result={result}
+        onSaveResult={saveCurrentTextResultToHistory}
+        isSavingResult={isSavingTextAnalysis}
+        saveResultError={saveTextAnalysisError}
       />
     </>
   );

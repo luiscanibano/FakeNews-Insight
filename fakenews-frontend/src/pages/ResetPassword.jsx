@@ -10,25 +10,30 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
+import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
 
-/** Vista para establecer una nueva contrasena desde el enlace de recuperacion. */
+/** Vista para establecer una nueva contrasena desde el enlace de recuperacion.
+ */
 function ResetPassword() {
   const navigate = useNavigate();
-  /** Estado local de formulario y mensajes de estado. */
+  /** Estado local de formulario y mensajes de estado.
+ */
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [localError, setLocalError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isReady, setIsReady] = useState(false);
 
-  /** Accion del store para persistir la nueva contrasena. */
+  /** Accion del store para persistir la nueva contrasena.
+ */
   const setRecoverySession = useAuthStore((state) => state.setRecoverySession);
   const updatePassword = useAuthStore((state) => state.updatePassword);
   const loading = useAuthStore((state) => state.loading);
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
 
-  /** Valida parametros del hash y crea sesion temporal de recovery en Supabase. */
+  /** Valida parametros del hash y crea sesion temporal de recovery en Supabase.
+ */
   useEffect(() => {
     const initializeRecoverySession = async () => {
       const hashParams = new URLSearchParams(window.location.hash.slice(1));
@@ -54,7 +59,8 @@ function ResetPassword() {
     initializeRecoverySession();
   }, []);
 
-  /** Valida el formulario y actualiza la contrasena. */
+  /** Valida el formulario y actualiza la contrasena.
+ */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -82,7 +88,8 @@ function ResetPassword() {
         navigate("/login", { replace: true });
       }, 1000);
     } catch {
-      /** Error is already handled in the store state. */
+      /** Error is already handled in the store state.
+ */
     }
   };
 
@@ -130,23 +137,9 @@ function ResetPassword() {
           />
         </div>
 
-        {localError ? (
-          <p className="rounded-xl border border-error/30 bg-error-container/40 px-3 py-2 text-sm text-error" role="alert">
-            {localError}
-          </p>
-        ) : null}
-
-        {error ? (
-          <p className="rounded-xl border border-error/30 bg-error-container/40 px-3 py-2 text-sm text-error" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        {successMessage ? (
-          <p className="rounded-xl border border-primary/25 bg-primary/15 px-3 py-2 text-sm text-primary" role="status">
-            {successMessage}
-          </p>
-        ) : null}
+        <AuthErrorBanner message={localError} />
+        <AuthErrorBanner message={error} />
+        <AuthSuccessBanner message={successMessage} />
 
         <Button
           type="submit"

@@ -1,30 +1,20 @@
 /**
  * @file DashboardHistory.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Pagina del dashboard que orquesta carga, filtrado y paginacion del historial guardado.
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { BarChart3, BookOpenText, Search } from "lucide-react";
+import { BookOpenText, Search } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { useHistoryStore } from "../store/historyStore";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+import HistoryItem from "../components/dashboard/history/HistoryItem";
+import HistoryFilters from "../components/dashboard/history/HistoryFilters";
+import HistoryPagination from "../components/dashboard/history/HistoryPagination";
 
 const PREVIEW_ITEMS_COUNT = 5;
 const PAGE_SIZE = 7;
-
-/** Asigna estilos de estado segun veredicto para chips de historial. */
-const getVerdictStyles = (verdict) => {
-  if (verdict === "FIABLE") {
-    return "border-emerald-400/30 bg-emerald-500/15 text-emerald-200";
-  }
-
-  if (verdict === "FALSA") {
-    return "border-red-400/30 bg-red-500/15 text-red-200";
-  }
-
-  return "border-amber-300/40 bg-amber-500/15 text-amber-100";
-};
+const SEARCH_DEBOUNCE_MS = 250;
 
 /** Pagina de historial guardado manualmente por el usuario autenticado. */
 function DashboardHistory() {
@@ -51,7 +41,7 @@ function DashboardHistory() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setSearchTerm(searchInput.trim().toLowerCase());
-    }, 250);
+    }, SEARCH_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
@@ -101,6 +91,11 @@ function DashboardHistory() {
   const visibleItems = showAllAnalyses ? paginatedItems : previewItems;
   const hasMoreThanPreview = historyItems.length > PREVIEW_ITEMS_COUNT;
 
+  const handleBackToPreview = () => {
+    setShowAllAnalyses(false);
+    setSearchInput("");
+  };
+
   return (
     <section className="space-y-6">
       <div className="auth-fade-up text-center" style={{ "--auth-delay": "40ms" }}>
@@ -113,12 +108,15 @@ function DashboardHistory() {
         </div>
 
         <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-on-surface-variant sm:text-base">
-          Consulta tus verificaciones guardadas con una vista rapida de 3 analisis o abre la vista
-          completa para buscar y paginar resultados.
+          Consulta tus verificaciones guardadas con una vista rapida de 3 analisis o abre la
+          vista completa para buscar y paginar resultados.
         </p>
       </div>
 
-      <div className="auth-fade-up landing-glass-card rounded-3xl border border-outline-variant/20 p-4 sm:p-6" style={{ "--auth-delay": "90ms" }}>
+      <div
+        className="auth-fade-up landing-glass-card rounded-3xl border border-outline-variant/20 p-4 sm:p-6"
+        style={{ "--auth-delay": "90ms" }}
+      >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="font-headline text-xl font-bold text-on-surface sm:text-2xl">
@@ -127,7 +125,10 @@ function DashboardHistory() {
             <p className="text-xs text-on-surface-variant sm:text-sm">
               {showAllAnalyses
                 ? `${filteredItems.length} analisis coinciden con la busqueda.`
-                : `Mostrando vista previa de ${Math.min(PREVIEW_ITEMS_COUNT, historyItems.length)} analisis.`}
+                : `Mostrando vista previa de ${Math.min(
+                    PREVIEW_ITEMS_COUNT,
+                    historyItems.length
+                  )} analisis.`}
             </p>
           </div>
 
@@ -148,18 +149,12 @@ function DashboardHistory() {
         ) : null}
 
         {showAllAnalyses && !historyLoading ? (
-          <div className="mb-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-            <Input
-              type="search"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Buscar por titulo, fragmento, fuente o veredicto..."
-              className="h-10 border-outline-variant/30 bg-surface-container-high/60 text-on-surface"
-            />
-            <p className="text-sm text-on-surface-variant">
-              Pagina {safeCurrentPage} de {totalPages}
-            </p>
-          </div>
+          <HistoryFilters
+            searchInput={searchInput}
+            onSearchInputChange={setSearchInput}
+            currentPage={safeCurrentPage}
+            totalPages={totalPages}
+          />
         ) : null}
 
         <div className="space-y-3">
@@ -176,33 +171,7 @@ function DashboardHistory() {
           ) : null}
 
           {visibleItems.map((analysis) => (
-            <article
-              key={analysis.id}
-              className="rounded-2xl border border-outline-variant/25 bg-surface/50 p-3 sm:p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold text-on-surface">{analysis.title}</p>
-                <span
-                  className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${getVerdictStyles(
-                    analysis.verdictLabel
-                  )}`}
-                >
-                  {analysis.verdictLabel}
-                </span>
-              </div>
-
-              <p className="mt-2 text-xs leading-relaxed text-on-surface-variant">{analysis.excerpt}</p>
-
-              <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-on-surface-variant">
-                <span className="inline-flex items-center gap-1.5">
-                  <BarChart3 className="size-3.5 text-primary" />
-                  Fuerza SVM: {typeof analysis.confidence === "number" ? analysis.confidence.toFixed(2) : "--"}
-                </span>
-                <span>{analysis.timestampLabel}</span>
-              </div>
-
-              <p className="mt-1 break-all text-[11px] text-primary">{analysis.source}</p>
-            </article>
+            <HistoryItem key={analysis.id} analysis={analysis} />
           ))}
         </div>
 
@@ -225,10 +194,7 @@ function DashboardHistory() {
                   type="button"
                   variant="outline"
                   className="h-10 rounded-xl"
-                  onClick={() => {
-                    setShowAllAnalyses(false);
-                    setSearchInput("");
-                  }}
+                  onClick={handleBackToPreview}
                 >
                   Volver a vista previa
                 </Button>
@@ -236,26 +202,12 @@ function DashboardHistory() {
             </div>
 
             {showAllAnalyses ? (
-              <div className="flex w-full items-center gap-2 sm:w-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 sm:flex-initial"
-                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                  disabled={safeCurrentPage === 1}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 sm:flex-initial"
-                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-                  disabled={safeCurrentPage === totalPages}
-                >
-                  Siguiente
-                </Button>
-              </div>
+              <HistoryPagination
+                currentPage={safeCurrentPage}
+                totalPages={totalPages}
+                onPrevious={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                onNext={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              />
             ) : null}
           </div>
         ) : null}

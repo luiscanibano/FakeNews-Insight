@@ -23,13 +23,13 @@ import {
   readLastActivityAt,
   readLastActivityAtForUser,
 } from "../lib/sessionActivity";
+import { INACTIVITY_TIMEOUT_MS } from "../lib/constants";
 
 /** Normaliza la forma de extraer el usuario porque cada endpoint puede devolver estructuras distintas.
  */
 const getUserFromAuthData = (authData) =>
   authData?.user || authData?.session?.user || null;
 
-const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000;
 let initializeAuthInFlightPromise = null;
 
 /** Comprueba si la ultima actividad del usuario supera el umbral de inactividad permitido. */
