@@ -256,7 +256,11 @@ def _extract_bearer_token(authorization_header: Optional[str]) -> Optional[str]:
         return None
 
     token = value[7:].strip()
-    return token or None
+    if not token:
+        return None
+    if any(ch in token for ch in ("\r", "\n", " ", "\t")):
+        return None
+    return token
 
 
 def _validate_user_with_supabase(jwt_token: str) -> Dict[str, Any]:
