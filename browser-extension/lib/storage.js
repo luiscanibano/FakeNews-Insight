@@ -1,13 +1,13 @@
 /**
  * @file storage.js
  * @description Wrappers asincronos sobre `chrome.storage.local` para guardar y
- * recuperar la sesion de Supabase de forma aislada al sitio web.
+ * recuperar la sesiÃ³n de Supabase de forma aislada al sitio web.
  */
 
 const STORAGE_KEY = "fakenews-insight-session";
 
 /**
- * Persiste la sesion completa (tokens + metadatos) en `chrome.storage.local`.
+ * Persiste la sesiÃ³n completa (tokens + metadatos) en `chrome.storage.local`.
  * @param {{ accessToken: string, refreshToken: string, expiresAt: number, userEmail: string }} session
  */
 export const saveSession = (session) =>
@@ -23,7 +23,7 @@ export const saveSession = (session) =>
   });
 
 /**
- * Lee la sesion guardada. Devuelve `null` si no hay ninguna.
+ * Lee la sesiÃ³n guardada. Devuelve `null` si no hay ninguna.
  * @returns {Promise<null | { accessToken: string, refreshToken: string, expiresAt: number, userEmail: string }>}
  */
 export const loadSession = () =>
@@ -38,7 +38,7 @@ export const loadSession = () =>
     });
   });
 
-/** Borra la sesion guardada (logout local). */
+/** Borra la sesiÃ³n guardada (logout local). */
 export const clearSession = () =>
   new Promise((resolve, reject) => {
     chrome.storage.local.remove([STORAGE_KEY], () => {

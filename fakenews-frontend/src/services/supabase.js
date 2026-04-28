@@ -9,7 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-/** Valida que una URL exista y use protocolo HTTP/HTTPS. */
+/** Válida que una URL exista y use protocolo HTTP/HTTPS. */
 const isValidHttpUrl = (value) => {
   if (!value) {
     return false;
@@ -43,7 +43,7 @@ export const getSupabaseClient = () => {
   return supabase;
 };
 
-/** Se crea solo cuando la configuracion es valida para evitar fallos en build/runtime. */
+/** Se crea solo cuando la configuración es válida para evitar fallos en build/runtime. */
 export const supabase = canInitializeClient
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;

@@ -1,6 +1,6 @@
 /**
  * @file promiseTimeout.js
- * @description Utilidad para envolver promesas con un tiempo limite y mensaje de error legible.
+ * @description Utilidad para envolver promesas con un tiempo límite y mensaje de error legible.
  */
 
 /** Resuelve la promesa o rechaza con `timeoutMessage` si excede `timeoutMs`. */

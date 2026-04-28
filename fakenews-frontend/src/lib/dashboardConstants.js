@@ -1,16 +1,16 @@
 /**
  * @file dashboardConstants.js
- * @description Constantes compartidas para modos de analisis y rutas internas del dashboard.
+ * @description Constantes compartidas para modos de análisis y rutas internas del dashboard.
  */
 
-/** Modos de analisis disponibles en el panel principal. */
+/** Modos de análisis disponibles en el panel principal. */
 export const ANALYSIS_MODE = {
   TEXT: "text",
   URL: "url",
   CSV: "csv",
 };
 
-/** Identificadores logicos de cada vista (uso historico, analytics). */
+/** Identificadores logicos de cada vista (uso histórico, analytics). */
 export const DASHBOARD_VIEW = {
   HOME: "home",
   ANALYZE: "analyze",

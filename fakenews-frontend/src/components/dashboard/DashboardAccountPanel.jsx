@@ -1,17 +1,16 @@
 /**
  * @file DashboardAccountPanel.jsx
- * @description Modal de gestion de cuenta: orquesta sub-secciones de contrasena, suscripcion y baja RGPD.
+ * @description Modal de gestion de cuenta: orquesta sub-secciones de contraseña, suscripcion y baja RGPD.
  */
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import PasswordChangeSection from "./account/PasswordChangeSection";
 import SubscriptionSection from "./account/SubscriptionSection";
 import DeleteAccountSection from "./account/DeleteAccountSection";
 import { resolveProviderState } from "./account/accountProviders";
 
-/** Modal de cuenta con tres secciones: contrasena, suscripcion, baja. */
+/** Modal de cuenta con tres secciones: contraseña, suscripcion, baja. */
 function DashboardAccountPanel({
   isOpen,
   email,
@@ -62,40 +61,40 @@ function DashboardAccountPanel({
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto overflow-x-hidden bg-black/70 p-4 pt-16 backdrop-blur-sm sm:items-center sm:pt-4"
+      className="dash-modal-overlay"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !isAnyActionInFlight) {
           onClose();
         }
       }}
     >
-      <section className="landing-glass-card my-auto w-full max-w-3xl overflow-hidden rounded-3xl border border-outline-variant/25 p-5 sm:p-7">
-        <div className="mb-5 flex items-start justify-between gap-3">
+      <section className="dash-modal dash-modal-md" role="dialog" aria-modal="true">
+        <div className="dash-modal-head">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant">
+            <span className="dash-home-eyebrow">
+              <span className="dash-home-eyebrow-dot" aria-hidden="true" />
               Mi cuenta
-            </p>
-            <h2 className="mt-1 text-xl font-semibold text-on-surface sm:text-2xl">
+            </span>
+            <h2 className="dash-home-h1 mt-3" style={{ fontSize: "clamp(1.4rem, 2.6vw, 1.8rem)" }}>
               Gestiona tu cuenta y privacidad
             </h2>
-            <p className="mt-1 text-sm text-on-surface-variant">
-              {email ? `Sesion iniciada como ${email}.` : "Sesion iniciada."} Plan actual:{" "}
+            <p className="dash-home-sub" style={{ marginTop: "0.4rem" }}>
+              {email ? `Sesión iniciada como ${email}.` : "Sesión iniciada."} Plan actual:{" "}
               {planLabel}.
             </p>
           </div>
-          <Button
+          <button
             type="button"
-            size="icon-sm"
-            variant="ghost"
+            className="dash-modal-close"
             onClick={onClose}
             disabled={isAnyActionInFlight}
             aria-label="Cerrar panel de cuenta"
           >
             <X className="size-4" />
-          </Button>
+          </button>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-3.5">
           <PasswordChangeSection
             isOauthOnly={isOauthOnly}
             primaryOauthLabel={primaryOauthLabel}

@@ -28,7 +28,7 @@ function LandingValueSection({ onExploreApi, content }) {
               <div className="mb-8 flex flex-wrap items-center justify-center gap-3">
                 {[
                   "Deteccion en tiempo real",
-                  "Analisis multicapa",
+                  "Análisis multicapa",
                   "Alertas tempranas",
                 ].map((tag) => (
                   <span

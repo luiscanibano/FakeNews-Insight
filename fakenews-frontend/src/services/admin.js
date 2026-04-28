@@ -85,7 +85,7 @@ export const getAdminUsers = async ({
 
   query = applyRoleScope(query, includeAdmins);
 
-  /** Si el termino es un UUID valido, busca por ID exacto; en otro caso por nombre.
+  /** Si el termino es un UUID válido, busca por ID exacto; en otro caso por nombre.
  */
   if (normalizedSearch) {
     if (UUID_V4_OR_V1_REGEX.test(normalizedSearch)) {

@@ -1,6 +1,6 @@
 /**
  * @file useAuthFormField.js
- * @description Hook minimo para campos de formulario que limpian un error global al editar.
+ * @description Hook mínimo para campos de formulario que limpian un error global al editar.
  */
 
 import { useState } from "react";

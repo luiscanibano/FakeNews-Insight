@@ -1,6 +1,6 @@
 /**
  * @file BatchResultView.jsx
- * @description Vista resumen del analisis por lotes (CSV).
+ * @description Vista resumen del análisis por lotes (CSV).
  */
 
 import { Button } from "@/components/ui/button";

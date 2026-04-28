@@ -1,6 +1,6 @@
 /**
  * @file sessionActivity.js
- * @description Utilidades de sesion para persistir y consultar la ultima actividad del usuario autenticado.
+ * @description Utilidades de sesión para persistir y consultar la ultima actividad del usuario autenticado.
  */
 
 const SESSION_ACTIVITY_STORAGE_KEY = "fakenews:session-activity";
@@ -76,7 +76,7 @@ export const persistLastActivityAtForUser = (userId, timestamp = Date.now()) => 
   );
 };
 
-/** Limpia por completo la marca de actividad persistida de sesion. */
+/** Limpia por completo la marca de actividad persistida de sesión. */
 export const clearSessionActivity = () => {
   if (typeof window === "undefined") {
     return;

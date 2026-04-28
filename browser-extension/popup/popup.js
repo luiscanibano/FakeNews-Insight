@@ -2,7 +2,7 @@
  * @file popup.js
  * @description Controlador principal del popup. Hace de router entre las
  * vistas (login / analyze / result), invoca a Supabase Auth y al backend
- * FastAPI, y maneja errores de sesion expirada de forma uniforme.
+ * FastAPI, y maneja errores de sesiÃ³n expirada de forma uniforme.
  */
 
 import { CONFIG } from "../lib/config.js";
@@ -101,7 +101,7 @@ const handleSessionExpired = async () => {
   showView("login");
   setBanner(
     elements.loginError,
-    "Tu sesion ha expirado. Vuelve a iniciar sesion."
+    "Tu sesiÃ³n ha expirado. Vuelve a iniciar sesiÃ³n."
   );
 };
 
@@ -122,7 +122,7 @@ const bootstrap = async () => {
     console.error("[FakeNews] Error inicializando el popup:", error);
     showHeaderForSession(null);
     showView("login");
-    setBanner(elements.loginError, "No se pudo cargar la sesion guardada.");
+    setBanner(elements.loginError, "No se pudo cargar la sesiÃ³n guardada.");
   }
 };
 
@@ -136,7 +136,7 @@ elements.loginForm.addEventListener("submit", async (event) => {
   const password = elements.loginPassword.value;
 
   if (!email || !password) {
-    setBanner(elements.loginError, "Introduce email y contrasena.");
+    setBanner(elements.loginError, "Introduce email y contraseÃ±a.");
     return;
   }
 
@@ -148,7 +148,7 @@ elements.loginForm.addEventListener("submit", async (event) => {
     showView("analyze");
     updateAnalyzeButtonState();
   } catch (error) {
-    setBanner(elements.loginError, error.message || "Error al iniciar sesion.");
+    setBanner(elements.loginError, error.message || "Error al iniciar sesiÃ³n.");
   } finally {
     setButtonLoading(elements.loginSubmit, false);
   }
@@ -187,7 +187,7 @@ elements.useSelectionButton.addEventListener("click", async () => {
       currentWindow: true,
     });
     if (!tab?.id) {
-      setBanner(elements.analyzeError, "No se encontro la pestana activa.");
+      setBanner(elements.analyzeError, "No se encontrÃ³ la pestana activa.");
       return;
     }
 
@@ -200,7 +200,7 @@ elements.useSelectionButton.addEventListener("click", async () => {
     if (!selection) {
       setBanner(
         elements.analyzeError,
-        "No hay texto seleccionado en la pagina actual."
+        "No hay texto seleccionado en la pÃ¡gina actual."
       );
       return;
     }
@@ -210,7 +210,7 @@ elements.useSelectionButton.addEventListener("click", async () => {
   } catch (error) {
     setBanner(
       elements.analyzeError,
-      "No se pudo leer la seleccion (la pagina puede bloquear el acceso)."
+      "No se pudo leer la selecciÃ³n (la pÃ¡gina puede bloquear el acceso)."
     );
     console.error("[FakeNews] executeScript fallo:", error);
   }
@@ -284,12 +284,12 @@ const renderResult = (result) => {
   const limit = result?.limite_diario;
   if (limit && remaining !== undefined && remaining !== null) {
     elements.quotaInfo.textContent =
-      `Plan ${plan.toUpperCase()} · Quedan ${remaining}/${limit} analisis hoy.`;
+      `Plan ${plan.toUpperCase()} · Quedan ${remaining}/${limit} anÃ¡lisis hoy.`;
   } else {
-    elements.quotaInfo.textContent = `Plan ${plan.toUpperCase()} · Sin limite diario.`;
+    elements.quotaInfo.textContent = `Plan ${plan.toUpperCase()} · Sin lÃ­mite diario.`;
   }
 
-  // Estado del boton de guardar segun el backend
+  // Estado del boton de guardar segÃºn el backend
   const alreadySaved = Boolean(result?.guardado_en_historial);
   elements.saveButton.disabled = alreadySaved || !result?.analysis_run_id;
   elements.saveButton.querySelector(".button-label").textContent = alreadySaved
@@ -308,9 +308,9 @@ elements.saveButton.addEventListener("click", async () => {
   try {
     const response = await saveAnalysis(runId);
     if (response?.already_saved) {
-      setBanner(elements.resultSuccess, "Este analisis ya estaba en tu historial.");
+      setBanner(elements.resultSuccess, "Este anÃ¡lisis ya estaba en tu historial.");
     } else {
-      setBanner(elements.resultSuccess, "Analisis guardado en tu historial.");
+      setBanner(elements.resultSuccess, "AnÃ¡lisis guardado en tu historial.");
     }
     elements.saveButton.querySelector(".button-label").textContent = "Guardado";
     elements.saveButton.disabled = true;
@@ -321,7 +321,7 @@ elements.saveButton.addEventListener("click", async () => {
     }
     setBanner(
       elements.resultError,
-      error.message || "No se pudo guardar el analisis."
+      error.message || "No se pudo guardar el anÃ¡lisis."
     );
   } finally {
     setButtonLoading(elements.saveButton, false);

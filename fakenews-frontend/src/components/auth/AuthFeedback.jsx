@@ -1,6 +1,6 @@
 /**
  * @file AuthFeedback.jsx
- * @description Banners de error y exito reutilizables en formularios de autenticacion.
+ * @description Banners de error y exito reutilizables en formularios de autenticación.
  */
 
 /** Banner de error con role="alert" para lectores de pantalla. */

@@ -1,7 +1,7 @@
 /**
  * @file api.js
- * @description Cliente del backend FastAPI (analisis y guardado en historial).
- * Captura 401 y delega en el flujo de auth para forzar reinicio de sesion.
+ * @description Cliente del backend FastAPI (anÃ¡lisis y guardado en historial).
+ * Captura 401 y delega en el flujo de auth para forzar reinicio de sesiÃ³n.
  */
 
 import { CONFIG } from "./config.js";

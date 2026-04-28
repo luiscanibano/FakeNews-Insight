@@ -34,7 +34,7 @@ const ANALYSIS_SAVE_PATH = normalizePath(
 const ANALYSIS_TEXT_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_TEXT_PATH}`;
 const ANALYSIS_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_SAVE_PATH}`;
 
-/** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semantico. */
+/** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semántico. */
 const getErrorMessage = async (response, fallbackMessage) => {
   try {
     const payload = await response.json();
@@ -52,7 +52,7 @@ const getErrorMessage = async (response, fallbackMessage) => {
 };
 
 /**
- * Ejecuta el analisis de texto en backend con autenticacion JWT.
+ * Ejecuta el análisis de texto en backend con autenticación JWT.
  * Devuelve el veredicto del modelo, metadatos de fuerza SVM y el identificador de ejecucion.
  */
 export const analyzeTextNews = async ({ text, jwtToken }) => {
@@ -61,7 +61,7 @@ export const analyzeTextNews = async ({ text, jwtToken }) => {
   };
 
   if (!jwtToken) {
-    throw new Error("Tu sesion no es valida. Inicia sesion de nuevo.");
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
   }
 
   const response = await fetch(ANALYSIS_TEXT_ENDPOINT, {
@@ -85,16 +85,16 @@ export const analyzeTextNews = async ({ text, jwtToken }) => {
 };
 
 /**
- * Persiste manualmente en historial un analisis previamente ejecutado (run_id).
- * Esta accion es explicita para separar consumo de cuota de almacenamiento historico.
+ * Persiste manualmente en historial un análisis previamente ejecutado (run_id).
+ * Esta acción es explicita para separar consumo de cuota de almacenamiento histórico.
  */
 export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
   if (!jwtToken) {
-    throw new Error("Tu sesion no es valida. Inicia sesion de nuevo.");
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
   }
 
   if (!runId) {
-    throw new Error("No se encontro el identificador del analisis para guardar.");
+    throw new Error("No se encontró el identificador del análisis para guardar.");
   }
 
   const response = await fetch(ANALYSIS_SAVE_ENDPOINT, {
@@ -109,7 +109,7 @@ export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
   if (!response.ok) {
     const message = await getErrorMessage(
       response,
-      "No se pudo guardar el analisis en historial."
+      "No se pudo guardar el análisis en historial."
     );
     throw new Error(message);
   }

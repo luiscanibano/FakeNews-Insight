@@ -8,7 +8,7 @@ import { landingNavbarContent } from "./content/landingNavbarContent";
 import { landingHeroContent } from "./content/landingHeroContent";
 import { landingFeaturesContent } from "./content/landingFeaturesContent";
 import { landingProcessContent } from "./content/landingProcessContent";
-import { landingIntegrationContent } from "./content/landingIntegrationContent";
+import { landingExtensionContent } from "./content/landingExtensionContent";
 import { landingValueContent } from "./content/landingValueContent";
 import { landingFinalCtaContent } from "./content/landingFinalCtaContent";
 import { landingFooterContent } from "./content/landingFooterContent";
@@ -18,7 +18,7 @@ export {
   landingHeroContent,
   landingFeaturesContent,
   landingProcessContent,
-  landingIntegrationContent,
+  landingExtensionContent,
   landingValueContent,
   landingFinalCtaContent,
   landingFooterContent,
@@ -30,7 +30,7 @@ export const landingContent = {
   hero: landingHeroContent,
   features: landingFeaturesContent,
   process: landingProcessContent,
-  integration: landingIntegrationContent,
+  extension: landingExtensionContent,
   value: landingValueContent,
   finalCta: landingFinalCtaContent,
   footer: landingFooterContent,

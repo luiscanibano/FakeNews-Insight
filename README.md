@@ -82,7 +82,7 @@ Cada subproyecto tiene su propio `.env.example`:
 
 - **CI** ([ci.yml](.github/workflows/ci.yml)): lint + smoke tests en cada PR.
 - **Build & Publish** ([build-and-publish.yml](.github/workflows/build-and-publish.yml)):
-  publica imágenes Docker en GHCR en cada push a `main`.
+  pÃºblica imágenes Docker en GHCR en cada push a `main`.
 - **Deploy** ([deploy-render.yml](.github/workflows/deploy-render.yml)):
   triggerea los Deploy Hooks de Render.
 

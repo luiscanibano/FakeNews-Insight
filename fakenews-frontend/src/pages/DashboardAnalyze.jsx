@@ -1,6 +1,6 @@
 /**
  * @file DashboardAnalyze.jsx
- * @description Vista de analisis: hero + formulario + panel de resultados, alimentada por `useAnalysisFlow`.
+ * @description Vista de análisis: hero + formulario + panel de resultados, alimentada por `useAnalysisFlow`.
  */
 
 import { useOutletContext } from "react-router-dom";
@@ -8,7 +8,7 @@ import DashboardHeroSection from "../components/dashboard/DashboardHeroSection";
 import DashboardAnalysisPanel from "../components/dashboard/DashboardAnalysisPanel";
 import DashboardResultPanel from "../components/dashboard/DashboardResultPanel";
 
-/** Vista principal de analisis que compone hero, formulario y panel de resultados. */
+/** Vista principal de análisis que compone hero, formulario y panel de resultados. */
 function DashboardAnalyze() {
   const { modeOptions, modeTagline, canUseCsvAnalysis, analysisFlow } = useOutletContext();
 
@@ -33,7 +33,7 @@ function DashboardAnalyze() {
   } = analysisFlow;
 
   return (
-    <>
+    <section className="space-y-8">
       <DashboardHeroSection />
 
       <DashboardAnalysisPanel
@@ -62,7 +62,7 @@ function DashboardAnalyze() {
         isSavingResult={isSavingTextAnalysis}
         saveResultError={saveTextAnalysisError}
       />
-    </>
+    </section>
   );
 }
 

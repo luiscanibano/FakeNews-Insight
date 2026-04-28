@@ -1,20 +1,14 @@
 /**
  * @file DashboardPlanSelectorModal.jsx
- * @description Componente del dashboard para renderizar analisis, resultados, navegacion y paneles operativos.
+ * @description Popup de selección de plan (botones decorativos: la facturación se reimplementará más adelante).
  */
 
 import { useEffect } from "react";
-import { CheckCircle2, Crown, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Check, Crown, X } from "lucide-react";
 import { landingContent } from "@/components/landing/landingContent";
 
-/** Popup de seleccion de plan (botones decorativos: la facturación se reimplementará más adelante). */
-function DashboardPlanSelectorModal({
-  isOpen,
-  currentPlan,
-  onClose,
-}) {
+/** Popup editorial de selección de plan. */
+function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -43,93 +37,82 @@ function DashboardPlanSelectorModal({
 
   return (
     <div
-      className="dashboard-plan-modal-overlay fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto overflow-x-hidden bg-black/70 p-4 pt-16 backdrop-blur-sm sm:items-center sm:pt-4"
+      className="dash-modal-overlay"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
         }
       }}
     >
-      <section className="dashboard-plan-modal-shell landing-glass-card my-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-outline-variant/25 p-5 sm:p-7">
-        <div className="mb-5 flex items-start justify-between gap-3">
+      <section className="dash-modal dash-modal-lg" role="dialog" aria-modal="true">
+        <div className="dash-modal-head">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-outline-variant/25 bg-surface/55 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-primary">
-              <Crown className="size-3.5" />
+            <span className="dash-home-eyebrow">
+              <Crown className="size-3.5" aria-hidden="true" />
               Gestión de plan
-            </p>
-            <h2 className="mt-3 font-headline text-2xl font-bold text-on-surface sm:text-3xl">
+            </span>
+            <h2 className="dash-home-h1 mt-3" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)" }}>
               Elige tu suscripción
             </h2>
-            <p className="mt-2 text-sm text-on-surface-variant">
+            <p className="dash-home-sub" style={{ marginTop: "0.4rem" }}>
               Selecciona el plan que más se ajuste a tus necesidades.
             </p>
           </div>
 
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="icon-sm"
-            className="rounded-xl"
+            className="dash-modal-close"
             onClick={onClose}
             aria-label="Cerrar selector de plan"
           >
             <X className="size-4" />
-          </Button>
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {landingContent.value.plans.map((plan, index) => {
             const isCurrent = plan.key === currentPlan;
+            const cardClasses = [
+              "dash-plan-card",
+              plan.recommended ? "is-recommended" : "",
+              isCurrent ? "is-current" : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
 
             return (
-              <Card
-                key={plan.key}
-                className={`dashboard-plan-card-motion landing-glass-card overflow-visible rounded-3xl border p-5 transition-all duration-300 ${
-                  plan.recommended
-                    ? "border-2 border-primary shadow-2xl shadow-primary/10"
-                    : "border-outline-variant/20"
-                }`}
-                style={{ "--plan-card-delay": `${index * 90}ms` }}
-              >
-                <CardContent className="flex h-full flex-col px-0">
-                  <div className="mb-5">
-                    <h3
-                      className={`text-xs font-semibold uppercase tracking-[0.18em] ${
-                        plan.recommended ? "text-primary" : "text-on-surface-variant"
-                      }`}
-                    >
-                      {plan.name}
-                    </h3>
-                    <p className="mt-2 flex items-baseline gap-1 text-on-surface">
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      <span className="text-sm text-on-surface-variant">{plan.interval}</span>
-                    </p>
-                  </div>
+              <article key={plan.key} className={cardClasses} style={{ "--i": index }}>
+                {plan.recommended ? (
+                  <span className="dash-plan-recommended-tag">Recomendado</span>
+                ) : null}
+                {isCurrent ? <span className="dash-plan-current-tag">Plan actual</span> : null}
 
-                  <ul className="mb-7 flex-1 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-center gap-2 text-sm text-on-surface-variant"
-                      >
-                        <CheckCircle2 className="size-4 text-primary" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                <p className="dash-plan-name">{plan.name}</p>
 
-                  <Button
-                    type="button"
-                    variant={plan.recommended ? "default" : "outline"}
-                    className={`w-full rounded-xl py-3 text-sm font-semibold ${
-                      plan.recommended ? "landing-shimmer bg-primary text-on-primary" : ""
-                    }`}
-                    disabled
-                  >
-                    {isCurrent ? "Plan actual" : `Activar ${plan.name}`}
-                  </Button>
-                </CardContent>
-              </Card>
+                <p className="dash-plan-price">
+                  <span className="dash-plan-price-amount">{plan.price}</span>
+                  <span className="dash-plan-price-interval">{plan.interval}</span>
+                </p>
+
+                <ul className="dash-plan-features">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="dash-plan-feature">
+                      <Check className="dash-plan-feature-icon size-4" aria-hidden="true" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  className={`dash-plan-action ${
+                    plan.recommended ? "dash-plan-action-primary" : "dash-plan-action-outline"
+                  }`}
+                  disabled
+                >
+                  {isCurrent ? "Plan actual" : `Activar ${plan.name}`}
+                </button>
+              </article>
             );
           })}
         </div>

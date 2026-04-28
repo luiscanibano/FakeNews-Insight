@@ -1,11 +1,11 @@
 /**
  * @file EmptyResultView.jsx
- * @description Estado vacio del panel de resultados antes del primer analisis.
+ * @description Estado vacio del panel de resultados antes del primer análisis.
  */
 
 import { Button } from "@/components/ui/button";
 
-/** Placeholder mostrado antes de cualquier analisis para guiar al usuario. */
+/** Placeholder mostrado antes de cualquier análisis para guiar al usuario. */
 function EmptyResultView() {
   return (
     <>

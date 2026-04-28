@@ -1,23 +1,27 @@
 /**
  * @file HistoryFilters.jsx
- * @description Buscador y indicador de paginacion para la vista expandida del historial.
+ * @description Buscador y indicador de paginación para la vista expandida del historial.
  */
 
-import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
-/** Buscador con campo de texto y resumen de pagina actual sobre el total. */
+/** Buscador con campo de texto y resumen de página actual sobre el total. */
 function HistoryFilters({ searchInput, onSearchInputChange, currentPage, totalPages }) {
   return (
-    <div className="mb-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-      <Input
-        type="search"
-        value={searchInput}
-        onChange={(event) => onSearchInputChange(event.target.value)}
-        placeholder="Buscar por titulo, fragmento, fuente o veredicto..."
-        className="h-10 border-outline-variant/30 bg-surface-container-high/60 text-on-surface"
-      />
-      <p className="text-sm text-on-surface-variant">
-        Pagina {currentPage} de {totalPages}
+    <div className="my-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="dash-input-shell flex items-center gap-2 px-3">
+        <Search className="size-4 text-on-surface-variant" aria-hidden="true" />
+        <input
+          type="search"
+          value={searchInput}
+          onChange={(event) => onSearchInputChange(event.target.value)}
+          placeholder="Buscar por título, fragmento, fuente o veredicto..."
+          className="dash-textarea !min-h-0 !py-2 !px-0 text-sm"
+          style={{ minHeight: 0, height: "2.4rem", padding: "0.4rem 0", resize: "none" }}
+        />
+      </div>
+      <p className="dash-panel-meta">
+        Página {currentPage} de {totalPages}
       </p>
     </div>
   );

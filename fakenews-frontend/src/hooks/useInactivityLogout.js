@@ -1,6 +1,6 @@
 /**
  * @file useInactivityLogout.js
- * @description Hook que cierra la sesion automaticamente si el usuario permanece inactivo.
+ * @description Hook que cierra la sesión automáticamente si el usuario permanece inactivo.
  */
 
 import { useEffect, useRef } from "react";
@@ -62,7 +62,7 @@ export const useInactivityLogout = ({ user, authReady, onLogout }) => {
       }
     };
 
-    /** Evalua inactividad y solo renueva actividad cuando la sesion sigue vigente. */
+    /** Evalua inactividad y solo renueva actividad cuando la sesión sigue vigente. */
     const evaluateInactivity = ({ refreshActivity = false } = {}) => {
       clearInactivityTimer();
 

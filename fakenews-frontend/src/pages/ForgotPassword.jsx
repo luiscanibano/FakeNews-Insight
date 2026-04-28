@@ -1,6 +1,6 @@
 /**
  * @file ForgotPassword.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Página de aplicación que orquesta componentes, estados y flujos de negocio por seccion.
  */
 
 import { useEffect, useState } from "react";
@@ -11,11 +11,11 @@ import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
 import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
 
-/** Clave para persistir el cooldown entre recargas de pagina.
+/** Clave para persistir el cooldown entre recargas de página.
  */
 const COOLDOWN_STORAGE_KEY = "forgot-password-cooldown-until";
 
-/** Pantalla para solicitar el enlace de recuperacion de contrasena.
+/** Pantalla para solicitar el enlace de recuperación de contraseña.
  */
 function ForgotPassword() {
   /** Estado local del formulario y de mensajes visuales.
@@ -95,7 +95,7 @@ function ForgotPassword() {
     setEmail(event.target.value);
   };
 
-  /** Envia la peticion de recuperacion y gestiona el cooldown segun resultado.
+  /** Envia la peticion de recuperación y gestiona el cooldown según resultado.
  */
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -112,12 +112,12 @@ function ForgotPassword() {
     try {
       await requestPasswordReset({ email, redirectTo });
       setSuccessMessage(
-        "Si el correo existe, te hemos enviado un enlace para restablecer la contrasena."
+        "Si el correo existe, te hemos enviado un enlace para restablecer la contraseña."
       );
       startCooldown(30);
     } catch (requestError) {
       const message = requestError?.message?.toLowerCase() || "";
-      if (message.includes("limite") || message.includes("rate limit")) {
+      if (message.includes("límite") || message.includes("rate limit")) {
         startCooldown(60);
       }
     }

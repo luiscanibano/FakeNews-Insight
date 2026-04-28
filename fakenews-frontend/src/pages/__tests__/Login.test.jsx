@@ -1,6 +1,6 @@
 /**
  * @file Login.test.jsx
- * @description Verifica que el formulario de login invoca la accion `login` del store con los datos introducidos.
+ * @description Verifica que el formulario de login invoca la acción `login` del store con los datos introducidos.
  */
 
 import React from "react";

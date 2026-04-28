@@ -1,6 +1,6 @@
 /**
  * @file Login.jsx
- * @description Pantalla de inicio de sesion con email/contrasena y opcion de OAuth Google.
+ * @description Pantalla de inicio de sesión con email/contraseña y opción de OAuth Google.
  */
 
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ import GoogleSignInButton from "../components/auth/GoogleSignInButton";
 import { AuthErrorBanner } from "../components/auth/AuthFeedback";
 import { useAuthFormField } from "../hooks/useAuthFormField";
 
-/** Pantalla de inicio de sesion. */
+/** Pantalla de inicio de sesión. */
 function Login() {
   const login = useAuthStore((state) => state.login);
   const loading = useAuthStore((state) => state.loading);

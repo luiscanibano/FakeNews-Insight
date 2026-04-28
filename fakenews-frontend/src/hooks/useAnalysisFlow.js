@@ -1,11 +1,11 @@
 /**
  * @file useAnalysisFlow.js
- * @description Hook que centraliza el estado y los flujos de los tres modos de analisis del dashboard.
+ * @description Hook que centraliza el estado y los flujos de los tres modos de análisis del dashboard.
  *
  * Encapsula:
  *  - estado local (modo activo, payloads de texto/URL/CSV, errores locales).
  *  - simulacion de progreso para los modos URL/CSV (sin backend real todavia).
- *  - delegacion al store de analisis para el modo TEXT.
+ *  - delegacion al store de análisis para el modo TEXT.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -40,7 +40,7 @@ const buildMockResult = ({ mode, text, url, file }) => {
     excerpt:
       mode === ANALYSIS_MODE.TEXT
         ? text.slice(0, 260)
-        : "Analisis semantico generado desde la URL facilitada.",
+        : "Análisis semántico generado desde la URL facilitada.",
   };
 };
 
@@ -91,7 +91,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
 
   const handleModeChange = (nextMode) => {
     if (nextMode === ANALYSIS_MODE.CSV && !canUseCsvAnalysis) {
-      setLocalError("La opcion por lotes en CSV esta disponible solo para plan Ultra.");
+      setLocalError("La opción por lotes en CSV esta disponible solo para plan Ultra.");
       return;
     }
 
@@ -132,13 +132,13 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
     }
 
     if (analysisMode === ANALYSIS_MODE.URL && !urlPayload.trim()) {
-      setLocalError("Introduce una URL valida para iniciar el analisis.");
+      setLocalError("Introduce una URL válida para iniciar el análisis.");
       return;
     }
 
     if (analysisMode === ANALYSIS_MODE.CSV) {
       if (!canUseCsvAnalysis) {
-        setLocalError("Necesitas plan Ultra para el analisis por lotes.");
+        setLocalError("Necesitas plan Ultra para el análisis por lotes.");
         return;
       }
       if (!csvFile) {

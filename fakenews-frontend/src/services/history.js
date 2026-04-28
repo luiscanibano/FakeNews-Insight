@@ -5,7 +5,7 @@
 
 import { getSupabaseClient } from "./supabase";
 
-/** Convierte confidence a numero finito para operar en UI sin NaN. */
+/** Convierte confidence a número finito para operar en UI sin NaN. */
 const toNumericOrNull = (value) => {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : null;
@@ -49,7 +49,7 @@ const toHistoryItem = (row) => {
   return {
     id: row?.id,
     runId: row?.run_id || null,
-    title: inputText ? `${inputText.slice(0, 72)}${inputText.length > 72 ? "..." : ""}` : "Analisis guardado",
+    title: inputText ? `${inputText.slice(0, 72)}${inputText.length > 72 ? "..." : ""}` : "Análisis guardado",
     excerpt: inputText ? inputText.slice(0, 220) : "Sin fragmento disponible.",
     source: row?.source_url || "Texto pegado manualmente",
     verdictLabel: normalizeVerdictLabel(row?.label),
@@ -59,7 +59,7 @@ const toHistoryItem = (row) => {
   };
 };
 
-/** Recupera analisis guardados manualmente por usuario ordenados por fecha descendente. */
+/** Recupera análisis guardados manualmente por usuario ordenados por fecha descendente. */
 export const getSavedHistory = async ({ userId, limit = null }) => {
   if (!userId) {
     throw new Error("User id is required to load history");

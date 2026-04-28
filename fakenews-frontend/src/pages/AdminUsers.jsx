@@ -1,6 +1,6 @@
 /**
  * @file AdminUsers.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Página de aplicación que orquesta componentes, estados y flujos de negocio por seccion.
  */
 
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ function AdminUsers() {
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
 
-  /** Carga la pagina actual de usuarios segun filtro de busqueda en servidor. */
+  /** Carga la página actual de usuarios según filtro de busqueda en servidor. */
   useEffect(() => {
     loadUsers({
       includeAdmins: false,
@@ -51,19 +51,19 @@ function AdminUsers() {
   const totalPages = Math.max(1, Math.ceil(totalUsersCount / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  /** Reinicia a primera pagina cuando cambia el filtro de busqueda aplicado. */
+  /** Reinicia a primera página cuando cambia el filtro de busqueda aplicado. */
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  /** Evita paginas fuera de rango cuando cambia el total filtrado. */
+  /** Evita páginas fuera de rango cuando cambia el total filtrado. */
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  /** Solicita el cambio de plan usando la accion de estado global del modulo admin. */
+  /** Solicita el cambio de plan usando la acción de estado global del modulo admin. */
   const handleChangePlan = async (targetUser, plan) => {
     try {
       await setUserPlan({ targetUser, plan });
@@ -76,7 +76,7 @@ function AdminUsers() {
   const handleDeactivateUser = async (targetUser) => {
     const label = targetUser.display_name || targetUser.id.slice(0, 8);
     const accepted = window.confirm(
-      `Vas a dar de baja a ${label}. Esta accion elimina su perfil y analisis. ¿Continuar?`
+      `Vas a dar de baja a ${label}. Esta acción elimina su perfil y análisis. ¿Continuar?`
     );
 
     if (!accepted) {
@@ -141,7 +141,7 @@ function AdminUsers() {
 
         <section className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-on-surface-variant">
-            Pagina {safeCurrentPage} de {totalPages}
+            Página {safeCurrentPage} de {totalPages}
           </p>
           <div className="flex w-full items-center gap-2 sm:w-auto">
             <Button

@@ -18,7 +18,7 @@ const ANALYSIS_QUERY_ATTEMPTS = [
   { table: "analyses", userColumn: "profile_id", createdAtColumn: "created_at" },
 ];
 
-/** Resuelve el limite por defecto cuando el perfil no expone limite diario explicito. */
+/** Resuelve el límite por defecto cuando el perfil no expone límite diario explicito. */
 const getFallbackLimitFromPlan = (plan) => {
   if (plan === "free") {
     return 20;
@@ -101,7 +101,7 @@ const formatTimestampLabel = (dateValue) => {
   }).format(parsedDate);
 };
 
-/** Adapta una fila de analisis al contrato usado por Home y tarjetas de recientes. */
+/** Adapta una fila de análisis al contrato usado por Home y tarjetas de recientes. */
 const normalizeRecentAnalysis = (row, index) => {
   const inputText = String(row?.input_text || "").trim();
   const title =
@@ -110,7 +110,7 @@ const normalizeRecentAnalysis = (row, index) => {
     row?.titular ||
     row?.news_title ||
     (inputText ? `${inputText.slice(0, 72)}${inputText.length > 72 ? "..." : ""}` : null) ||
-    `Analisis #${index + 1}`;
+    `Análisis #${index + 1}`;
 
   const rawStrength =
     row?.svm_strength ??
@@ -135,7 +135,7 @@ const normalizeRecentAnalysis = (row, index) => {
   };
 };
 
-/** Obtiene la clave de dia de una fila de analisis compatible con distintas tablas. */
+/** Obtiene la clave de dia de una fila de análisis compatible con distintas tablas. */
 const getAnalysisDateKey = (row) => {
   const rawDate = row?.created_at ?? row?.createdAt ?? row?.fecha ?? row?.analysis_date;
   const parsedDate = new Date(rawDate);
@@ -147,7 +147,7 @@ const getAnalysisDateKey = (row) => {
   return getUtcDateKeyFromDate(parsedDate);
 };
 
-/** Cuenta cuantos analisis del usuario pertenecen al mes actual. */
+/** Cuenta cuantos análisis del usuario pertenecen al mes actual. */
 const getCurrentMonthAnalysisCount = (rows) => {
   return rows.reduce((accumulator, row) => {
     const rawDate = row?.created_at ?? row?.createdAt ?? row?.fecha ?? row?.analysis_date;
@@ -196,7 +196,7 @@ const fetchAnalysisRows = async ({ supabase, userId }) => {
     }
 
     if (!isRecoverableSchemaError(error)) {
-      throw new Error(error.message || "No se pudieron leer los analisis del usuario");
+      throw new Error(error.message || "No se pudieron leer los análisis del usuario");
     }
   }
 
@@ -234,7 +234,7 @@ const buildLast30DaysSeries = (rows) => {
   });
 };
 
-/** Deriva metricas de uso (restantes/consumidos/limite) a partir del perfil y plan activo. */
+/** Deriva métricas de uso (restantes/consumidos/límite) a partir del perfil y plan activo. */
 const getUsageMetricsFromProfile = ({ profile, fallbackPlan }) => {
   const plan = profile?.plan || fallbackPlan || "free";
   const fallbackLimit = getFallbackLimitFromPlan(plan);

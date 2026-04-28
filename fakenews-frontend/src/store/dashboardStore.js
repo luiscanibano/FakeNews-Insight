@@ -6,7 +6,7 @@
 import { create } from "zustand";
 import { getDashboardHomeData } from "../services/dashboard";
 
-/** Estado base de metricas para evitar nulos en primer render. */
+/** Estado base de métricas para evitar nulos en primer render. */
 const EMPTY_USAGE_METRICS = {
   remainingLabel: "--",
   usedToday: 0,

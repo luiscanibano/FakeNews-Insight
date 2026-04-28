@@ -10,7 +10,7 @@ import { getAccessToken } from "../services/auth";
 let progressTimerRef = null;
 let resetProgressTimerRef = null;
 
-/** Limpia timers de progreso para evitar fugas de estado entre analisis consecutivos. */
+/** Limpia timers de progreso para evitar fugas de estado entre análisis consecutivos. */
 const clearProgressTimers = () => {
   if (progressTimerRef) {
     window.clearInterval(progressTimerRef);
@@ -58,10 +58,10 @@ export const useAnalysisStore = create((set) => ({
   saveLoading: false,
   saveError: null,
 
-  /** Reinicia errores de analisis y de guardado manual en historial. */
+  /** Reinicia errores de análisis y de guardado manual en historial. */
   clearError: () => set({ error: null, saveError: null }),
 
-  /** Restablece por completo el estado del flujo de analisis y limpia timers activos. */
+  /** Restablece por completo el estado del flujo de análisis y limpia timers activos. */
   reset: () => {
     clearProgressTimers();
     set({
@@ -75,7 +75,7 @@ export const useAnalysisStore = create((set) => ({
   },
 
   /**
-   * Ejecuta el analisis de texto autenticado con JWT.
+   * Ejecuta el análisis de texto autenticado con JWT.
    * Mantiene progreso visual optimista hasta recibir respuesta de backend.
    */
   analyzeText: async (text) => {
@@ -131,7 +131,7 @@ export const useAnalysisStore = create((set) => ({
   },
 
   /**
-   * Guarda manualmente el ultimo analisis en historial usando run_id.
+   * Guarda manualmente el ultimo análisis en historial usando run_id.
    * Si ya estaba guardado, devuelve el resultado sin repetir la operacion.
    */
   saveCurrentResultToHistory: async () => {
@@ -139,7 +139,7 @@ export const useAnalysisStore = create((set) => ({
     const runId = state.result?.analysisRunId;
 
     if (!runId) {
-      throw new Error("No hay un analisis valido para guardar en historial.");
+      throw new Error("No hay un análisis válido para guardar en historial.");
     }
 
     if (state.result?.savedInHistory) {

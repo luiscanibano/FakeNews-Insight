@@ -1,6 +1,6 @@
 /**
  * @file AnalysingView.jsx
- * @description Vista de fases en curso mientras se ejecuta el analisis.
+ * @description Vista de fases en curso mientras se ejecuta el análisis.
  */
 
 const PHASES = ["Recopilando fuente", "Extrayendo patrones", "Calculando veredicto"];
@@ -10,7 +10,7 @@ function AnalysingView() {
   return (
     <>
       <div className="text-center">
-        <p className="text-sm text-on-surface-variant">Ejecutando analisis multicapa</p>
+        <p className="text-sm text-on-surface-variant">Ejecutando análisis multicapa</p>
         <h2 className="mt-2 font-headline text-2xl font-bold text-on-surface sm:text-3xl">
           Motor IA en proceso
         </h2>

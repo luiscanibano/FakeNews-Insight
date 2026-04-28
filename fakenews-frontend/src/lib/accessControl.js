@@ -39,7 +39,7 @@ export const resolveAccess = (profile) => {
   return { role, plan };
 };
 
-/** Comprueba si el plan actual cumple el minimo requerido por funcionalidad. */
+/** Comprueba si el plan actual cumple el mínimo requerido por funcionalidad. */
 export const hasMinimumPlan = (currentPlan, requiredPlan) =>
   PLAN_ORDER[currentPlan] >= PLAN_ORDER[requiredPlan];
 
@@ -62,7 +62,7 @@ export const canUseFeature = ({ role, plan }, feature) => {
   }
 };
 
-/** Devuelve el cupo mensual maximo de analisis segun nivel de acceso. */
+/** Devuelve el cupo mensual máximo de análisis según nivel de acceso. */
 export const getMonthlyAnalysisLimit = ({ role, plan }) => {
   if (role === USER_ROLE.ADMIN) {
     return Number.POSITIVE_INFINITY;

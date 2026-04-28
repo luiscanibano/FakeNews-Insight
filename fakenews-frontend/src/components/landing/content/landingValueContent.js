@@ -1,6 +1,6 @@
 /**
  * @file landingValueContent.js
- * @description Catalogo de planes mostrado en la landing y en el modal de seleccion.
+ * @description Catalogo de planes mostrado en la landing y en el modal de selección.
  */
 
 export const landingValueContent = {

@@ -1,6 +1,6 @@
 /**
  * @file account.js
- * @description Servicios de gestion de cuenta del usuario (RGPD): cambio de contrasena y baja.
+ * @description Servicios de gestion de cuenta del usuario (RGPD): cambio de contraseña y baja.
  */
 
 import { getSupabaseClient } from "./supabase";
@@ -28,22 +28,22 @@ const ACCOUNT_DELETE_ENDPOINT = `${ACCOUNT_API_BASE_URL}${normalizePath(
   DEFAULT_ACCOUNT_DELETE_PATH
 )}`;
 
-/** Reautentica al usuario con su contrasena actual y luego actualiza la contrasena. */
+/** Reautentica al usuario con su contraseña actual y luego actualiza la contraseña. */
 export const changeAccountPassword = async ({ email, currentPassword, newPassword }) => {
   if (!email) {
     throw new Error("No se pudo obtener el email del usuario actual.");
   }
 
   if (!currentPassword || !newPassword) {
-    throw new Error("Introduce la contrasena actual y la nueva contrasena.");
+    throw new Error("Introduce la contraseña actual y la nueva contraseña.");
   }
 
   if (newPassword.length < 8) {
-    throw new Error("La nueva contrasena debe tener al menos 8 caracteres.");
+    throw new Error("La nueva contraseña debe tener al menos 8 caracteres.");
   }
 
   if (newPassword === currentPassword) {
-    throw new Error("La nueva contrasena debe ser distinta de la actual.");
+    throw new Error("La nueva contraseña debe ser distinta de la actual.");
   }
 
   const supabase = getSupabaseClient();
@@ -54,13 +54,13 @@ export const changeAccountPassword = async ({ email, currentPassword, newPasswor
   });
 
   if (signInError) {
-    throw new Error("La contrasena actual no es correcta.");
+    throw new Error("La contraseña actual no es correcta.");
   }
 
   const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
 
   if (updateError) {
-    throw new Error(updateError.message || "No se pudo actualizar la contrasena.");
+    throw new Error(updateError.message || "No se pudo actualizar la contraseña.");
   }
 
   return { updated: true };
@@ -69,7 +69,7 @@ export const changeAccountPassword = async ({ email, currentPassword, newPasswor
 /** Solicita al backend la baja definitiva de la cuenta. */
 export const deleteAccount = async ({ jwtToken, confirmation }) => {
   if (!jwtToken) {
-    throw new Error("Tu sesion no es valida. Inicia sesion de nuevo.");
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
   }
 
   const controller = new AbortController();
@@ -90,7 +90,7 @@ export const deleteAccount = async ({ jwtToken, confirmation }) => {
     });
   } catch (error) {
     if (error?.name === "AbortError") {
-      throw new Error("La solicitud tardo demasiado. Reintenta en unos segundos.");
+      throw new Error("La solicitud tardó demasiado. Reintenta en unos segundos.");
     }
 
     throw new Error("No se pudo conectar con el backend para eliminar la cuenta.");

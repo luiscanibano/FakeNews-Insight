@@ -1,32 +1,34 @@
 /**
  * @file HistoryPagination.jsx
- * @description Controles de paginacion (anterior/siguiente) para la vista expandida del historial.
+ * @description Controles de paginación (anterior/siguiente) para la vista expandida del historial.
  */
 
-import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/** Botones de paginacion previa/siguiente con desactivado en extremos. */
+/** Botones de paginación previa/siguiente con desactivado en extremos. */
 function HistoryPagination({ currentPage, totalPages, onPrevious, onNext }) {
   return (
-    <div className="flex w-full items-center gap-2 sm:w-auto">
-      <Button
+    <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+      <button
         type="button"
-        variant="outline"
-        className="flex-1 sm:flex-initial"
+        className="dash-btn"
         onClick={onPrevious}
         disabled={currentPage === 1}
+        aria-label="Página anterior"
       >
+        <ChevronLeft className="size-4" />
         Anterior
-      </Button>
-      <Button
+      </button>
+      <button
         type="button"
-        variant="outline"
-        className="flex-1 sm:flex-initial"
+        className="dash-btn"
         onClick={onNext}
         disabled={currentPage === totalPages}
+        aria-label="Página siguiente"
       >
         Siguiente
-      </Button>
+        <ChevronRight className="size-4" />
+      </button>
     </div>
   );
 }

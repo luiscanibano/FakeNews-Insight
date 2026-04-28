@@ -1,6 +1,6 @@
 /**
  * @file Register.jsx
- * @description Pantalla de registro de nuevos usuarios con email/contrasena y OAuth Google.
+ * @description Pantalla de registro de nuevos usuarios con email/contraseña y OAuth Google.
  */
 
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ function Register() {
       await register({ email, password });
 
       window.alert(
-        "Registro completado. Revisa tu correo para confirmar la cuenta antes de iniciar sesion."
+        "Registro completado. Revisa tu correo para confirmar la cuenta antes de iniciar sesión."
       );
 
       navigate("/login", { replace: true });

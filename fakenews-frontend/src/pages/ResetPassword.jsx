@@ -1,6 +1,6 @@
 /**
  * @file ResetPassword.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Página de aplicación que orquesta componentes, estados y flujos de negocio por seccion.
  */
 
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
 import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
 
-/** Vista para establecer una nueva contrasena desde el enlace de recuperacion.
+/** Vista para establecer una nueva contraseña desde el enlace de recuperación.
  */
 function ResetPassword() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function ResetPassword() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isReady, setIsReady] = useState(false);
 
-  /** Accion del store para persistir la nueva contrasena.
+  /** Acción del store para persistir la nueva contraseña.
  */
   const setRecoverySession = useAuthStore((state) => state.setRecoverySession);
   const updatePassword = useAuthStore((state) => state.updatePassword);
@@ -32,7 +32,7 @@ function ResetPassword() {
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
 
-  /** Valida parametros del hash y crea sesion temporal de recovery en Supabase.
+  /** Válida parametros del hash y crea sesión temporal de recovery en Supabase.
  */
   useEffect(() => {
     const initializeRecoverySession = async () => {
@@ -43,7 +43,7 @@ function ResetPassword() {
 
       if (type !== "recovery" || !accessToken || !refreshToken) {
         setLocalError(
-          "El enlace de recuperacion es invalido o ha expirado. Solicita uno nuevo."
+          "El enlace de recuperación es invalido o ha expirado. Solicita uno nuevo."
         );
         return;
       }
@@ -59,7 +59,7 @@ function ResetPassword() {
     initializeRecoverySession();
   }, []);
 
-  /** Valida el formulario y actualiza la contrasena.
+  /** Válida el formulario y actualiza la contraseña.
  */
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -72,7 +72,7 @@ function ResetPassword() {
     }
 
     if (password.length < 6) {
-      setLocalError("La contrasena debe tener al menos 6 caracteres.");
+      setLocalError("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
 
@@ -83,7 +83,7 @@ function ResetPassword() {
 
     try {
       await updatePassword({ password });
-      setSuccessMessage("Contrasena actualizada correctamente. Ya puedes iniciar sesion.");
+      setSuccessMessage("Contraseña actualizada correctamente. Ya puedes iniciar sesión.");
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 1000);

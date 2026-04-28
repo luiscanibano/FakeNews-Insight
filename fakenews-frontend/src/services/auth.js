@@ -14,13 +14,13 @@ const getErrorMessage = (error, fallbackMessage) => {
     normalizedMessage.includes("email rate limit exceeded") ||
     normalizedMessage.includes("rate limit")
   ) {
-    return "Has superado el limite de correos de recuperacion. Espera un minuto e intentalo de nuevo.";
+    return "Has superado el límite de correos de recuperación. Espera un minuto e inténtalo de nuevo.";
   }
 
   return message;
 };
 
-/** Inicia sesion por email y contrasena en Supabase Auth. */
+/** Inicia sesión por email y contraseña en Supabase Auth. */
 export const login = async ({ email, password }) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -35,7 +35,7 @@ export const login = async ({ email, password }) => {
   return data;
 };
 
-/** Inicia autenticacion OAuth con Google y redirige de vuelta al dashboard. */
+/** Inicia autenticación OAuth con Google y redirige de vuelta al dashboard. */
 export const signInWithGoogle = async () => {
   const supabase = getSupabaseClient();
   const redirectTo = `${window.location.origin}/dashboard`;
@@ -72,7 +72,7 @@ export const register = async ({ email, password }) => {
   return data;
 };
 
-/** Solicita email de recuperacion de contrasena con URL de retorno al frontend. */
+/** Solicita email de recuperación de contraseña con URL de retorno al frontend. */
 export const requestPasswordReset = async ({ email, redirectTo }) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -86,7 +86,7 @@ export const requestPasswordReset = async ({ email, redirectTo }) => {
   return data;
 };
 
-/** Establece sesion temporal de recovery usando access_token y refresh_token del enlace. */
+/** Establece sesión temporal de recovery usando access_token y refresh_token del enlace. */
 export const setRecoverySession = async ({ accessToken, refreshToken }) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.setSession({
@@ -101,7 +101,7 @@ export const setRecoverySession = async ({ accessToken, refreshToken }) => {
   return data;
 };
 
-/** Actualiza la contrasena del usuario autenticado en el flujo de recovery. */
+/** Actualiza la contraseña del usuario autenticado en el flujo de recovery. */
 export const updatePassword = async ({ password }) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.updateUser({ password });
@@ -113,7 +113,7 @@ export const updatePassword = async ({ password }) => {
   return data;
 };
 
-/** Cierra sesion en Supabase y revoca el contexto de autenticacion local. */
+/** Cierra sesión en Supabase y revoca el contexto de autenticación local. */
 export const logout = async () => {
   const supabase = getSupabaseClient();
   const { error } = await supabase.auth.signOut({ scope: "global" });
@@ -133,7 +133,7 @@ export const logout = async () => {
   }
 };
 
-/** Recupera el usuario actual desde la sesion persistida de Supabase Auth. */
+/** Recupera el usuario actual desde la sesión persistida de Supabase Auth. */
 export const getCurrentUser = async () => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.getSession();
@@ -177,7 +177,7 @@ export const getProfileByUserId = async (userId) => {
   return data || null;
 };
 
-/** Suscribe cambios de sesion y devuelve una funcion de limpieza de suscripcion. */
+/** Suscribe cambios de sesión y devuelve una funcion de limpieza de suscripcion. */
 export const onAuthStateChange = (callback) => {
   const supabase = getSupabaseClient();
   const { data } = supabase.auth.onAuthStateChange((event, session) => {

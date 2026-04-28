@@ -1,21 +1,24 @@
 /**
  * @file DashboardHeroSection.jsx
- * @description Componente del dashboard para renderizar analisis, resultados, navegacion y paneles operativos.
+ * @description Cabecera editorial sobria de la vista de análisis.
  */
 
 function DashboardHeroSection() {
   return (
-    <section className="auth-fade-up text-center" style={{ "--auth-delay": "40ms" }}>
-      <div className="pointer-events-none absolute left-0 top-16 hidden w-full justify-center lg:flex" />
-      <div className="dashboard-hero-title-wrap mx-auto max-w-4xl">
-        <h1 className="dashboard-hero-title font-headline text-3xl font-extrabold leading-[1.08] tracking-tighter sm:text-5xl">
-          <span className="landing-gradient-title">Selecciona una opción y empieza a</span>{" "}
-          <em className="landing-title-emphasis mx-1 italic">analizar</em>
-        </h1>
-        <div className="dashboard-hero-underline" aria-hidden="true" />
-      </div>
-      <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-on-surface-variant sm:text-base">
+    <section className="dash-in" style={{ "--i": 0 }}>
+      <span className="dash-home-eyebrow">
+        <span className="dash-home-eyebrow-dot" aria-hidden="true" />
+        Centro de análisis
+      </span>
+
+      <h1 className="dash-home-h1 mt-3">
+        Selecciona una opción y{" "}
+        <span className="dash-home-h1-soft">empieza a analizar.</span>
+      </h1>
+
+      <p className="dash-home-sub">
         Cambia de modo en un clic y procesa noticias por texto, URL o lotes CSV.
+        Cada análisis se ejecuta contra el mismo modelo entrenado en español.
       </p>
     </section>
   );

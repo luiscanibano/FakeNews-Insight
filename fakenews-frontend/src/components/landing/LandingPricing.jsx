@@ -7,7 +7,7 @@ import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-/** Tabla de planes y mapeo de CTA a accion segun tipo de suscripcion. */
+/** Tabla de planes y mapeo de CTA a acción según tipo de suscripcion. */
 function LandingPricing({ content, onStartFree, onSubscribePro, onContactEnterprise }) {
   const actionByPlan = {
     free: onStartFree,

@@ -10,9 +10,7 @@ function FeedbackBanner({ message, tone }) {
   }
 
   const className =
-    tone === "success"
-      ? "mt-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400"
-      : "mt-3 rounded-xl border border-error/30 bg-error-container/40 px-3 py-2 text-sm text-error";
+    tone === "success" ? "dash-feedback dash-feedback-success" : "dash-feedback dash-feedback-error";
 
   return <p className={className}>{message}</p>;
 }

@@ -1,6 +1,6 @@
 /**
  * @file AdminPanel.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Página de aplicación que orquesta componentes, estados y flujos de negocio por seccion.
  */
 
 import { useEffect } from "react";
@@ -29,7 +29,7 @@ function AdminPanel() {
   const setUserPlan = useAdminStore((state) => state.setUserPlan);
   const deactivateUser = useAdminStore((state) => state.deactivateUser);
 
-  /** Carga solo la primera pagina y los KPIs globales del panel administrativo. */
+  /** Carga solo la primera página y los KPIs globales del panel administrativo. */
   useEffect(() => {
     loadUsers({ includeAdmins: false, page: 1, pageSize: 5 });
     loadUserKpis({ includeAdmins: false });
@@ -48,7 +48,7 @@ function AdminPanel() {
   const handleDeactivateUser = async (targetUser) => {
     const label = targetUser.display_name || targetUser.id.slice(0, 8);
     const accepted = window.confirm(
-      `Vas a dar de baja a ${label}. Esta accion elimina su perfil y analisis. ¿Continuar?`
+      `Vas a dar de baja a ${label}. Esta acción elimina su perfil y análisis. ¿Continuar?`
     );
 
     if (!accepted) {
@@ -62,7 +62,7 @@ function AdminPanel() {
     }
   };
 
-  /** Cierra sesion desde el panel administrativo. */
+  /** Cierra sesión desde el panel administrativo. */
   const handleLogout = async () => {
     try {
       await logout();

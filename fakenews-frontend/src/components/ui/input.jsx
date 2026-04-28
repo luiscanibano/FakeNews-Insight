@@ -1,6 +1,6 @@
 /**
  * @file input.jsx
- * @description Componente UI reutilizable del design system base de la aplicacion.
+ * @description Componente UI reutilizable del design system base de la aplicación.
  */
 
 import * as React from "react"

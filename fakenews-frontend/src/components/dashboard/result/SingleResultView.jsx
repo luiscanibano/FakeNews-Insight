@@ -1,6 +1,6 @@
 /**
  * @file SingleResultView.jsx
- * @description Vista del resultado individual del analisis con veredicto y acciones.
+ * @description Vista del resultado individual del análisis con veredicto y acciones.
  */
 
 import { Button } from "@/components/ui/button";
@@ -90,7 +90,7 @@ function SingleResultView({ result, isSavingResult, saveResultError, onSaveResul
             : "Guardar en historial"}
         </Button>
         <Button type="button" variant="outline" className="w-full sm:w-auto">
-          Generar enlace publico
+          Generar enlace público
         </Button>
         <Button type="button" variant="outline" className="w-full sm:w-auto">
           Reportar fallo

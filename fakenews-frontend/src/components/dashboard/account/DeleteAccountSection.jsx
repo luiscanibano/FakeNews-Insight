@@ -1,17 +1,11 @@
 /**
  * @file DeleteAccountSection.jsx
- * @description Seccion de baja RGPD con confirmacion explicita por escrito.
+ * @description Sección de baja RGPD con confirmación explícita por escrito.
  */
 
 import { useState } from "react";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import FeedbackBanner from "./FeedbackBanner";
-
-const SECTION_BASE_CLASSES =
-  "rounded-2xl border border-outline-variant/25 bg-surface/40 p-5";
 
 /** Formulario de baja de cuenta que exige escribir ELIMINAR para confirmar. */
 function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
@@ -48,23 +42,26 @@ function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
   };
 
   return (
-    <div className={`${SECTION_BASE_CLASSES} border-error/40 bg-error-container/15`}>
-      <div className="mb-3 flex items-center gap-2 text-error">
-        <AlertTriangle className="size-4" />
-        <h3 className="text-sm font-semibold uppercase tracking-[0.16em]">
+    <div className="dash-section dash-section-danger">
+      <div className="dash-section-head" style={{ color: "rgb(255 180 180)" }}>
+        <AlertTriangle className="size-4" aria-hidden="true" />
+        <h3 className="dash-section-title-sm" style={{ color: "rgb(255 200 200)" }}>
           Eliminar cuenta (RGPD)
         </h3>
       </div>
-      <p className="text-sm text-on-surface-variant">
-        Esta accion es irreversible. Eliminaremos tu cuenta y datos asociados. Para
+      <p className="dash-section-text">
+        Esta acción es irreversible. Eliminaremos tu cuenta y datos asociados. Para
         confirmar, escribe{" "}
-        <span className="font-semibold text-on-surface">ELIMINAR</span> en el campo de abajo.
+        <span style={{ color: "var(--on-surface)", fontWeight: 600 }}>ELIMINAR</span> en el
+        campo de abajo.
       </p>
 
-      <form onSubmit={handleSubmitDelete} className="mt-4 grid gap-3">
-        <div className="grid gap-1.5">
-          <Label htmlFor="account-delete-confirmation">Confirmacion</Label>
-          <Input
+      <form onSubmit={handleSubmitDelete} className="dash-form-grid mt-4">
+        <div className="dash-form-grid">
+          <label htmlFor="account-delete-confirmation" className="dash-form-label">
+            Confirmación
+          </label>
+          <input
             id="account-delete-confirmation"
             type="text"
             value={deleteConfirmation}
@@ -72,13 +69,14 @@ function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
             placeholder="Escribe ELIMINAR"
             disabled={isDeleting}
             required
+            className="dash-input"
           />
         </div>
-        <div className="flex justify-end">
-          <Button type="submit" variant="destructive" disabled={isDeleting}>
+        <div className="dash-form-actions">
+          <button type="submit" className="dash-btn dash-btn-danger" disabled={isDeleting}>
             <Trash2 className="size-3.5" />
             {isDeleting ? "Eliminando..." : "Eliminar mi cuenta"}
-          </Button>
+          </button>
         </div>
         <FeedbackBanner message={deleteMessage} tone={deleteTone} />
       </form>

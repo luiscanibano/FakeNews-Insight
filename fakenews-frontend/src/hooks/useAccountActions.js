@@ -1,6 +1,6 @@
 /**
  * @file useAccountActions.js
- * @description Hook que agrupa las acciones de cuenta (cambio de contrasena, baja RGPD)
+ * @description Hook que agrupa las acciones de cuenta (cambio de contraseña, baja RGPD)
  * con sus respectivos timeouts para evitar UI bloqueada.
  */
 
@@ -20,7 +20,7 @@ export const useAccountActions = () => {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
-  /** Cambia la contrasena reautenticando con la actual. */
+  /** Cambia la contraseña reautenticando con la actual. */
   const handleChangeAccountPassword = async ({ currentPassword, newPassword }) => {
     const email = user?.email;
     if (!email) {
@@ -30,7 +30,7 @@ export const useAccountActions = () => {
     return changeAccountPassword({ email, currentPassword, newPassword });
   };
 
-  /** Elimina la cuenta tras confirmacion explicita y cierra sesion. */
+  /** Elimina la cuenta tras confirmacion explicita y cierra sesión. */
   const handleDeleteAccount = async ({ confirmation }) => {
     const jwtToken = await withTimeout(
       getAccessToken(),

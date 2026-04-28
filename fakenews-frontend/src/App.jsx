@@ -1,6 +1,6 @@
 /**
  * @file App.jsx
- * @description Componente raiz de enrutado: inicializa autenticacion, controla rutas publicas/privadas y aplica guardas por rol.
+ * @description Componente raiz de enrutado: inicializa autenticación, controla rutas publicas/privadas y aplica guardas por rol.
  */
 
 import { useEffect } from "react";
@@ -17,7 +17,7 @@ import Landing from "./pages/Landing";
 import { USER_ROLE } from "./lib/accessControl";
 import { useInactivityLogout } from "./hooks/useInactivityLogout";
 
-/** Componente raiz: inicializa auth y define rutas publicas/privadas segun rol. */
+/** Componente raiz: inicializa auth y define rutas publicas/privadas según rol. */
 function App() {
   const user = useAuthStore((state) => state.user);
   const role = useAuthStore((state) => state.role);
@@ -29,7 +29,7 @@ function App() {
   const isAdmin = role === USER_ROLE.ADMIN;
   const defaultPrivatePath = isAdmin ? "/admin" : "/dashboard";
 
-  /** Hidrata sesion inicial y deja suscripcion activa a cambios de auth. */
+  /** Hidrata sesión inicial y deja suscripcion activa a cambios de auth. */
   useEffect(() => {
     let isCancelled = false;
     let unsubscribe = () => {};
@@ -52,13 +52,13 @@ function App() {
     };
   }, [initializeAuth, subscribeToAuthChanges]);
 
-  /** Cierre automatico por inactividad delegado al hook reutilizable. */
+  /** Cierre automático por inactividad delegado al hook reutilizable. */
   useInactivityLogout({ user, authReady, onLogout: logout });
 
   if (!authReady) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-        Cargando sesion...
+        Cargando sesión...
       </div>
     );
   }

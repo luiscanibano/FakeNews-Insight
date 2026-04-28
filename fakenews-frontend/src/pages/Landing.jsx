@@ -1,6 +1,6 @@
 /**
  * @file Landing.jsx
- * @description Pagina de aplicacion que orquesta componentes, estados y flujos de negocio por seccion.
+ * @description Página de aplicación que orquesta componentes, estados y flujos de negocio por seccion.
  */
 
 import { useEffect } from "react";
@@ -11,21 +11,24 @@ import LandingHero from "../components/landing/LandingHero";
 import LandingFeatures from "../components/landing/LandingFeatures";
 import LandingProcess from "../components/landing/LandingProcess";
 import LandingValueSection from "../components/landing/LandingValueSection";
-import LandingIntegration from "../components/landing/LandingIntegration";
+import LandingExtension from "../components/landing/LandingExtension";
 import LandingPricing from "../components/landing/LandingPricing";
 import LandingFooter from "../components/landing/LandingFooter";
 import { landingContent } from "../components/landing/landingContent";
 
-/** Compone la landing publica y conecta CTAs con rutas de autenticacion. */
+/** Compone la landing pública y conecta CTAs con rutas de autenticación.
+ */
 function Landing() {
   const navigate = useNavigate();
 
-  /** Activa animaciones de entrada conforme cada bloque entra en viewport. */
+  /** Activa animaciones de entrada conforme cada bloque entra en viewport.
+ */
   useEffect(() => {
     const elements = document.querySelectorAll(".landing-reveal");
     if (!elements.length) return;
 
-    /** Fallback para navegadores sin observer: muestra todos los bloques al instante. */
+    /** Fallback para navegadores sin observer: muestra todos los bloques al instante.
+ */
     const revealAll = () => {
       elements.forEach((element) => element.classList.add("in-view"));
     };
@@ -77,7 +80,7 @@ function Landing() {
         />
         <LandingFeatures content={landingContent.features} />
         <LandingProcess content={landingContent.process} />
-        <LandingIntegration content={landingContent.integration} />
+        <LandingExtension content={landingContent.extension} />
         <LandingPricing
           content={landingContent.value}
           onStartFree={() => navigate("/register")}

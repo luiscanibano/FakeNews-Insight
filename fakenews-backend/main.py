@@ -1,6 +1,6 @@
 """
 @file main.py
-@description API FastAPI de analisis de noticias: autenticacion JWT, control de cuota y persistencia de ejecuciones/historial en Supabase.
+@description API FastAPI de anÃ¡lisis de noticias: autenticaciÃ³n JWT, control de cuota y persistencia de ejecuciones/historial en Supabase.
 """
 
 from fastapi import FastAPI, Header, HTTPException
@@ -64,14 +64,14 @@ SUPABASE_ANON_KEY = (
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
 
 
-"""Inicializacion de la aplicacion FastAPI."""
+"""Inicializacion de la aplicaciÃ³n FastAPI."""
 app = FastAPI(
     title="API de Detección de Fake News",
     description="Motor de clasificación usando SVM y TF-IDF",
     version="1.0.0"
 )
 
-"""Configuracion CORS para permitir comunicacion frontend-backend y extension de navegador.
+"""ConfiguraciÃ³n CORS para permitir comunicacion frontend-backend y extension de navegador.
 
 El regex acepta:
 - Frontend en produccion (Render).
@@ -108,7 +108,7 @@ try:
 except Exception as e:
     raise RuntimeError(f"Error critico al cargar los modelos: {e}") from e
 
-"""Configuracion de limpieza y normalizacion del texto de entrada."""
+"""ConfiguraciÃ³n de limpieza y normalizacion del texto de entrada."""
 stop_words = set(stopwords.words('english'))
 custom_stops = {'reuters', 'reuter', 'image', 'via', 'video', 'pic', 'twitter', 'fox'}
 stop_words.update(custom_stops)
@@ -133,16 +133,16 @@ def limpiar_texto_auditoria(text: str):
 
 
 def _ensure_supabase_config() -> None:
-    """Valida la presencia de variables criticas para conectar con Supabase."""
+    """VÃ¡lida la presencia de variables criticas para conectar con Supabase."""
     if not SUPABASE_URL or not SUPABASE_ANON_KEY:
         raise HTTPException(
             status_code=500,
-            detail="Falta configuracion de Supabase en backend (SUPABASE_URL y SUPABASE_ANON_KEY).",
+            detail="Falta configuraciÃ³n de Supabase en backend (SUPABASE_URL y SUPABASE_ANON_KEY).",
         )
 
 
 def _ensure_supabase_service_config() -> None:
-    """Valida credenciales privilegiadas para escrituras server-to-server de billing."""
+    """VÃ¡lida credenciales privilegiadas para escrituras server-to-server de billing."""
     _ensure_supabase_config()
 
     if not SUPABASE_SERVICE_ROLE_KEY:
@@ -153,7 +153,7 @@ def _ensure_supabase_service_config() -> None:
 
 
 def _parse_json_payload(raw_bytes: bytes) -> Any:
-    """Decodifica un payload JSON y retorna texto encapsulado cuando no sea JSON valido."""
+    """Decodifica un payload JSON y retorna texto encapsulado cuando no sea JSON vÃ¡lido."""
     if not raw_bytes:
         return None
 
@@ -273,7 +273,7 @@ def _extract_bearer_token(authorization_header: Optional[str]) -> Optional[str]:
 
 
 def _validate_user_with_supabase(jwt_token: str) -> Dict[str, Any]:
-    """Valida JWT contra Supabase Auth y devuelve payload de usuario autenticado."""
+    """VÃ¡lida JWT contra Supabase Auth y devuelve payload de usuario autenticado."""
     status, payload = _supabase_json_request("/auth/v1/user", method="GET", jwt_token=jwt_token)
 
     if status != 200 or not isinstance(payload, dict) or not payload.get("id"):
@@ -348,7 +348,7 @@ def _normalize_date_key(value: Any) -> Optional[str]:
 
 
 def _is_unlimited_plan(plan: str) -> bool:
-    """Indica si un plan tiene analisis ilimitados."""
+    """Indica si un plan tiene anÃ¡lisis ilimitados."""
     normalized = plan.strip().lower()
     return normalized in {"pro", "ultra", "pro_user", "ultra_user"}
 
@@ -367,7 +367,7 @@ def _consume_free_analysis_quota(profile: Dict[str, Any], user_id: str, jwt_toke
 
     daily_limit = _to_int(profile.get("daily_analysis_limit"), default=20)
     if daily_limit <= 0:
-        raise HTTPException(status_code=403, detail="Tu plan no tiene analisis disponibles hoy.")
+        raise HTTPException(status_code=403, detail="Tu plan no tiene anÃ¡lisis disponibles hoy.")
 
     today_key = date.today().isoformat()
     stored_date = _normalize_date_key(profile.get("daily_analysis_date"))
@@ -378,7 +378,7 @@ def _consume_free_analysis_quota(profile: Dict[str, Any], user_id: str, jwt_toke
     if used_today >= daily_limit:
         raise HTTPException(
             status_code=403,
-            detail="Has alcanzado tu limite diario de analisis para el plan Free.",
+            detail="Has alcanzado tu lÃ­mite diario de anÃ¡lisis para el plan Free.",
         )
 
     next_used = used_today + 1
@@ -415,7 +415,7 @@ def _consume_free_analysis_quota(profile: Dict[str, Any], user_id: str, jwt_toke
     if status == 200 and isinstance(payload, list) and len(payload) == 0:
         raise HTTPException(
             status_code=409,
-            detail="No se pudo reservar el analisis por concurrencia. Intentalo de nuevo.",
+            detail="No se pudo reservar el anÃ¡lisis por concurrencia. IntÃ©ntalo de nuevo.",
         )
 
     return {
@@ -442,7 +442,7 @@ def _insert_analysis_run(
     model_version: str,
     jwt_token: str,
 ) -> Dict[str, Any]:
-    """Inserta una ejecucion de analisis en analysis_runs y devuelve la fila creada."""
+    """Inserta una ejecucion de anÃ¡lisis en analysis_runs y devuelve la fila creada."""
     status, payload = _supabase_json_request(
         "/rest/v1/analysis_runs",
         method="POST",
@@ -462,15 +462,15 @@ def _insert_analysis_run(
     )
 
     if status not in (200, 201):
-        detail = _extract_detail(payload, "No se pudo registrar la ejecucion del analisis.")
+        detail = _extract_detail(payload, "No se pudo registrar la ejecucion del anÃ¡lisis.")
         raise HTTPException(status_code=502, detail=detail)
 
     if not isinstance(payload, list) or len(payload) == 0:
-        raise HTTPException(status_code=502, detail="No se pudo registrar la ejecucion del analisis.")
+        raise HTTPException(status_code=502, detail="No se pudo registrar la ejecucion del anÃ¡lisis.")
 
     row = payload[0]
     if not isinstance(row, dict) or not row.get("id"):
-        raise HTTPException(status_code=502, detail="No se pudo obtener el id de ejecucion del analisis.")
+        raise HTTPException(status_code=502, detail="No se pudo obtener el id de ejecucion del anÃ¡lisis.")
 
     return row
 
@@ -492,11 +492,11 @@ def _load_analysis_run(run_id: str, user_id: str, jwt_token: str) -> Dict[str, A
     if status != 200:
         raise HTTPException(
             status_code=502,
-            detail=_extract_detail(payload, "No se pudo leer la ejecucion del analisis."),
+            detail=_extract_detail(payload, "No se pudo leer la ejecucion del anÃ¡lisis."),
         )
 
     if not isinstance(payload, list) or len(payload) == 0:
-        raise HTTPException(status_code=404, detail="No existe una ejecucion de analisis con ese id.")
+        raise HTTPException(status_code=404, detail="No existe una ejecucion de anÃ¡lisis con ese id.")
 
     return payload[0]
 
@@ -518,7 +518,7 @@ def _load_saved_analysis_by_run_id(run_id: str, user_id: str, jwt_token: str) ->
     if status != 200:
         raise HTTPException(
             status_code=502,
-            detail=_extract_detail(payload, "No se pudo comprobar si el analisis ya estaba guardado."),
+            detail=_extract_detail(payload, "No se pudo comprobar si el anÃ¡lisis ya estaba guardado."),
         )
 
     if isinstance(payload, list) and len(payload) > 0:
@@ -551,7 +551,7 @@ def _insert_saved_analysis_from_run(run: Dict[str, Any], user_id: str, jwt_token
     if status not in (200, 201):
         raise HTTPException(
             status_code=502,
-            detail=_extract_detail(payload, "No se pudo guardar el analisis en historial."),
+            detail=_extract_detail(payload, "No se pudo guardar el anÃ¡lisis en historial."),
         )
 
     if isinstance(payload, list) and len(payload) > 0:
@@ -584,7 +584,7 @@ def _mark_analysis_run_as_saved(run_id: str, user_id: str, jwt_token: str) -> No
     if status not in (200, 204):
         raise HTTPException(
             status_code=502,
-            detail=_extract_detail(payload, "No se pudo actualizar el estado de guardado del analisis."),
+            detail=_extract_detail(payload, "No se pudo actualizar el estado de guardado del anÃ¡lisis."),
         )
 
 

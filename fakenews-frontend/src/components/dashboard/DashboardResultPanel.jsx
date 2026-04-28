@@ -1,6 +1,6 @@
 /**
  * @file DashboardResultPanel.jsx
- * @description Panel de resultados que delega en sub-vistas segun estado: vacio, analizando, single o batch.
+ * @description Panel de resultados que delega en sub-vistas según estado: vacio, analizando, single o batch.
  */
 
 import SingleResultView from "./result/SingleResultView";
@@ -8,7 +8,7 @@ import BatchResultView from "./result/BatchResultView";
 import AnalysingView from "./result/AnalysingView";
 import EmptyResultView from "./result/EmptyResultView";
 
-/** Selector de vista segun el estado actual del flujo de analisis. */
+/** Selector de vista según el estado actual del flujo de análisis. */
 function DashboardResultPanel({
   result,
   isAnalysing,
@@ -17,8 +17,8 @@ function DashboardResultPanel({
   saveResultError = "",
 }) {
   return (
-    <section className="auth-fade-up mt-6" style={{ "--auth-delay": "170ms" }}>
-      <div className="dashboard-result-shell dashboard-panel-float dashboard-panel-float-delayed landing-glass-card rounded-3xl border border-outline-variant/20 p-4 sm:p-6">
+    <section className="dash-in" style={{ "--i": 2 }}>
+      <div className="dash-panel">
         {result?.kind === "single" ? (
           <SingleResultView
             result={result}

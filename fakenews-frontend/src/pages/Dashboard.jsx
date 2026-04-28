@@ -102,7 +102,7 @@ function DashboardLayout({
   );
 }
 
-/** Pagina raiz del dashboard que monta layout, rutas anidadas y modales. */
+/** Página raiz del dashboard que monta layout, rutas anidadas y modales. */
 function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
@@ -130,7 +130,7 @@ function Dashboard() {
 
   const modeTagline =
     analysisFlow.analysisMode === ANALYSIS_MODE.TEXT
-      ? "Motor semantico para texto libre"
+      ? "Motor semántico para texto libre"
       : analysisFlow.analysisMode === ANALYSIS_MODE.URL
       ? "Extraccion y verificacion desde fuente web"
       : "Procesamiento masivo de titulares en lote";

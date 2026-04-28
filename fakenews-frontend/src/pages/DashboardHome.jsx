@@ -7,7 +7,7 @@ import { useOutletContext } from "react-router-dom";
 import { useDashboardStore } from "../store/dashboardStore";
 import DashboardHomeSection from "../components/dashboard/DashboardHomeSection";
 
-/** Pagina Inicio del dashboard. */
+/** Página Inicio del dashboard. */
 function DashboardHome() {
   const { planLabel, onStartAnalysis } = useOutletContext();
 

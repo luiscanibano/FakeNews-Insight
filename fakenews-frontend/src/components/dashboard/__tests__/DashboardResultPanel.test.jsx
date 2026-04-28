@@ -1,6 +1,6 @@
 /**
  * @file DashboardResultPanel.test.jsx
- * @description Comprueba que el panel selecciona la sub-vista correcta segun `result.kind` e `isAnalysing`.
+ * @description Comprueba que el panel selecciona la sub-vista correcta según `result.kind` e `isAnalysing`.
  */
 
 import React from "react";
@@ -9,13 +9,13 @@ import { render, screen } from "@testing-library/react";
 import DashboardResultPanel from "../DashboardResultPanel";
 
 describe("<DashboardResultPanel />", () => {
-  it("muestra el estado vacio cuando no hay resultado ni analisis activo", () => {
+  it("muestra el estado vacio cuando no hay resultado ni análisis activo", () => {
     render(<DashboardResultPanel result={null} isAnalysing={false} />);
-    /** EmptyResultView muestra el copy de "Esperando tu primer analisis". */
+    /** EmptyResultView muestra el copy de "Esperando tu primer análisis". */
     expect(document.body.textContent).toMatch(/esperando/i);
   });
 
-  it("muestra estado de analisis en curso", () => {
+  it("muestra estado de análisis en curso", () => {
     render(<DashboardResultPanel result={null} isAnalysing={true} />);
     expect(document.body.textContent).toMatch(/ejecutando/i);
   });

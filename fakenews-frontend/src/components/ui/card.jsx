@@ -1,6 +1,6 @@
 /**
  * @file card.jsx
- * @description Componente UI reutilizable del design system base de la aplicacion.
+ * @description Componente UI reutilizable del design system base de la aplicación.
  */
 
 import * as React from "react"
@@ -25,7 +25,7 @@ function Card({
   );
 }
 
-/** Cabecera de tarjeta para titulo, descripcion y acciones de cabecera. */
+/** Cabecera de tarjeta para titulo, descripción y acciones de cabecera. */
 function CardHeader({
   className,
   ...props
@@ -41,7 +41,7 @@ function CardHeader({
   );
 }
 
-/** Titulo semantico y visual de la tarjeta. */
+/** Titulo semántico y visual de la tarjeta. */
 function CardTitle({
   className,
   ...props

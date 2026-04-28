@@ -1,9 +1,9 @@
 /**
  * @file verdictTone.js
- * @description Helper para derivar estilo visual y badge segun veredicto y fuerza SVM.
+ * @description Helper para derivar estilo visual y badge según veredicto y fuerza SVM.
  */
 
-/** Deriva tono visual segun veredicto y nivel de incertidumbre de la fuerza SVM. */
+/** Deriva tono visual según veredicto y nivel de incertidumbre de la fuerza SVM. */
 export const getVerdictTone = ({ verdictLabel, svmStrength }) => {
   const hasStrength = typeof svmStrength === "number";
   const threshold = 0.3;

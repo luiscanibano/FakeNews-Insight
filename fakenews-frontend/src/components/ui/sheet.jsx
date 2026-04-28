@@ -1,6 +1,6 @@
 /**
  * @file sheet.jsx
- * @description Componente UI reutilizable del design system base de la aplicacion.
+ * @description Componente UI reutilizable del design system base de la aplicación.
  */
 
 "use client"
@@ -115,7 +115,7 @@ function SheetFooter({
   );
 }
 
-/** Titulo semantico del panel lateral. */
+/** Titulo semántico del panel lateral. */
 function SheetTitle({
   className,
   ...props
@@ -128,7 +128,7 @@ function SheetTitle({
   );
 }
 
-/** Descripcion contextual del contenido del Sheet. */
+/** Descripción contextual del contenido del Sheet. */
 function SheetDescription({
   className,
   ...props

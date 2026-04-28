@@ -58,7 +58,7 @@ const getErrorMessage = async (response, fallbackMessage) => {
 /** Ejecuta peticion POST autenticada con timeout para evitar estados indefinidos. */
 const sendBillingRequest = async ({ endpoint, body, jwtToken, fallbackMessage }) => {
 	if (!jwtToken) {
-		throw new Error("Tu sesion no es valida. Inicia sesion de nuevo.");
+		throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
 	}
 
 	const controller = new AbortController();
@@ -96,7 +96,7 @@ const sendBillingRequest = async ({ endpoint, body, jwtToken, fallbackMessage })
 	return response.json();
 };
 
-/** Inicia flujo de checkout o downgrade programado segun plan objetivo. */
+/** Inicia flujo de checkout o downgrade programado según plan objetivo. */
 export const createBillingCheckout = async ({ plan, jwtToken }) => {
 	if (!plan) {
 		throw new Error("Debes seleccionar un plan para continuar.");
@@ -110,10 +110,10 @@ export const createBillingCheckout = async ({ plan, jwtToken }) => {
 	});
 };
 
-/** Confirma en backend una sesion de Stripe Checkout ya completada. */
+/** Confirma en backend una sesión de Stripe Checkout ya completada. */
 export const confirmBillingCheckout = async ({ sessionId, jwtToken }) => {
 	if (!sessionId) {
-		throw new Error("No se encontro session_id para confirmar el pago.");
+		throw new Error("No se encontró session_id para confirmar el pago.");
 	}
 
 	return sendBillingRequest({
@@ -127,7 +127,7 @@ export const confirmBillingCheckout = async ({ sessionId, jwtToken }) => {
 /** Recupera estado de suscripcion actual del usuario para mostrar en el panel de cuenta. */
 export const fetchBillingSnapshot = async ({ jwtToken }) => {
 	if (!jwtToken) {
-		throw new Error("Tu sesion no es valida. Inicia sesion de nuevo.");
+		throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
 	}
 
 	const controller = new AbortController();

@@ -1,12 +1,12 @@
 /**
  * @file AuthLayout.jsx
- * @description Componente de layout y estructura visual para flujos de autenticacion y recuperacion de cuenta.
+ * @description Componente de layout y estructura visual para flujos de autenticación y recuperación de cuenta.
  */
 
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
-/** Layout reutilizable para login, registro y recuperacion con narrativa de marca. */
+/** Layout reutilizable para login, registro y recuperación con narrativa de marca. */
 function AuthLayout({ title, description, highlights, children, bottomText, bottomLinkTo, bottomLinkLabel, floatingCard = false }) {
   const brand = "FakeNews Insight";
   const [brandLead = brand, ...brandTailParts] = brand.split(" ");

@@ -66,7 +66,7 @@ const hydrateAccessFromUser = async (user) => {
   return { profile, role, plan };
 };
 
-/** Store global de autenticacion para compartir estado entre pantallas.
+/** Store global de autenticación para compartir estado entre pantallas.
  */
 export const useAuthStore = create((set) => ({
   user: null,
@@ -91,7 +91,7 @@ export const useAuthStore = create((set) => ({
     set({ profile: profile || null, ...access });
   },
 
-  /** Refresca perfil del usuario autenticado sin reinicializar toda la sesion. */
+  /** Refresca perfil del usuario autenticado sin reinicializar toda la sesión. */
   refreshAccess: async () => {
     const currentUser = useAuthStore.getState().user;
 
@@ -111,7 +111,7 @@ export const useAuthStore = create((set) => ({
     return access;
   },
 
-  /** Inicializa el usuario desde la sesion persistida de Supabase.
+  /** Inicializa el usuario desde la sesión persistida de Supabase.
  */
   initializeAuth: async () => {
     if (initializeAuthInFlightPromise) {
@@ -158,7 +158,7 @@ export const useAuthStore = create((set) => ({
     await initializeAuthInFlightPromise;
   },
 
-  /** Suscribe el store a eventos de autenticacion de Supabase.
+  /** Suscribe el store a eventos de autenticación de Supabase.
  */
   subscribeToAuthChanges: () =>
     onAuthStateChange(async (event, user) => {
@@ -177,7 +177,7 @@ export const useAuthStore = create((set) => ({
       /**
        * En SIGNED_IN no usamos fallback global para evitar falsos positivos por
        * marcas heredadas de otro contexto, pero si existe marca del mismo usuario
-       * y esta vencida, se fuerza cierre de sesion.
+       * y esta vencida, se fuerza cierre de sesión.
        */
       if (hasExpiredByInactivity(user.id, { allowGlobalFallback: event !== "SIGNED_IN" })) {
         clearSessionActivity();
@@ -213,7 +213,7 @@ export const useAuthStore = create((set) => ({
       }
     }),
 
-  /** Cierra sesion en Supabase y limpia estado local.
+  /** Cierra sesión en Supabase y limpia estado local.
  */
   logout: async () => {
     set({ loading: true, error: null });
@@ -246,7 +246,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /** Inicia sesion, refleja loading/error y guarda el usuario si todo va bien.
+  /** Inicia sesión, refleja loading/error y guarda el usuario si todo va bien.
  */
   login: async (credentials) => {
     set({ loading: true, error: null });
@@ -254,7 +254,7 @@ export const useAuthStore = create((set) => ({
     try {
       /**
        * Limpia huella previa para que un login explicito no herede
-       * marcas de inactividad antiguas de la sesion anterior.
+       * marcas de inactividad antiguas de la sesión anterior.
        */
       clearSessionActivity();
 
@@ -284,7 +284,7 @@ export const useAuthStore = create((set) => ({
       clearSessionActivity();
 
       const authData = await register(credentials);
-      /** En registro solo consideramos usuario logueado si existe sesion activa.
+      /** En registro solo consideramos usuario logueado si existe sesión activa.
  */
       /** Si Supabase exige confirmacion por email, authData.session suele venir null.
  */
@@ -303,7 +303,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /** Inicia autenticacion con Google mediante OAuth.
+  /** Inicia autenticación con Google mediante OAuth.
  */
   signInWithGoogle: async () => {
     set({ loading: true, error: null });
@@ -321,7 +321,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /** Solicita el email de recuperacion.
+  /** Solicita el email de recuperación.
  */
   requestPasswordReset: async ({ email, redirectTo }) => {
     set({ loading: true, error: null });
@@ -336,7 +336,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /** Inicializa sesion temporal para flujo de recuperacion de contrasena.
+  /** Inicializa sesión temporal para flujo de recuperación de contraseña.
  */
   setRecoverySession: async ({ accessToken, refreshToken }) => {
     set({ loading: true, error: null });
@@ -351,7 +351,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /** Actualiza la contrasena del usuario en recovery.
+  /** Actualiza la contraseña del usuario en recovery.
  */
   updatePassword: async ({ password }) => {
     set({ loading: true, error: null });
