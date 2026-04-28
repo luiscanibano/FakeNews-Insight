@@ -82,6 +82,12 @@
     @apply bg-background text-foreground;
     min-height: 100%;
     background-color: #0e0e0e;
+    color: #e7e5e4;
+    --surface: #0e0e0e;
+    --on-surface: #e7e5e4;
+    --on-surface-variant: #acabaa;
+    --outline-variant: #484848;
+    --primary: #adc7ff;
     overscroll-behavior-y: none;
     overflow-anchor: none;
   }
@@ -435,6 +441,46 @@
     filter: blur(14px);
     opacity: 0.62;
     animation: landing-hero-halo 6.4s ease-in-out infinite;
+  }
+
+  /* === Hero minimalist intro (page load) ===
+     Fade limpio, sin movimientos bruscos en el fondo.
+     El fondo se atenúa ligeramente al inicio y vuelve a su estado natural,
+     mientras la tipografía aparece con un fade + micro slide. */
+  .hero-min-stage {
+    animation: hero-min-stage-in 900ms ease-out both;
+  }
+
+  .hero-min-bg {
+    opacity: 0;
+    animation: hero-min-bg-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+  }
+
+  .hero-min-rule {
+    display: block;
+    width: 0;
+    height: 1px;
+    margin: 0 auto 2.25rem;
+    background: linear-gradient(90deg, transparent, rgb(173 199 255 / 65%), transparent);
+    opacity: 0;
+    animation: hero-min-rule-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
+  }
+
+  .hero-min-fade {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: hero-min-fade-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--hero-min-delay, 0ms);
+  }
+
+  .hero-min-emphasis {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(14px);
+    animation:
+      hero-min-fade-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both,
+      landing-title-pulse 2.8s ease-in-out 1500ms infinite;
   }
 
   .landing-parallax-stage {
@@ -1044,6 +1090,1167 @@
     }
   }
 
+  /* =========================================================
+     DASHBOARD REFRESH — minimalist, editorial, less "AI-y"
+     ========================================================= */
+
+  /* --- Tabs en cabecera (alineadas con landing-nav-link) --- */
+  .dash-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.7rem;
+    font-family: var(--font-label, "Inter", sans-serif);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: rgb(231 229 228 / 74%);
+    background: transparent;
+    transition: color 220ms ease, background-color 220ms ease;
+  }
+
+  .dash-tab:hover {
+    color: var(--on-surface);
+    background: rgb(255 255 255 / 3%);
+  }
+
+  .dash-tab::after {
+    content: "";
+    position: absolute;
+    left: 0.8rem;
+    right: 0.8rem;
+    bottom: 0.36rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(173 199 255 / 85%), transparent);
+    transform: scaleX(0.15);
+    transform-origin: center;
+    opacity: 0;
+    transition: transform 240ms ease, opacity 240ms ease;
+  }
+
+  .dash-tab:hover::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  .dash-tab.is-active {
+    color: var(--on-surface);
+    background: transparent;
+  }
+
+  .dash-tab.is-active::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  /* --- Píldoras de plan/cuenta en cabecera (alineadas con landing-nav-link) --- */
+  .dash-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.36rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 8%);
+    background: transparent;
+    color: rgb(231 229 228 / 74%);
+    font-family: var(--font-label, "Inter", sans-serif);
+    font-size: 0.66rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+  }
+
+  .dash-pill:hover {
+    border-color: rgb(255 255 255 / 18%);
+    color: var(--on-surface);
+    background: rgb(255 255 255 / 3%);
+  }
+
+  .dash-pill-emphasis {
+    border-color: rgb(173 199 255 / 28%);
+    color: rgb(173 199 255 / 92%);
+  }
+
+  /* --- Mobile sidebar items (mantiene layout, look más sobrio) --- */
+  .dash-mobile-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 0.7rem;
+    font-size: 0.82rem;
+    color: rgb(231 229 228 / 72%);
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  .dash-mobile-item:hover {
+    background: rgb(255 255 255 / 3.5%);
+    color: var(--on-surface);
+  }
+
+  .dash-mobile-item.is-active {
+    background: rgb(255 255 255 / 4.5%);
+    color: var(--on-surface);
+    border-color: rgb(255 255 255 / 8%);
+  }
+
+  /* --- Home: hero sobrio --- */
+  .dash-home-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 8%);
+    background: rgb(255 255 255 / 2%);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgb(231 229 228 / 70%);
+  }
+
+  .dash-home-eyebrow-dot {
+    width: 0.32rem;
+    height: 0.32rem;
+    border-radius: 999px;
+    background: rgb(120 220 160 / 92%);
+    box-shadow: 0 0 0 3px rgb(120 220 160 / 16%);
+  }
+
+  .dash-home-h1 {
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    font-size: clamp(1.85rem, 4vw, 2.6rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--on-surface);
+  }
+
+  .dash-home-h1 .dash-home-h1-soft {
+    color: rgb(231 229 228 / 48%);
+    font-weight: 400;
+  }
+
+  .dash-home-sub {
+    margin-top: 0.6rem;
+    max-width: 56ch;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: rgb(231 229 228 / 62%);
+  }
+
+  /* --- Stats: jerarquía 1+2 sin glass uniforme --- */
+  .dash-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .dash-stat-grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+
+  .dash-stat {
+    position: relative;
+    padding: 1.1rem 1.15rem;
+    border-radius: 0.95rem;
+    border: 1px solid rgb(255 255 255 / 6%);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 1.5%), rgb(255 255 255 / 0%));
+    transition: border-color 220ms ease, transform 220ms ease;
+  }
+
+  .dash-stat:hover {
+    border-color: rgb(255 255 255 / 11%);
+  }
+
+  .dash-stat-primary {
+    background:
+      linear-gradient(135deg, rgb(173 199 255 / 7%), rgb(173 199 255 / 0%) 60%),
+      linear-gradient(180deg, rgb(255 255 255 / 1.5%), rgb(255 255 255 / 0%));
+    border-color: rgb(173 199 255 / 14%);
+  }
+
+  .dash-stat-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 56%);
+    letter-spacing: -0.005em;
+  }
+
+  .dash-stat-label-icon {
+    color: rgb(173 199 255 / 80%);
+  }
+
+  .dash-stat-value {
+    margin-top: 0.65rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    font-size: 2.05rem;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--on-surface);
+  }
+
+  .dash-stat-value-suffix {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 45%);
+    letter-spacing: -0.005em;
+  }
+
+  .dash-stat-foot {
+    margin-top: 0.65rem;
+    font-size: 0.72rem;
+    color: rgb(231 229 228 / 52%);
+  }
+
+  /* --- Card del gráfico de actividad (limpia) --- */
+  .dash-panel {
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(255 255 255 / 6%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 1.2%), rgb(255 255 255 / 0%));
+  }
+
+  .dash-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .dash-panel-title {
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--on-surface);
+  }
+
+  .dash-panel-meta {
+    font-size: 0.7rem;
+    color: rgb(231 229 228 / 50%);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dash-chart {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    align-items: end;
+    gap: 0.6rem;
+    height: 11rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid rgb(255 255 255 / 6%);
+  }
+
+  .dash-chart::before,
+  .dash-chart::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgb(255 255 255 / 4%);
+    pointer-events: none;
+  }
+
+  .dash-chart::before { top: 33%; }
+  .dash-chart::after  { top: 66%; }
+
+  .dash-chart-col {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  .dash-chart-bar {
+    width: 60%;
+    max-width: 16px;
+    border-radius: 3px 3px 1px 1px;
+    background: linear-gradient(180deg, rgb(173 199 255 / 88%), rgb(173 199 255 / 38%));
+    transform-origin: bottom;
+    transform: scaleY(0);
+    opacity: 0;
+    animation: dash-bar-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--bar-delay, 0ms);
+  }
+
+  .dash-chart-col:hover .dash-chart-bar {
+    background: linear-gradient(180deg, rgb(173 199 255 / 100%), rgb(173 199 255 / 55%));
+  }
+
+  .dash-chart-tip {
+    position: absolute;
+    bottom: calc(100% + 0.35rem);
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.4rem;
+    background: rgb(20 20 22 / 96%);
+    border: 1px solid rgb(255 255 255 / 8%);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-surface);
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+    white-space: nowrap;
+  }
+
+  .dash-chart-col:hover .dash-chart-tip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .dash-chart-axis {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.6rem;
+    font-size: 0.66rem;
+    color: rgb(231 229 228 / 42%);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Recientes: lista editorial con divisores --- */
+  .dash-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dash-list-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 5%);
+    transition: background-color 180ms ease;
+  }
+
+  .dash-list-row:last-child {
+    border-bottom: none;
+  }
+
+  .dash-list-row-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--on-surface);
+    letter-spacing: -0.005em;
+  }
+
+  .dash-list-row-meta {
+    margin-top: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    font-size: 0.7rem;
+    color: rgb(231 229 228 / 48%);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dash-list-empty {
+    padding: 1.4rem 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgb(231 229 228 / 50%);
+  }
+
+  /* --- Verdict dot (sustituye badge ruidoso) --- */
+  .dash-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 80%);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dash-verdict-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .dash-verdict-real  { color: rgb(120 220 160 / 92%); }
+  .dash-verdict-fake  { color: rgb(255 130 130 / 92%); }
+  .dash-verdict-other { color: rgb(245 200 110 / 92%); }
+
+  /* --- Botón de acción primaria del home (más calmado) --- */
+  .dash-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.7rem;
+    background: var(--on-surface);
+    color: var(--surface);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+
+  .dash-cta:hover {
+    transform: translateY(-1px);
+    background: rgb(245 245 245);
+  }
+
+  .dash-cta-arrow {
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dash-cta:hover .dash-cta-arrow {
+    transform: translateX(3px);
+  }
+
+  /* --- Animación de entrada minimalista (stagger por --i) --- */
+  .dash-in {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: dash-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  @keyframes dash-bar-rise {
+    from { transform: scaleY(0); opacity: 0; }
+    to   { transform: scaleY(1); opacity: 1; }
+  }
+
+  @keyframes dash-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- Segmented control (modo análisis, filtros) --- */
+  .dash-seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.25rem;
+    border-radius: 0.7rem;
+    border: 1px solid rgb(255 255 255 / 6%);
+    background: rgb(255 255 255 / 1.5%);
+  }
+
+  .dash-seg-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 60%);
+    background: transparent;
+    transition: color 200ms ease, background-color 240ms ease;
+  }
+
+  .dash-seg-item:hover:not(:disabled) {
+    color: var(--on-surface);
+  }
+
+  .dash-seg-item.is-active {
+    color: var(--on-surface);
+    background: rgb(255 255 255 / 6%);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 25%), inset 0 1px 0 rgb(255 255 255 / 6%);
+  }
+
+  .dash-seg-item:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .dash-seg-badge {
+    margin-left: 0.15rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    background: rgb(173 199 255 / 14%);
+    color: rgb(173 199 255 / 92%);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* --- Inputs/textarea editorial --- */
+  .dash-input-shell {
+    position: relative;
+    border-radius: 0.85rem;
+    border: 1px solid rgb(255 255 255 / 7%);
+    background: rgb(255 255 255 / 1.5%);
+    transition: border-color 220ms ease, background-color 220ms ease;
+  }
+
+  .dash-input-shell:focus-within {
+    border-color: rgb(173 199 255 / 32%);
+    background: rgb(173 199 255 / 3%);
+  }
+
+  .dash-textarea {
+    width: 100%;
+    min-height: 14rem;
+    padding: 1rem 1.15rem;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: var(--on-surface);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    resize: vertical;
+  }
+
+  .dash-textarea::placeholder { color: rgb(231 229 228 / 38%); }
+
+  .dash-input {
+    width: 100%;
+    height: 2.7rem;
+    padding: 0 0.95rem;
+    border-radius: 0.7rem;
+    border: 1px solid rgb(255 255 255 / 8%);
+    background: rgb(255 255 255 / 1.5%);
+    color: var(--on-surface);
+    font-size: 0.9rem;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+
+  .dash-input:focus {
+    outline: none;
+    border-color: rgb(173 199 255 / 32%);
+    background: rgb(173 199 255 / 3%);
+  }
+
+  .dash-input::placeholder { color: rgb(231 229 228 / 38%); }
+
+  .dash-field-hint {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: rgb(231 229 228 / 50%);
+  }
+
+  /* --- Dropzone CSV --- */
+  .dash-drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 2rem 1rem;
+    border-radius: 0.85rem;
+    border: 1px dashed rgb(255 255 255 / 12%);
+    background: rgb(255 255 255 / 1.5%);
+    color: var(--on-surface);
+    transition: border-color 220ms ease, background-color 220ms ease, transform 220ms ease;
+  }
+
+  .dash-drop:hover:not(:disabled) {
+    border-color: rgb(173 199 255 / 35%);
+    background: rgb(173 199 255 / 3.5%);
+  }
+
+  .dash-drop:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .dash-drop-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    background: rgb(173 199 255 / 10%);
+    color: rgb(173 199 255 / 95%);
+  }
+
+  /* --- Mensajes de feedback --- */
+  .dash-alert {
+    border-radius: 0.7rem;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    border: 1px solid;
+  }
+
+  .dash-alert-error {
+    border-color: rgb(255 130 130 / 30%);
+    background: rgb(255 130 130 / 8%);
+    color: rgb(255 180 180 / 95%);
+  }
+
+  .dash-alert-info {
+    border-color: rgb(173 199 255 / 24%);
+    background: rgb(173 199 255 / 6%);
+    color: rgb(210 224 255 / 92%);
+  }
+
+  /* --- Progress lineal sobrio --- */
+  .dash-progress {
+    height: 0.35rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 6%);
+    overflow: hidden;
+  }
+
+  .dash-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgb(173 199 255 / 65%), rgb(173 199 255 / 100%));
+    transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dash-progress-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+      transparent,
+      rgb(255 255 255 / 35%),
+      transparent);
+    transform: translateX(-100%);
+    animation: dash-progress-sheen 1.6s ease-in-out infinite;
+  }
+
+  @keyframes dash-progress-sheen {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(120%); }
+  }
+
+  /* --- Pasos numerados (Extension) --- */
+  .dash-step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.95rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 5%);
+  }
+
+  .dash-step:last-child { border-bottom: none; }
+
+  .dash-step-num {
+    width: 1.85rem;
+    height: 1.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(173 199 255 / 22%);
+    background: rgb(173 199 255 / 6%);
+    color: rgb(210 224 255 / 95%);
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .dash-step-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    letter-spacing: -0.01em;
+  }
+
+  .dash-step-desc {
+    margin-top: 0.25rem;
+    font-size: 0.83rem;
+    line-height: 1.55;
+    color: rgb(231 229 228 / 62%);
+  }
+
+  /* --- Variantes botón secundario / fantasma --- */
+  .dash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 82%);
+    background: transparent;
+    border: 1px solid rgb(255 255 255 / 8%);
+    transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+  }
+
+  .dash-btn:hover:not(:disabled) {
+    color: var(--on-surface);
+    border-color: rgb(255 255 255 / 18%);
+    background: rgb(255 255 255 / 3%);
+  }
+
+  .dash-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .dash-btn-primary {
+    color: var(--surface);
+    background: var(--on-surface);
+    border-color: transparent;
+  }
+
+  .dash-btn-primary:hover:not(:disabled) {
+    background: rgb(245 245 245);
+    color: var(--surface);
+  }
+
+  /* --- Link sutil --- */
+  .dash-link {
+    color: rgb(173 199 255 / 92%);
+    transition: color 180ms ease;
+    word-break: break-all;
+  }
+
+  .dash-link:hover { color: rgb(210 224 255); }
+
+  /* --- Carrusel snap-scroll para landing features --- */
+  .landing-carousel {
+    position: relative;
+  }
+
+  .landing-carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .landing-carousel-track::-webkit-scrollbar { display: none; }
+
+  .landing-carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    min-width: 0;
+    min-height: 420px;
+    display: flex;
+  }
+
+  .landing-carousel-slide > * { width: 100%; }
+
+  @media (min-width: 768px) {
+    .landing-carousel-track { gap: 1.5rem; padding: 0 3.5rem 0.5rem; }
+    .landing-carousel-slide { flex-basis: calc(100% - 7rem); min-height: 460px; }
+  }
+
+  @media (min-width: 1024px) {
+    .landing-carousel-slide { flex-basis: calc(100% - 7rem); }
+  }
+
+  .landing-carousel-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    background: rgb(18 19 21 / 88%);
+    color: rgb(231 229 228 / 85%);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+    transform: translateY(-50%);
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, opacity 200ms ease, transform 200ms ease;
+  }
+
+  @media (min-width: 768px) { .landing-carousel-nav { display: inline-flex; } }
+
+  .landing-carousel-nav:hover:not(:disabled) {
+    background: rgb(28 30 34);
+    border-color: rgb(255 255 255 / 22%);
+    color: var(--on-surface);
+    transform: translateY(-50%) scale(1.04);
+  }
+
+  .landing-carousel-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .landing-carousel-nav-prev { left: 0; }
+  .landing-carousel-nav-next { right: 0; }
+
+  .landing-carousel-dots {
+    margin-top: 1.25rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .landing-carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    border: 0;
+    background: rgb(255 255 255 / 18%);
+    transition: background-color 220ms ease, width 220ms ease;
+  }
+
+  .landing-carousel-dot:hover { background: rgb(255 255 255 / 32%); }
+
+  .landing-carousel-dot.is-active {
+    width: 1.6rem;
+    background: rgb(173 199 255 / 85%);
+  }
+
+  /* --- Modal: overlay y shell sólidos y siempre visibles --- */
+  .dash-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    padding-top: 4rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: rgb(0 0 0 / 70%);
+    backdrop-filter: blur(6px);
+    animation: dash-modal-overlay-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (min-width: 640px) {
+    .dash-modal-overlay { align-items: center; padding-top: 1rem; }
+  }
+
+  .dash-modal {
+    position: relative;
+    width: 100%;
+    margin: auto;
+    border-radius: 1rem;
+    border: 1px solid rgb(255 255 255 / 10%);
+    background: rgb(18 19 21);
+    box-shadow:
+      0 20px 60px rgb(0 0 0 / 55%),
+      0 0 0 1px rgb(255 255 255 / 4%),
+      inset 0 1px 0 rgb(255 255 255 / 4%);
+    padding: 1.4rem;
+    animation: dash-modal-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (min-width: 640px) { .dash-modal { padding: 1.7rem; } }
+
+  .dash-modal-md { max-width: 44rem; }
+  .dash-modal-lg { max-width: 72rem; }
+
+  .dash-modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .dash-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 0.55rem;
+    border: 1px solid rgb(255 255 255 / 8%);
+    background: transparent;
+    color: rgb(231 229 228 / 70%);
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  }
+
+  .dash-modal-close:hover:not(:disabled) {
+    color: var(--on-surface);
+    border-color: rgb(255 255 255 / 18%);
+    background: rgb(255 255 255 / 4%);
+  }
+
+  .dash-modal-close:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* --- Sección dentro de modal de cuenta --- */
+  .dash-section {
+    border-radius: 0.85rem;
+    border: 1px solid rgb(255 255 255 / 7%);
+    background: rgb(255 255 255 / 2%);
+    padding: 1.1rem 1.15rem;
+  }
+
+  .dash-section-danger {
+    border-color: rgb(255 130 130 / 28%);
+    background: rgb(255 130 130 / 4%);
+  }
+
+  .dash-section-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .dash-section-title-sm {
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    letter-spacing: -0.01em;
+  }
+
+  .dash-section-text {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: rgb(231 229 228 / 65%);
+  }
+
+  /* --- Plan card del selector --- */
+  .dash-plan-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.4rem 1.3rem;
+    border-radius: 0.95rem;
+    border: 1px solid rgb(255 255 255 / 7%);
+    background: rgb(255 255 255 / 2%);
+    transition: border-color 220ms ease, transform 220ms ease, background-color 220ms ease;
+    animation: dash-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+
+  .dash-plan-card:hover {
+    border-color: rgb(255 255 255 / 14%);
+    transform: translateY(-2px);
+  }
+
+  .dash-plan-card.is-recommended {
+    border-color: rgb(173 199 255 / 38%);
+    background:
+      linear-gradient(135deg, rgb(173 199 255 / 8%), rgb(173 199 255 / 0%) 65%),
+      rgb(255 255 255 / 2%);
+  }
+
+  .dash-plan-card.is-current {
+    border-color: rgb(120 220 160 / 35%);
+  }
+
+  .dash-plan-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgb(231 229 228 / 60%);
+  }
+
+  .dash-plan-card.is-recommended .dash-plan-name {
+    color: rgb(210 224 255 / 95%);
+  }
+
+  .dash-plan-price {
+    margin-top: 0.55rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    font-family: var(--font-headline, "Manrope", sans-serif);
+    color: var(--on-surface);
+  }
+
+  .dash-plan-price-amount {
+    font-size: 2.2rem;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .dash-plan-price-interval {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 50%);
+  }
+
+  .dash-plan-features {
+    margin: 1.2rem 0 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    flex: 1;
+  }
+
+  .dash-plan-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+    color: rgb(231 229 228 / 78%);
+  }
+
+  .dash-plan-feature-icon {
+    flex-shrink: 0;
+    color: rgb(173 199 255 / 90%);
+    margin-top: 0.15rem;
+  }
+
+  .dash-plan-action {
+    width: 100%;
+    height: 2.6rem;
+    border-radius: 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 180ms ease;
+  }
+
+  .dash-plan-action-primary {
+    background: var(--on-surface);
+    color: var(--surface);
+    border: 1px solid transparent;
+  }
+
+  .dash-plan-action-primary:not(:disabled):hover {
+    background: rgb(245 245 245);
+    transform: translateY(-1px);
+  }
+
+  .dash-plan-action-outline {
+    background: transparent;
+    color: var(--on-surface);
+    border: 1px solid rgb(255 255 255 / 12%);
+  }
+
+  .dash-plan-action-outline:not(:disabled):hover {
+    border-color: rgb(255 255 255 / 22%);
+    background: rgb(255 255 255 / 3%);
+  }
+
+  .dash-plan-action:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  .dash-plan-current-tag {
+    position: absolute;
+    top: -0.65rem;
+    right: 1rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgb(120 220 160 / 35%);
+    background: rgb(20 28 24);
+    color: rgb(120 220 160 / 92%);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .dash-plan-recommended-tag {
+    position: absolute;
+    top: -0.65rem;
+    left: 1rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgb(173 199 255 / 38%);
+    background: rgb(22 26 36);
+    color: rgb(210 224 255);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* --- Form fields editorial dentro de modal --- */
+  .dash-form-grid {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .dash-form-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgb(231 229 228 / 78%);
+  }
+
+  .dash-form-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.55rem;
+  }
+
+  /* --- Botón destructivo --- */
+  .dash-btn-danger {
+    color: rgb(255 130 130 / 95%);
+    border-color: rgb(255 130 130 / 30%);
+    background: rgb(255 130 130 / 6%);
+  }
+
+  .dash-btn-danger:not(:disabled):hover {
+    color: rgb(255 200 200);
+    border-color: rgb(255 130 130 / 50%);
+    background: rgb(255 130 130 / 12%);
+  }
+
+  /* --- Banner de feedback --- */
+  .dash-feedback {
+    margin-top: 0.65rem;
+    border-radius: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.82rem;
+    border: 1px solid;
+  }
+
+  .dash-feedback-success {
+    color: rgb(120 220 160);
+    border-color: rgb(120 220 160 / 35%);
+    background: rgb(120 220 160 / 8%);
+  }
+
+  .dash-feedback-error {
+    color: rgb(255 180 180);
+    border-color: rgb(255 130 130 / 35%);
+    background: rgb(255 130 130 / 8%);
+  }
+
+  @keyframes dash-modal-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes dash-modal-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   @keyframes landing-shimmer {
     0%,
     20% {
@@ -1092,6 +2299,26 @@
       transform: translate(-50%, -50%) scale(1.08);
       opacity: 0.82;
     }
+  }
+
+  @keyframes hero-min-stage-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes hero-min-bg-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes hero-min-rule-in {
+    from { width: 0; opacity: 0; }
+    to   { width: 88px; opacity: 1; }
+  }
+
+  @keyframes hero-min-fade-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes landing-spin-ring {
@@ -1195,6 +2422,19 @@
     .landing-hero-aurora,
     .landing-hero-aurora-alt,
     .landing-hero-halo,
+    .hero-min-stage,
+    .hero-min-bg,
+    .hero-min-rule,
+    .hero-min-fade,
+    .hero-min-emphasis,
+    .dash-in,
+    .dash-chart-bar,
+    .dash-tab::after,
+    .dash-progress-fill,
+    .dash-progress-fill::after,
+    .dash-modal-overlay,
+    .dash-modal,
+    .dash-plan-card,
     .landing-hero-ring,
     .landing-hero-scanline::before,
     .landing-float-slow,

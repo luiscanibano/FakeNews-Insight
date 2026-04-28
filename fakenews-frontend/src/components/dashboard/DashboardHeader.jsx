@@ -1,6 +1,6 @@
 /**
  * @file DashboardHeader.jsx
- * @description Componente del dashboard para renderizar analisis, resultados, navegacion y paneles operativos.
+ * @description Componente del dashboard para renderizar análisis, resultados, navegacion y paneles operativos.
  */
 
 import { Link } from "react-router-dom";
@@ -50,14 +50,15 @@ function DashboardHeader({
             const isActive = item.id === activeNavId;
 
             return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onNavSelect(item.id)}
-              className={`landing-nav-link ${isActive ? "bg-white/5 text-on-surface" : ""}`}
-            >
-              {item.label}
-            </button>
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onNavSelect(item.id)}
+                className={`dash-tab ${isActive ? "is-active" : ""}`}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {item.label}
+              </button>
             );
           })}
         </nav>
@@ -66,21 +67,22 @@ function DashboardHeader({
           <button
             type="button"
             onClick={onOpenPlanSelector}
-            className="rounded-full border border-outline-variant/30 bg-surface/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-primary transition-colors hover:bg-surface"
+            className="dash-pill dash-pill-emphasis"
           >
-            Plan {planLabel}
+            <Crown className="size-3.5" />
+            {planLabel}
           </button>
           <button
             type="button"
             onClick={onOpenAccountPanel}
-            className="inline-flex max-w-44 items-center gap-1.5 truncate rounded-full border border-outline-variant/20 bg-surface/45 px-3 py-1.5 text-xs text-on-surface-variant transition-colors hover:border-primary/40 hover:bg-surface hover:text-on-surface"
+            className="dash-pill max-w-44 truncate"
             aria-label="Abrir panel de cuenta"
             title="Gestionar cuenta"
           >
-            <UserRound className="size-3.5 text-primary" />
-            {accountLabel}
+            <UserRound className="size-3.5" />
+            <span className="truncate">{accountLabel}</span>
           </button>
-          <Button type="button" variant="outline" size="sm" onClick={onLogout}>
+          <Button type="button" variant="ghost" size="sm" onClick={onLogout} className="dash-tab">
             <LogOut className="size-3.5" />
             Salir
           </Button>
@@ -100,7 +102,7 @@ function DashboardHeader({
                   Navegacion principal del panel.
                 </SheetDescription>
               </SheetHeader>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5">
                 {navItems.map((item, index) => {
                   const isActive = item.id === activeNavId;
 
@@ -109,12 +111,8 @@ function DashboardHeader({
                       <button
                         type="button"
                         onClick={() => onNavSelect(item.id)}
-                        className={`landing-mobile-link rounded-xl border px-3 py-2 text-left text-xs uppercase tracking-widest ${
-                          isActive
-                            ? "border-primary/35 bg-primary/10 text-primary"
-                            : "border-outline-variant/20 text-on-surface/80"
-                        }`}
-                        style={{ "--nav-delay": `${index * 70}ms` }}
+                        className={`dash-mobile-item landing-mobile-link ${isActive ? "is-active" : ""}`}
+                        style={{ "--nav-delay": `${index * 60}ms` }}
                       >
                         {item.label}
                       </button>
@@ -145,7 +143,7 @@ function DashboardHeader({
               </SheetClose>
               <Button type="button" variant="outline" className="mt-6 w-full" onClick={onLogout}>
                 <LogOut className="size-4" />
-                Cerrar sesion
+                Cerrar sesión
               </Button>
             </SheetContent>
           </Sheet>
