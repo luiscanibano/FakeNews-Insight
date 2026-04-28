@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -16,6 +17,7 @@ import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedb
  */
 function ResetPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
   /** Estado local de formulario y mensajes de estado.
  */
   const [password, setPassword] = useState("");
@@ -42,9 +44,7 @@ function ResetPassword() {
       const refreshToken = hashParams.get("refresh_token");
 
       if (type !== "recovery" || !accessToken || !refreshToken) {
-        setLocalError(
-          "El enlace de recuperación es invalido o ha expirado. Solicita uno nuevo."
-        );
+        setLocalError(t("reset.errorInvalidLink"));
         return;
       }
 
@@ -72,18 +72,18 @@ function ResetPassword() {
     }
 
     if (password.length < 6) {
-      setLocalError("La contraseña debe tener al menos 6 caracteres.");
+      setLocalError(t("reset.errorMinLength"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setLocalError("Las contrasenas no coinciden.");
+      setLocalError(t("reset.errorMismatch"));
       return;
     }
 
     try {
       await updatePassword({ password });
-      setSuccessMessage("Contraseña actualizada correctamente. Ya puedes iniciar sesión.");
+      setSuccessMessage(t("reset.successMessage"));
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 1000);
@@ -95,24 +95,20 @@ function ResetPassword() {
 
   return (
     <AuthLayout
-      title="Nueva contraseña"
-      description="Establece una contraseña segura para volver a acceder a tu cuenta de forma inmediata."
-      highlights={[
-        "Verificación de token de recuperación al cargar la página.",
-        "Validación local para evitar contraseñas débiles.",
-        "Redirección automática al login tras actualización.",
-      ]}
-      bottomText="¿Quieres volver al acceso?"
+      title={t("reset.title")}
+      description={t("reset.description")}
+      highlights={t("reset.highlights", { returnObjects: true })}
+      bottomText={t("reset.bottomText")}
       bottomLinkTo="/login"
-      bottomLinkLabel="Ir al login"
+      bottomLinkLabel={t("reset.bottomLink")}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-on-surface">Nueva contraseña</Label>
+          <Label htmlFor="password" className="text-on-surface">{t("fields.newPassword")}</Label>
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("fields.passwordPlaceholder")}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             autoComplete="new-password"
@@ -123,11 +119,11 @@ function ResetPassword() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirm-password" className="text-on-surface">Confirmar contraseña</Label>
+          <Label htmlFor="confirm-password" className="text-on-surface">{t("fields.confirmPassword")}</Label>
           <Input
             id="confirm-password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("fields.passwordPlaceholder")}
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
             autoComplete="new-password"
@@ -146,7 +142,7 @@ function ResetPassword() {
           className="landing-shimmer h-11 w-full rounded-xl bg-primary font-bold text-on-primary"
           disabled={loading || !isReady}
         >
-          {loading ? "Guardando..." : "Actualizar contraseña"}
+          {loading ? t("reset.loading") : t("reset.submit")}
         </Button>
       </form>
     </AuthLayout>

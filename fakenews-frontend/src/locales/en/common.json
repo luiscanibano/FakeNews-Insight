@@ -1,0 +1,16 @@
+{
+  "language": {
+    "label": "Language",
+    "es": "Spanish",
+    "en": "English"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading..."
+  }
+}

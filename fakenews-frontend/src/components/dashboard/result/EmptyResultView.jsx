@@ -4,41 +4,42 @@
  */
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 /** Placeholder mostrado antes de cualquier análisis para guiar al usuario. */
 function EmptyResultView() {
+  const { t } = useTranslation("dashboard");
   return (
     <>
       <div className="text-center">
         <h2 className="mt-2 font-headline text-2xl font-bold text-on-surface sm:text-3xl">
-          Esperando tu primer análisis
+          {t("result.empty.title")}
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-on-surface-variant">
-          Cuando analices una noticia, aqui veras el veredicto, la fuerza SVM y las acciones
-          disponibles.
+          {t("result.empty.subtitle")}
         </p>
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-outline-variant/25 bg-surface/50 p-3 text-center">
-          <p className="text-xs uppercase tracking-wider text-on-surface-variant">Veredicto</p>
+          <p className="text-xs uppercase tracking-wider text-on-surface-variant">{t("result.empty.verdictLabel")}</p>
           <p className="mt-1 text-lg font-bold text-on-surface/50">--</p>
         </div>
         <div className="rounded-xl border border-outline-variant/25 bg-surface/50 p-3 text-center">
-          <p className="text-xs uppercase tracking-wider text-on-surface-variant">Fuerza SVM</p>
+          <p className="text-xs uppercase tracking-wider text-on-surface-variant">{t("result.empty.svmStrengthLabel")}</p>
           <p className="mt-1 text-lg font-bold text-on-surface/50">--</p>
         </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          Guardar en historial
+          {t("result.actions.saveHistory")}
         </Button>
         <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          Generar enlace público
+          {t("result.actions.publicLink")}
         </Button>
         <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          Reportar fallo
+          {t("result.actions.report")}
         </Button>
       </div>
     </>

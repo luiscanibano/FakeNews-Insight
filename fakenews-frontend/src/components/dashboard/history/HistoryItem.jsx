@@ -5,6 +5,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { getVerdictClass } from "./historyVerdict";
+import { translateVerdictLabel } from "../result/verdictI18n";
 
 /** Render unitario de un análisis con titulo, veredicto, fragmento y metadatos. */
 function HistoryItem({ analysis, index = 0 }) {
@@ -48,7 +49,7 @@ function HistoryItem({ analysis, index = 0 }) {
 
       <span className={`dash-verdict ${getVerdictClass(analysis.verdictLabel)}`}>
         <span className="dash-verdict-dot" aria-hidden="true" />
-        {analysis.verdictLabel}
+        {translateVerdictLabel(analysis.verdictLabel)}
       </span>
     </article>
   );

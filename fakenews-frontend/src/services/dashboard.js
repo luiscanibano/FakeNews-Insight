@@ -4,6 +4,7 @@
  */
 
 import { getSupabaseClient } from "./supabase";
+import i18next from "i18next";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const DASHBOARD_CHART_DAYS = 10;
@@ -58,7 +59,9 @@ const formatChartDateLabel = (date) => {
     return "--/--";
   }
 
-  return new Intl.DateTimeFormat("es-ES", {
+  const lang = (i18next.language || "es").toLowerCase().split("-")[0];
+  const locale = lang === "en" ? "en-US" : "es-ES";
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "2-digit",
   }).format(date);
@@ -228,7 +231,7 @@ const buildLast30DaysSeries = (rows) => {
     const dateKey = getUtcDateKeyFromDate(referenceDate);
 
     return {
-      label: offset === 0 ? "Hoy" : formatChartDateLabel(referenceDate),
+      label: offset === 0 ? i18next.t("home.today", { ns: "dashboard", defaultValue: "Hoy" }) : formatChartDateLabel(referenceDate),
       count: dateKey ? countsByDay.get(dateKey) || 0 : 0,
     };
   });
@@ -248,12 +251,17 @@ const getUsageMetricsFromProfile = ({ profile, fallbackPlan }) => {
   const usedToday = profileDate === todayUtcDate ? profileUsed : 0;
 
   const remainingLabel =
-    resolvedLimit === null ? "Ilimitados" : Math.max(0, resolvedLimit - usedToday);
+    resolvedLimit === null
+      ? i18next.t("home.unlimitedRemaining", { ns: "dashboard", defaultValue: "Ilimitados" })
+      : Math.max(0, resolvedLimit - usedToday);
 
   return {
     remainingLabel,
     usedToday,
-    dailyLimitLabel: resolvedLimit === null ? "Ilimitado" : resolvedLimit,
+    dailyLimitLabel:
+      resolvedLimit === null
+        ? i18next.t("home.unlimited", { ns: "dashboard", defaultValue: "Ilimitado" })
+        : resolvedLimit,
   };
 };
 

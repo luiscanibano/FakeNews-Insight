@@ -4,12 +4,7 @@
  */
 
 import { FileSpreadsheet, Globe2, ArrowRight } from "lucide-react";
-
-const MODE_TITLES = {
-  text: "Modo texto",
-  url: "Modo URL",
-  csv: "Modo lote CSV",
-};
+import { useTranslation } from "react-i18next";
 
 function DashboardAnalysisPanel({
   modeOptions,
@@ -29,15 +24,21 @@ function DashboardAnalysisPanel({
   localError,
   analysisProgress,
 }) {
+  const { t } = useTranslation("dashboard");
+  const MODE_TITLES = {
+    text: t("modes.modeTitleText"),
+    url: t("modes.modeTitleUrl"),
+    csv: t("modes.modeTitleCsv"),
+  };
   return (
     <section className="dash-in dash-panel" style={{ "--i": 1 }}>
       <header className="dash-panel-head flex-wrap">
         <div>
-          <h2 className="dash-panel-title">Configura el análisis</h2>
+          <h2 className="dash-panel-title">{t("analysisPanel.title")}</h2>
           <p className="dash-panel-meta">{modeTagline}</p>
         </div>
 
-        <div className="dash-seg" role="tablist" aria-label="Modo de análisis">
+        <div className="dash-seg" role="tablist" aria-label={t("analysisPanel.tabsLabel")}>
           {modeOptions.map((mode) => {
             const isActive = analysisMode === mode.id;
             const Icon = mode.Icon;
@@ -53,7 +54,7 @@ function DashboardAnalysisPanel({
               >
                 <Icon className="size-3.5" />
                 {mode.label}
-                {mode.locked ? <span className="dash-seg-badge">Ultra</span> : null}
+                {mode.locked ? <span className="dash-seg-badge">{t("modes.ultraBadge")}</span> : null}
               </button>
             );
           })}
@@ -62,14 +63,14 @@ function DashboardAnalysisPanel({
 
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-2">
-          <p className="dash-stat-label">{MODE_TITLES[analysisMode] || "Entrada"}</p>
+          <p className="dash-stat-label">{MODE_TITLES[analysisMode] || t("analysisPanel.title")}</p>
 
           {analysisMode === "text" ? (
             <div className="dash-input-shell">
               <textarea
                 value={textPayload}
                 onChange={(event) => onTextPayloadChange(event.target.value)}
-                placeholder="Pega o escribe la noticia que quieres verificar..."
+                placeholder={t("analysisPanel.textPlaceholder")}
                 disabled={isAnalysing}
                 className="dash-textarea"
               />
@@ -80,18 +81,18 @@ function DashboardAnalysisPanel({
             <div>
               <label className="dash-stat-label">
                 <Globe2 className="dash-stat-label-icon size-3.5" />
-                URL de la noticia
+                {t("analysisPanel.urlLabel")}
               </label>
               <input
                 type="url"
-                placeholder="https://ejemplo.com/noticia"
+                placeholder={t("analysisPanel.urlPlaceholder")}
                 value={urlPayload}
                 disabled={isAnalysing}
                 onChange={(event) => onUrlPayloadChange(event.target.value)}
                 className="dash-input mt-2"
               />
               <p className="dash-field-hint">
-                Extraemos titular, contexto y metadatos para un dictamen trazable.
+                {t("analysisPanel.urlHint")}
               </p>
             </div>
           ) : null}
@@ -115,10 +116,10 @@ function DashboardAnalysisPanel({
                   <FileSpreadsheet className="size-5" />
                 </span>
                 <span className="text-sm font-semibold text-on-surface">
-                  {csvFile ? csvFile.name : "Seleccionar archivo CSV"}
+                  {csvFile ? csvFile.name : t("analysisPanel.csvSelect")}
                 </span>
                 <span className="dash-field-hint mt-0">
-                  Sube un lote de titulares para procesarlos en bloque.
+                  {t("analysisPanel.csvHint")}
                 </span>
               </button>
             </div>
@@ -133,16 +134,16 @@ function DashboardAnalysisPanel({
 
         {!canUseCsvAnalysis ? (
           <p className="dash-alert dash-alert-info">
-            El análisis por lotes CSV se desbloquea en el plan Ultra.
+            {t("analysisPanel.csvLockedUltra")}
           </p>
         ) : null}
 
         <div className="flex items-center justify-between gap-3 pt-1">
           <p className="dash-panel-meta">
-            {isAnalysing ? "Procesando..." : "Listo para analizar"}
+            {isAnalysing ? t("analysisPanel.processing") : t("analysisPanel.ready")}
           </p>
           <button type="submit" disabled={isAnalysing} className="dash-cta">
-            {isAnalysing ? "Analizando..." : "Analizar"}
+            {isAnalysing ? t("analysisPanel.analyzing") : t("analysisPanel.analyze")}
             <ArrowRight className="dash-cta-arrow size-4" aria-hidden="true" />
           </button>
         </div>
@@ -159,7 +160,7 @@ function DashboardAnalysisPanel({
               <div className="dash-progress-fill" style={{ width: `${analysisProgress}%` }} />
             </div>
             <p className="dash-panel-meta">
-              Procesando señales · {analysisProgress}%
+              {t("analysisPanel.progress", { progress: analysisProgress })}
             </p>
           </div>
         ) : null}

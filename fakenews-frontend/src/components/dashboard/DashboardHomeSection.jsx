@@ -4,6 +4,8 @@
  */
 
 import { ArrowRight, ArrowUpRight, BarChart3, CalendarDays, Crown } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { translateVerdictLabel } from "./result/verdictI18n";
 
 /** Asigna clases del verdict-dot según veredicto normalizado del análisis. */
 const getVerdictClass = (verdict) => {
@@ -29,6 +31,7 @@ function DashboardHomeSection({
   homeError,
   onStartAnalysis,
 }) {
+  const { t } = useTranslation("dashboard");
   const safeSeries = Array.isArray(last30DaysSeries) ? last30DaysSeries : [];
   const maxSeriesValue = Math.max(1, ...safeSeries.map((point) => point.count || 0));
   const totalSeries = safeSeries.reduce((acc, point) => acc + (Number(point.count) || 0), 0);
@@ -41,22 +44,19 @@ function DashboardHomeSection({
       <div className="dash-in" style={{ "--i": 0 }}>
         <span className="dash-home-eyebrow">
           <span className="dash-home-eyebrow-dot" aria-hidden="true" />
-          Resumen de tu cuenta
+          {t("home.eyebrow")}
         </span>
 
         <h1 className="dash-home-h1 mt-3">
-          Tu actividad,{" "}
-          <span className="dash-home-h1-soft">de un vistazo.</span>
+          {t("home.titlePrefix")}{" "}
+          <span className="dash-home-h1-soft">{t("home.titleSoft")}</span>
         </h1>
 
-        <p className="dash-home-sub">
-          Consumo, evolución reciente y tus últimos análisis. Todo conectado en
-          tiempo real con tu cuenta.
-        </p>
+        <p className="dash-home-sub">{t("home.subtitle")}</p>
 
         <div className="mt-5 flex items-center gap-2">
           <button type="button" onClick={onStartAnalysis} className="dash-cta">
-            Analizar un texto
+            {t("home.ctaAnalyze")}
             <ArrowRight className="dash-cta-arrow size-4" aria-hidden="true" />
           </button>
         </div>
@@ -67,35 +67,35 @@ function DashboardHomeSection({
         <div className="dash-stat dash-stat-primary">
           <p className="dash-stat-label">
             <BarChart3 className="dash-stat-label-icon size-3.5" />
-            Análisis restantes hoy
+            {t("home.remainingToday")}
           </p>
           <p className="dash-stat-value">
             {safeUsageMetrics.remainingLabel}
             <span className="dash-stat-value-suffix">
-              de {safeUsageMetrics.dailyLimitLabel}
+              {t("home.remainingTodayOf", { limit: safeUsageMetrics.dailyLimitLabel })}
             </span>
           </p>
           <p className="dash-stat-foot">
-            Cupo diario disponible para tu plan.
+            {t("home.remainingTodayFoot")}
           </p>
         </div>
 
         <div className="dash-stat">
           <p className="dash-stat-label">
             <Crown className="dash-stat-label-icon size-3.5" />
-            Plan actual
+            {t("home.currentPlan")}
           </p>
           <p className="dash-stat-value">{planLabel}</p>
-          <p className="dash-stat-foot">Suscripción activa.</p>
+          <p className="dash-stat-foot">{t("home.currentPlanFoot")}</p>
         </div>
 
         <div className="dash-stat">
           <p className="dash-stat-label">
             <CalendarDays className="dash-stat-label-icon size-3.5" />
-            Este mes
+            {t("home.thisMonth")}
           </p>
           <p className="dash-stat-value">{safeUsageMetrics.usedThisMonth}</p>
-          <p className="dash-stat-foot">Análisis acumulados.</p>
+          <p className="dash-stat-foot">{t("home.thisMonthFoot")}</p>
         </div>
       </div>
 
@@ -103,17 +103,17 @@ function DashboardHomeSection({
       <div className="dash-in dash-panel" style={{ "--i": 2 }}>
         <header className="dash-panel-head">
           <div>
-            <h2 className="dash-panel-title">Actividad reciente</h2>
+            <h2 className="dash-panel-title">{t("home.recentActivity")}</h2>
             <p className="dash-panel-meta">
-              Ãšltimos 10 días · {totalSeries} análisis
+              {t("home.recentActivityMeta", { total: totalSeries })}
             </p>
           </div>
           <span className="dash-panel-meta">
-            Pico: {maxSeriesValue}
+            {t("home.peak", { peak: maxSeriesValue })}
           </span>
         </header>
 
-        <div className="dash-chart" role="img" aria-label="Análisis por día en los últimos 10 días">
+        <div className="dash-chart" role="img" aria-label={t("home.chartAria")}>
           {safeSeries.map((point, index) => {
             const value = Number(point.count) || 0;
             const barHeight = Math.max(2, Math.round((value / maxSeriesValue) * 100));
@@ -147,7 +147,7 @@ function DashboardHomeSection({
         </div>
 
         {homeLoading ? (
-          <p className="mt-3 text-xs text-on-surface-variant">Cargando actividad...</p>
+          <p className="mt-3 text-xs text-on-surface-variant">{t("home.loadingActivity")}</p>
         ) : null}
 
         {homeError ? (
@@ -159,9 +159,9 @@ function DashboardHomeSection({
       <div className="dash-in" style={{ "--i": 3 }}>
         <header className="dash-panel-head">
           <div>
-            <h2 className="dash-panel-title">Análisis recientes</h2>
+            <h2 className="dash-panel-title">{t("home.recentAnalyses")}</h2>
             <p className="dash-panel-meta">
-              Tus últimos 3 análisis registrados.
+              {t("home.recentAnalysesSub")}
             </p>
           </div>
         </header>
@@ -169,7 +169,7 @@ function DashboardHomeSection({
         <div className="dash-list">
           {recentAnalyses.length === 0 ? (
             <div className="dash-list-empty">
-              Aún no hay análisis recientes en tu cuenta.
+              {t("home.emptyRecent")}
             </div>
           ) : null}
 
@@ -188,7 +188,7 @@ function DashboardHomeSection({
 
               <span className={`dash-verdict ${getVerdictClass(analysis.verdictLabel)}`}>
                 <span className="dash-verdict-dot" aria-hidden="true" />
-                {analysis.verdictLabel}
+                {translateVerdictLabel(analysis.verdictLabel)}
               </span>
             </article>
           ))}

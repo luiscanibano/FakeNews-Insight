@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -18,6 +19,7 @@ const COOLDOWN_STORAGE_KEY = "forgot-password-cooldown-until";
 /** Pantalla para solicitar el enlace de recuperación de contraseña.
  */
 function ForgotPassword() {
+  const { t } = useTranslation("auth");
   /** Estado local del formulario y de mensajes visuales.
  */
   const [email, setEmail] = useState("");
@@ -101,9 +103,7 @@ function ForgotPassword() {
     event.preventDefault();
 
     if (cooldownSeconds > 0) {
-      setLocalError(
-        `Espera ${cooldownSeconds}s antes de solicitar otro enlace.`
-      );
+      setLocalError(t("forgot.cooldownError", { seconds: cooldownSeconds }));
       return;
     }
 
@@ -111,9 +111,7 @@ function ForgotPassword() {
 
     try {
       await requestPasswordReset({ email, redirectTo });
-      setSuccessMessage(
-        "Si el correo existe, te hemos enviado un enlace para restablecer la contraseña."
-      );
+      setSuccessMessage(t("forgot.successMessage"));
       startCooldown(30);
     } catch (requestError) {
       const message = requestError?.message?.toLowerCase() || "";
@@ -125,19 +123,19 @@ function ForgotPassword() {
 
   return (
     <AuthLayout
-      title="Recuperar contraseña"
-      description="Te enviaremos un enlace seguro para restablecer tu acceso en pocos segundos."
-      bottomText="¿Recordaste tu contraseña?"
+      title={t("forgot.title")}
+      description={t("forgot.description")}
+      bottomText={t("forgot.bottomText")}
       bottomLinkTo="/login"
-      bottomLinkLabel="Inicia sesión"
+      bottomLinkLabel={t("forgot.bottomLink")}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-on-surface">Correo electrónico</Label>
+          <Label htmlFor="email" className="text-on-surface">{t("fields.email")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="tu@email.com"
+            placeholder={t("fields.emailPlaceholder")}
             value={email}
             onChange={handleEmailChange}
             autoComplete="email"
@@ -156,10 +154,10 @@ function ForgotPassword() {
           disabled={loading || cooldownSeconds > 0}
         >
           {loading
-            ? "Enviando..."
+            ? t("forgot.loading")
             : cooldownSeconds > 0
-            ? `Reintentar en ${cooldownSeconds}s`
-            : "Enviar enlace"}
+            ? t("forgot.retryIn", { seconds: cooldownSeconds })
+            : t("forgot.submit")}
         </Button>
       </form>
     </AuthLayout>

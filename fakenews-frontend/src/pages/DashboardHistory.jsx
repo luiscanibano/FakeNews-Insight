@@ -5,6 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpenText, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { useHistoryStore } from "../store/historyStore";
 import HistoryItem from "../components/dashboard/history/HistoryItem";
@@ -17,6 +18,7 @@ const SEARCH_DEBOUNCE_MS = 250;
 
 /** Página de historial guardado manualmente por el usuario autenticado. */
 function DashboardHistory() {
+  const { t } = useTranslation("dashboard");
   const user = useAuthStore((state) => state.user);
   const historyLoading = useHistoryStore((state) => state.loading);
   const historyError = useHistoryStore((state) => state.error);
@@ -100,42 +102,40 @@ function DashboardHistory() {
       <div className="dash-in" style={{ "--i": 0 }}>
         <span className="dash-home-eyebrow">
           <span className="dash-home-eyebrow-dot" aria-hidden="true" />
-          Tu archivo personal
+          {t("history.eyebrow")}
         </span>
 
         <h1 className="dash-home-h1 mt-3">
-          Historial de análisis{" "}
-          <span className="dash-home-h1-soft">guardados.</span>
+          {t("history.titlePrefix")}{" "}
+          <span className="dash-home-h1-soft">{t("history.titleSoft")}</span>
         </h1>
 
         <p className="dash-home-sub">
-          Vista rápida de tus 5 análisis más recientes o vista completa con buscador
-          y paginación para navegar todo tu archivo.
+          {t("history.subtitle")}
         </p>
       </div>
 
       <div className="dash-in dash-panel" style={{ "--i": 1 }}>
         <header className="dash-panel-head flex-wrap">
           <div>
-            <h2 className="dash-panel-title">Registros guardados</h2>
+            <h2 className="dash-panel-title">{t("history.savedRecords")}</h2>
             <p className="dash-panel-meta">
               {showAllAnalyses
-                ? `${filteredItems.length} análisis coinciden con la búsqueda`
-                : `Mostrando vista previa de ${Math.min(
-                    PREVIEW_ITEMS_COUNT,
-                    historyItems.length
-                  )} análisis`}
+                ? t("history.matchesFound", { count: filteredItems.length })
+                : t("history.previewMeta", {
+                    count: Math.min(PREVIEW_ITEMS_COUNT, historyItems.length),
+                  })}
             </p>
           </div>
 
           <span className="dash-pill">
             <BookOpenText className="size-3.5" />
-            Guardado manual
+            {t("history.manualSave")}
           </span>
         </header>
 
         {historyLoading ? (
-          <p className="dash-panel-meta">Cargando historial guardado...</p>
+          <p className="dash-panel-meta">{t("history.loadingHistory")}</p>
         ) : null}
 
         {historyError ? (
@@ -154,13 +154,13 @@ function DashboardHistory() {
         <div className="dash-list">
           {!historyLoading && historyItems.length === 0 ? (
             <div className="dash-list-empty">
-              Aún no has guardado análisis en tu historial.
+              {t("history.emptyHistory")}
             </div>
           ) : null}
 
           {!historyLoading && showAllAnalyses && filteredItems.length === 0 ? (
             <div className="dash-list-empty">
-              No hay resultados para esa búsqueda. Prueba con otra palabra clave.
+              {t("history.emptySearch")}
             </div>
           ) : null}
 
@@ -179,13 +179,13 @@ function DashboardHistory() {
                   onClick={() => setShowAllAnalyses(true)}
                 >
                   <Search className="size-4" />
-                  Mostrar todos los análisis
+                  {t("history.showAll")}
                 </button>
               ) : null}
 
               {showAllAnalyses ? (
                 <button type="button" className="dash-btn" onClick={handleBackToPreview}>
-                  Volver a vista previa
+                  {t("history.backToPreview")}
                 </button>
               ) : null}
             </div>

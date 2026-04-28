@@ -6,7 +6,8 @@
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 
-/** CTA final de conversión para dirigir al registro o exploracion de API. */
+/** CTA final de conversión para dirigir al registro o exploracion de API.
+ */
 function LandingValueSection({ onExploreApi, content }) {
   return (
     <section className="bg-surface-container-lowest px-6 py-24">
@@ -26,11 +27,7 @@ function LandingValueSection({ onExploreApi, content }) {
               <p className="mx-auto mb-7 max-w-2xl text-base leading-relaxed text-on-surface-variant md:text-lg">{content.description}</p>
 
               <div className="mb-8 flex flex-wrap items-center justify-center gap-3">
-                {[
-                  "Deteccion en tiempo real",
-                  "Análisis multicapa",
-                  "Alertas tempranas",
-                ].map((tag) => (
+                {(content.tags ?? []).map((tag) => (
                   <span
                     key={tag}
                     className="inline-flex items-center rounded-full border border-outline-variant/25 bg-surface/55 px-3 py-1.5 text-[11px] uppercase tracking-wide text-on-surface-variant backdrop-blur-md"

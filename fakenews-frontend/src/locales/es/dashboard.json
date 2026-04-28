@@ -1,0 +1,230 @@
+{
+  "result": {
+    "empty": {
+      "title": "Esperando tu primer análisis",
+      "subtitle": "Cuando analices una noticia, aqui veras el veredicto, la fuerza SVM y las acciones disponibles.",
+      "verdictLabel": "Veredicto",
+      "svmStrengthLabel": "Fuerza SVM"
+    },
+    "actions": {
+      "saveHistory": "Guardar en historial",
+      "savedHistory": "Guardado en historial",
+      "saving": "Guardando...",
+      "publicLink": "Generar enlace público",
+      "report": "Reportar fallo",
+      "downloadReport": "Descargar reporte"
+    },
+    "analysing": {
+      "title": "Motor IA en proceso",
+      "subtitle": "Ejecutando análisis multicapa",
+      "phaseLabel": "Fase {{index}}",
+      "phases": ["Recopilando fuente", "Extrayendo patrones", "Calculando veredicto"]
+    },
+    "single": {
+      "intro": "Tenemos los resultados para tu noticia",
+      "headingSuffix": "FUERZA SVM",
+      "sourceLabel": "Fuente analizada",
+      "svmAbsolute": "Fuerza SVM (valor absoluto): {{value}}",
+      "detailsSummary": "Que significa la fuerza SVM",
+      "detailsLine1": "Es el nivel de conviccion del algoritmo.",
+      "detailsLine2": "Un valor cercano a 0 significa que la noticia tiene patrones contradictorios y la IA no esta 100% segura.",
+      "detailsLine3": "Valores altos indican una deteccion clara y contundente."
+    },
+    "batch": {
+      "intro": "Lote procesado correctamente",
+      "headingSuffix": "noticias analizadas",
+      "fileLabel": "Archivo",
+      "totalsLabel": "Totales",
+      "suspiciousLabel": "Sospechosas"
+    },
+    "verdicts": {
+      "FIABLE": "FIABLE",
+      "FALSA": "FALSA",
+      "DUDOSA": "DUDOSA",
+      "uncertainBadge": "INCIERTO / DUDOSO"
+    }
+  },
+  "header": {
+    "openAccount": "Abrir panel de cuenta",
+    "manageAccount": "Gestionar cuenta",
+    "logout": "Salir",
+    "logoutLong": "Cerrar sesión",
+    "openMenu": "Abrir menu dashboard",
+    "menuTitle": "Menu de dashboard",
+    "menuDescription": "Navegacion principal del panel.",
+    "currentPlan": "Plan actual: {{plan}}"
+  },
+  "nav": {
+    "home": "Inicio",
+    "analyze": "Analizar",
+    "history": "Mi historial",
+    "extension": "Extension navegador",
+    "apiKeys": "Developers",
+    "admin": "Admin"
+  },
+  "hero": {
+    "eyebrow": "Centro de análisis",
+    "titlePrefix": "Selecciona una opción y ",
+    "titleSoft": "empieza a analizar.",
+    "subtitle": "Cambia de modo en un clic y procesa noticias por texto, URL o lotes CSV. Cada análisis se ejecuta contra el mismo modelo entrenado en español."
+  },
+  "modes": {
+    "text": "Texto",
+    "url": "URL",
+    "csv": "Lote .CSV",
+    "ultraBadge": "Ultra",
+    "modeTitleText": "Modo texto",
+    "modeTitleUrl": "Modo URL",
+    "modeTitleCsv": "Modo lote CSV",
+    "taglineText": "Motor semántico para texto libre",
+    "taglineUrl": "Extraccion y verificacion desde fuente web",
+    "taglineCsv": "Procesamiento masivo de titulares en lote"
+  },
+  "analysisPanel": {
+    "title": "Configura el análisis",
+    "tabsLabel": "Modo de análisis",
+    "textPlaceholder": "Pega o escribe la noticia que quieres verificar...",
+    "urlLabel": "URL de la noticia",
+    "urlPlaceholder": "https://ejemplo.com/noticia",
+    "urlHint": "Extraemos titular, contexto y metadatos para un dictamen trazable.",
+    "csvSelect": "Seleccionar archivo CSV",
+    "csvHint": "Sube un lote de titulares para procesarlos en bloque.",
+    "csvLockedUltra": "El análisis por lotes CSV se desbloquea en el plan Ultra.",
+    "ready": "Listo para analizar",
+    "processing": "Procesando...",
+    "analyze": "Analizar",
+    "analyzing": "Analizando...",
+    "progress": "Procesando señales · {{progress}}%"
+  },
+  "home": {
+    "eyebrow": "Resumen de tu cuenta",
+    "titlePrefix": "Tu actividad,",
+    "titleSoft": "de un vistazo.",
+    "subtitle": "Consumo, evolución reciente y tus últimos análisis. Todo conectado en tiempo real con tu cuenta.",
+    "ctaAnalyze": "Analizar un texto",
+    "remainingToday": "Análisis restantes hoy",
+    "remainingTodayOf": "de {{limit}}",
+    "remainingTodayFoot": "Cupo diario disponible para tu plan.",
+    "currentPlan": "Plan actual",
+    "currentPlanFoot": "Suscripción activa.",
+    "thisMonth": "Este mes",
+    "thisMonthFoot": "Análisis acumulados.",
+    "recentActivity": "Actividad reciente",
+    "recentActivityMeta": "Últimos 10 días · {{total}} análisis",
+    "peak": "Pico: {{peak}}",
+    "chartAria": "Análisis por día en los últimos 10 días",
+    "loadingActivity": "Cargando actividad...",
+    "recentAnalyses": "Análisis recientes",
+    "recentAnalysesSub": "Tus últimos 3 análisis registrados.",
+    "emptyRecent": "Aún no hay análisis recientes en tu cuenta.",
+    "today": "Hoy",
+    "unlimited": "Ilimitado",
+    "unlimitedRemaining": "Ilimitados"
+  },
+  "history": {
+    "eyebrow": "Tu archivo personal",
+    "titlePrefix": "Historial de análisis",
+    "titleSoft": "guardados.",
+    "subtitle": "Vista rápida de tus 5 análisis más recientes o vista completa con buscador y paginación para navegar todo tu archivo.",
+    "savedRecords": "Registros guardados",
+    "matchesFound": "{{count}} análisis coinciden con la búsqueda",
+    "previewMeta": "Mostrando vista previa de {{count}} análisis",
+    "manualSave": "Guardado manual",
+    "loadingHistory": "Cargando historial guardado...",
+    "emptyHistory": "Aún no has guardado análisis en tu historial.",
+    "emptySearch": "No hay resultados para esa búsqueda. Prueba con otra palabra clave.",
+    "showAll": "Mostrar todos los análisis",
+    "backToPreview": "Volver a vista previa",
+    "filterPlaceholder": "Buscar por título, fragmento, fuente o veredicto...",
+    "pageOf": "Página {{current}} de {{total}}",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "previousAria": "Página anterior",
+    "nextAria": "Página siguiente"
+  },
+  "extension": {
+    "eyebrow": "Extensión de navegador",
+    "titlePrefix": "Verifica desde tu navegador,",
+    "titleSoft": "sin abrir el dashboard.",
+    "subtitle": "La extensión reutiliza tu cuenta de FakeNews Insight, respeta tu cuota diaria y permite guardar resultados en tu historial con un clic.",
+    "downloadCta": "Descargar extensión",
+    "compatibility": "Compatible con Google Chrome y Microsoft Edge (Manifest V3).",
+    "howToInstall": "Cómo instalarla",
+    "installSubtitle": "Por ahora la extensión se instala manualmente en modo desarrollador.",
+    "steps": [
+      {
+        "title": "Descarga el ZIP",
+        "description": "Pulsa el botón 'Descargar extensión' para abrir la página de Releases del repositorio y baja el último ZIP de la extensión."
+      },
+      {
+        "title": "Descomprime la carpeta",
+        "description": "Extrae el ZIP en una ubicación estable de tu equipo (no la borres mientras uses la extensión)."
+      },
+      {
+        "title": "Activa el modo desarrollador",
+        "description": "Abre chrome://extensions o edge://extensions y activa el interruptor 'Modo desarrollador' en la esquina superior derecha."
+      },
+      {
+        "title": "Carga la extensión descomprimida",
+        "description": "Pulsa 'Cargar descomprimida' y selecciona la carpeta que acabas de extraer. Fija el icono en la barra de herramientas para tenerlo a mano."
+      },
+      {
+        "title": "Inicia sesión",
+        "description": "Abre el popup, usa el mismo email y contraseña de FakeNews Insight y empieza a analizar textos sin salir de la página que estés leyendo."
+      }
+    ]
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "subtitle": "Esta página se conectara con Supabase para gestionar claves, rotacion y permisos de API."
+  },
+  "account": {
+    "myAccount": "Mi cuenta",
+    "manageTitle": "Gestiona tu cuenta y privacidad",
+    "sessionAs": "Sesión iniciada como {{email}}.",
+    "sessionGeneric": "Sesión iniciada.",
+    "currentPlan": "Plan actual: {{plan}}.",
+    "closePanelAria": "Cerrar panel de cuenta"
+  },
+  "password": {
+    "title": "Cambiar contraseña",
+    "oauthIntro": "Iniciaste sesión con {{provider}}, por lo que tu contraseña se gestiona directamente en {{provider}} y no está almacenada en nuestra plataforma.",
+    "oauthIntroFallbackProvider": "un proveedor externo",
+    "oauthOpen": "Abrir seguridad de {{provider}}",
+    "intro": "Por seguridad, te pediremos tu contraseña actual antes de aplicar el cambio.",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar contraseña",
+    "submit": "Actualizar contraseña",
+    "submitting": "Actualizando...",
+    "errorMismatch": "La nueva contraseña y su confirmación no coinciden.",
+    "successMessage": "Contraseña actualizada correctamente.",
+    "fallbackError": "No se pudo actualizar la contraseña."
+  },
+  "subscription": {
+    "title": "Gestionar suscripción",
+    "intro": "Cambia de plan, programa el regreso a Free al final del ciclo o reactiva una suscripción desde el selector de planes.",
+    "planChip": "Plan {{plan}}",
+    "openSelector": "Abrir selector de planes"
+  },
+  "planSelector": {
+    "eyebrow": "Gestión de plan",
+    "title": "Elige tu suscripción",
+    "subtitle": "Selecciona el plan que más se ajuste a tus necesidades.",
+    "closeAria": "Cerrar selector de plan",
+    "recommended": "Recomendado",
+    "currentTag": "Plan actual",
+    "currentAction": "Plan actual",
+    "activate": "Activar {{plan}}"
+  },
+  "delete": {
+    "title": "Eliminar cuenta (RGPD)",
+    "intro": "Esta acción es irreversible. Eliminaremos tu cuenta y datos asociados. Para confirmar, escribe",
+    "confirmation": "Confirmación",
+    "confirmPlaceholder": "Escribe ELIMINAR",
+    "submit": "Eliminar mi cuenta",
+    "submitting": "Eliminando...",
+    "errorPattern": "Escribe ELIMINAR en el campo para confirmar la baja.",
+    "fallbackError": "No se pudo eliminar la cuenta."
+  }
+}

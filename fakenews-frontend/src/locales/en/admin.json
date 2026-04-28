@@ -1,0 +1,40 @@
+{
+  "panel": {
+    "eyebrow": "Administrator",
+    "title": "Administrator panel",
+    "logout": "Sign out",
+    "greeting": "Hi, {{name}}. Welcome to the administration panel.",
+    "fallbackName": "admin",
+    "usersTitle": "User management",
+    "showMore": "Show more"
+  },
+  "users": {
+    "title": "All users",
+    "back": "Back to panel",
+    "searchPlaceholder": "Search by name or full ID...",
+    "found": "{{count}} user(s) found",
+    "page": "Page {{current}} of {{total}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "usersTable": {
+    "defaultTitle": "User management",
+    "loading": "Loading users...",
+    "empty": "No users to display.",
+    "savePlan": "Save plan",
+    "deactivate": "Deactivate"
+  },
+  "confirmDeactivate": "You are about to deactivate {{name}}. This action removes their profile and analyses. Continue?",
+  "kpis": {
+    "usersTitle": "Number of users",
+    "totalUsers": "Total users",
+    "totalFree": "Total FREE users",
+    "totalPro": "Total PRO users",
+    "totalUltra": "Total ULTRA users",
+    "apiCallsTitle": "API call volume",
+    "webToday": "Total WEB requests TODAY",
+    "extensionToday": "Total Extension requests TODAY",
+    "apiToday": "Total API requests TODAY",
+    "simulatedNote": "API call data is temporarily simulated."
+  }
+}

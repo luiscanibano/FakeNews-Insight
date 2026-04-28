@@ -4,11 +4,22 @@
  */
 
 export const landingNavbarContent = {
-  brand: "FakeNews Insight",
-  links: [
-    { label: "Características", href: "#features" },
-    { label: "Cómo funciona", href: "#process" },
-    { label: "Precios", href: "#pricing" },
-  ],
-  cta: "Empieza ahora",
+  es: {
+    brand: "FakeNews Insight",
+    links: [
+      { label: "Características", href: "#features" },
+      { label: "Cómo funciona", href: "#process" },
+      { label: "Precios", href: "#pricing" },
+    ],
+    cta: "Empieza ahora",
+  },
+  en: {
+    brand: "FakeNews Insight",
+    links: [
+      { label: "Features", href: "#features" },
+      { label: "How it works", href: "#process" },
+      { label: "Pricing", href: "#pricing" },
+    ],
+    cta: "Get started",
+  },
 };

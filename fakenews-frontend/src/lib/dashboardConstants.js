@@ -24,9 +24,9 @@ export const DASHBOARD_VIEW = {
  * `path` es relativo al prefijo "/dashboard". El item HOME usa "" para coincidir con la ruta indice.
  */
 export const DASHBOARD_NAV_ITEMS = [
-  { id: DASHBOARD_VIEW.HOME, label: "Inicio", path: "" },
-  { id: DASHBOARD_VIEW.ANALYZE, label: "Analizar", path: "analyze" },
-  { id: DASHBOARD_VIEW.HISTORY, label: "Mi historial", path: "history" },
-  { id: DASHBOARD_VIEW.EXTENSION, label: "Extension navegador", path: "extension" },
-  { id: DASHBOARD_VIEW.API_KEYS, label: "Developers", path: "api-keys" },
+  { id: DASHBOARD_VIEW.HOME, label: "Inicio", labelKey: "nav.home", path: "" },
+  { id: DASHBOARD_VIEW.ANALYZE, label: "Analizar", labelKey: "nav.analyze", path: "analyze" },
+  { id: DASHBOARD_VIEW.HISTORY, label: "Mi historial", labelKey: "nav.history", path: "history" },
+  { id: DASHBOARD_VIEW.EXTENSION, label: "Extension navegador", labelKey: "nav.extension", path: "extension" },
+  { id: DASHBOARD_VIEW.API_KEYS, label: "Developers", labelKey: "nav.apiKeys", path: "api-keys" },
 ];

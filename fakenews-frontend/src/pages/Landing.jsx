@@ -14,12 +14,13 @@ import LandingValueSection from "../components/landing/LandingValueSection";
 import LandingExtension from "../components/landing/LandingExtension";
 import LandingPricing from "../components/landing/LandingPricing";
 import LandingFooter from "../components/landing/LandingFooter";
-import { landingContent } from "../components/landing/landingContent";
+import { useLandingContent } from "../components/landing/landingContent";
 
 /** Compone la landing pública y conecta CTAs con rutas de autenticación.
  */
 function Landing() {
   const navigate = useNavigate();
+  const landingContent = useLandingContent();
 
   /** Activa animaciones de entrada conforme cada bloque entra en viewport.
  */

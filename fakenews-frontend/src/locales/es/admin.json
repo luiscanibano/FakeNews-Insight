@@ -1,0 +1,40 @@
+{
+  "panel": {
+    "eyebrow": "Administrador",
+    "title": "Panel de administrador",
+    "logout": "Cerrar sesión",
+    "greeting": "Hola, {{name}}. Bienvenido al panel de administración.",
+    "fallbackName": "admin",
+    "usersTitle": "Gestión de usuarios",
+    "showMore": "Mostrar más"
+  },
+  "users": {
+    "title": "Todos los usuarios",
+    "back": "Volver al panel",
+    "searchPlaceholder": "Buscar por nombre o ID completo...",
+    "found": "{{count}} usuario(s) encontrados",
+    "page": "Página {{current}} de {{total}}",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "usersTable": {
+    "defaultTitle": "Gestión de usuarios",
+    "loading": "Cargando usuarios...",
+    "empty": "No hay usuarios para mostrar.",
+    "savePlan": "Guardar plan",
+    "deactivate": "Dar de baja"
+  },
+  "confirmDeactivate": "Vas a dar de baja a {{name}}. Esta acción elimina su perfil y análisis. ¿Continuar?",
+  "kpis": {
+    "usersTitle": "Número de usuarios",
+    "totalUsers": "Total usuarios",
+    "totalFree": "Total usuarios FREE",
+    "totalPro": "Total usuarios PRO",
+    "totalUltra": "Total usuarios ULTRA",
+    "apiCallsTitle": "Número de llamadas a la API",
+    "webToday": "Total peticiones WEB HOY",
+    "extensionToday": "Total peticiones Extensión HOY",
+    "apiToday": "Total peticiones API HOY",
+    "simulatedNote": "Datos de llamadas API simulados temporalmente."
+  }
+}

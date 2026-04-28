@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { Crown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 
 /** Tabla de usuarios administrables con acciones de plan y baja de cuenta. */
@@ -14,11 +15,13 @@ function AdminUsersTable({
   actionLoadingUserId,
   onChangePlan,
   onDeactivate,
-  title = "Gestion de usuarios",
+  title,
   showMoreLabel,
   onShowMore,
   showUserId = false,
 }) {
+  const { t } = useTranslation("admin");
+  const resolvedTitle = title || t("usersTable.defaultTitle");
   const [draftPlansByUserId, setDraftPlansByUserId] = useState({});
 
   /** Sincroniza plan editable por fila con los datos actuales recibidos por props. */
@@ -43,7 +46,7 @@ function AdminUsersTable({
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 font-headline text-2xl font-bold">
           <Crown className="size-5 text-primary" />
-          {title}
+          {resolvedTitle}
         </h2>
         {showMoreLabel && onShowMore ? (
           <Button type="button" variant="outline" onClick={onShowMore}>
@@ -53,9 +56,9 @@ function AdminUsersTable({
       </div>
 
       {loading ? (
-        <p className="text-sm text-on-surface-variant">Cargando usuarios...</p>
+        <p className="text-sm text-on-surface-variant">{t("usersTable.loading")}</p>
       ) : users.length === 0 ? (
-        <p className="text-sm text-on-surface-variant">No hay usuarios para mostrar.</p>
+        <p className="text-sm text-on-surface-variant">{t("usersTable.empty")}</p>
       ) : (
         <div className="space-y-3">
           {users.map((managedUser) => {
@@ -99,7 +102,7 @@ function AdminUsersTable({
                     (draftPlansByUserId[managedUser.id] || "free") === (managedUser.plan || "free")
                   }
                 >
-                  Guardar plan
+                  {t("usersTable.savePlan")}
                 </Button>
                 <Button
                   type="button"
@@ -108,7 +111,7 @@ function AdminUsersTable({
                   onClick={() => onDeactivate(managedUser)}
                   disabled={isPending}
                 >
-                  Dar de baja
+                  {t("usersTable.deactivate")}
                 </Button>
               </div>
             );

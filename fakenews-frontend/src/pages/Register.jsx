@@ -4,6 +4,7 @@
  */
 
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -16,6 +17,7 @@ import { useAuthFormField } from "../hooks/useAuthFormField";
 /** Pantalla de registro de nuevos usuarios. */
 function Register() {
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
 
   const register = useAuthStore((state) => state.register);
   const loading = useAuthStore((state) => state.loading);
@@ -33,9 +35,7 @@ function Register() {
     try {
       await register({ email, password });
 
-      window.alert(
-        "Registro completado. Revisa tu correo para confirmar la cuenta antes de iniciar sesión."
-      );
+      window.alert(t("register.alertSuccess"));
 
       navigate("/login", { replace: true });
     } catch {
@@ -58,27 +58,27 @@ function Register() {
 
   return (
     <AuthLayout
-      title="Crear cuenta"
-      description="Regístrate y empieza a detectar desinformación en tiempo real con IA avanzada."
+      title={t("register.title")}
+      description={t("register.description")}
       floatingCard
-      bottomText="¿Ya tienes cuenta?"
+      bottomText={t("register.bottomText")}
       bottomLinkTo="/login"
       bottomLinkLabel={
         <>
-          <span>Inicia </span>
-          <em className="landing-title-emphasis italic">sesión</em>
+          <span>{t("register.bottomLinkPrefix")}</span>
+          <em className="landing-title-emphasis italic">{t("register.bottomLinkEmphasis")}</em>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-on-surface">
-            Correo electrónico
+            {t("fields.email")}
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="tu@email.com"
+            placeholder={t("fields.emailPlaceholder")}
             value={email}
             onChange={handleEmailChange}
             autoComplete="email"
@@ -89,12 +89,12 @@ function Register() {
 
         <div className="space-y-2">
           <Label htmlFor="password" className="text-on-surface">
-            Contraseña
+            {t("fields.password")}
           </Label>
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("fields.passwordPlaceholder")}
             value={password}
             onChange={handlePasswordChange}
             autoComplete="new-password"
@@ -111,12 +111,13 @@ function Register() {
             className="landing-shimmer h-11 w-full rounded-xl bg-primary font-bold text-on-primary"
             disabled={loading}
           >
-            {loading ? "Registrando..." : "Registrarse"}
+            {loading ? t("register.loading") : t("register.submit")}
           </Button>
           <GoogleSignInButton
             onClick={handleGoogleSignIn}
             loading={loading}
-            idleLabel="Registrarse con Google"
+            idleLabel={t("register.google")}
+            loadingLabel={t("register.googleLoading")}
           />
         </div>
       </form>

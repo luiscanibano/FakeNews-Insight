@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import GoogleIcon from "./GoogleIcon";
 
 /** Boton estandar para iniciar el flujo OAuth de Google. */
-function GoogleSignInButton({ onClick, loading, idleLabel, loadingLabel = "Redirigiendo..." }) {
+function GoogleSignInButton({ onClick, loading, idleLabel, loadingLabel = "..." }) {
   return (
     <Button
       type="button"

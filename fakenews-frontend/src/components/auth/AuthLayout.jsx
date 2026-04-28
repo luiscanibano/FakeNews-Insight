@@ -5,9 +5,11 @@
 
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 /** Layout reutilizable para login, registro y recuperación con narrativa de marca. */
 function AuthLayout({ title, description, highlights, children, bottomText, bottomLinkTo, bottomLinkLabel, floatingCard = false }) {
+  const { t } = useTranslation("auth");
   const brand = "FakeNews Insight";
   const [brandLead = brand, ...brandTailParts] = brand.split(" ");
   const brandTail = brandTailParts.join(" ");
@@ -41,7 +43,7 @@ function AuthLayout({ title, description, highlights, children, bottomText, bott
             to="/"
             className="landing-nav-link"
           >
-            INICIO
+            {t("layout.home")}
           </Link>
         </div>
       </header>
@@ -50,11 +52,11 @@ function AuthLayout({ title, description, highlights, children, bottomText, bott
         <aside className="auth-fade-up hidden lg:block">
           <div className="max-w-xl">
             <h1 className="mb-5 font-headline text-5xl font-extrabold leading-tight text-on-surface">
-              <span>Seguridad y claridad en cada </span>
-              <em className="landing-title-emphasis italic">sesión</em>
+              <span>{t("layout.asideTitlePrefix")}</span>
+              <em className="landing-title-emphasis italic">{t("layout.asideTitleEmphasis")}</em>
             </h1>
             <p className="mb-10 max-w-lg text-lg text-on-surface-variant">
-              Mantén tu flujo de verificación de noticias en un entorno seguro, rápido y diseñado para decisiones de confianza.
+              {t("layout.asideDescription")}
             </p>
 
             <div className="space-y-4">

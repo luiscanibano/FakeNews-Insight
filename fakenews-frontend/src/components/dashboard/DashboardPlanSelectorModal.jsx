@@ -5,10 +5,13 @@
 
 import { useEffect } from "react";
 import { Check, Crown, X } from "lucide-react";
-import { landingContent } from "@/components/landing/landingContent";
+import { useTranslation } from "react-i18next";
+import { useLandingContent } from "@/components/landing/landingContent";
 
 /** Popup editorial de selección de plan. */
 function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
+  const { t } = useTranslation("dashboard");
+  const landingContent = useLandingContent();
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -49,13 +52,13 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
           <div>
             <span className="dash-home-eyebrow">
               <Crown className="size-3.5" aria-hidden="true" />
-              Gestión de plan
+              {t("planSelector.eyebrow")}
             </span>
             <h2 className="dash-home-h1 mt-3" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)" }}>
-              Elige tu suscripción
+              {t("planSelector.title")}
             </h2>
             <p className="dash-home-sub" style={{ marginTop: "0.4rem" }}>
-              Selecciona el plan que más se ajuste a tus necesidades.
+              {t("planSelector.subtitle")}
             </p>
           </div>
 
@@ -63,7 +66,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
             type="button"
             className="dash-modal-close"
             onClick={onClose}
-            aria-label="Cerrar selector de plan"
+            aria-label={t("planSelector.closeAria")}
           >
             <X className="size-4" />
           </button>
@@ -83,9 +86,9 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
             return (
               <article key={plan.key} className={cardClasses} style={{ "--i": index }}>
                 {plan.recommended ? (
-                  <span className="dash-plan-recommended-tag">Recomendado</span>
+                  <span className="dash-plan-recommended-tag">{t("planSelector.recommended")}</span>
                 ) : null}
-                {isCurrent ? <span className="dash-plan-current-tag">Plan actual</span> : null}
+                {isCurrent ? <span className="dash-plan-current-tag">{t("planSelector.currentTag")}</span> : null}
 
                 <p className="dash-plan-name">{plan.name}</p>
 
@@ -110,7 +113,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
                   }`}
                   disabled
                 >
-                  {isCurrent ? "Plan actual" : `Activar ${plan.name}`}
+                  {isCurrent ? t("planSelector.currentAction") : t("planSelector.activate", { plan: plan.name })}
                 </button>
               </article>
             );

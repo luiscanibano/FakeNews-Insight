@@ -4,6 +4,7 @@
  */
 
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,6 +16,7 @@ import { useAuthFormField } from "../hooks/useAuthFormField";
 
 /** Pantalla de inicio de sesión. */
 function Login() {
+  const { t } = useTranslation("auth");
   const login = useAuthStore((state) => state.login);
   const loading = useAuthStore((state) => state.loading);
   const error = useAuthStore((state) => state.error);
@@ -50,22 +52,22 @@ function Login() {
 
   return (
     <AuthLayout
-      title="Iniciar sesión"
-      description="Accede a tu panel de verificación y continúa analizando titulares con precisión."
+      title={t("login.title")}
+      description={t("login.description")}
       floatingCard
-      bottomText="¿No tienes cuenta?"
+      bottomText={t("login.bottomText")}
       bottomLinkTo="/register"
-      bottomLinkLabel="Regístrate aquí"
+      bottomLinkLabel={t("login.bottomLink")}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-on-surface">
-            Correo electrónico
+            {t("fields.email")}
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="tu@email.com"
+            placeholder={t("fields.emailPlaceholder")}
             value={email}
             onChange={handleEmailChange}
             autoComplete="email"
@@ -76,12 +78,12 @@ function Login() {
 
         <div className="space-y-2">
           <Label htmlFor="password" className="text-on-surface">
-            Contraseña
+            {t("fields.password")}
           </Label>
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("fields.passwordPlaceholder")}
             value={password}
             onChange={handlePasswordChange}
             autoComplete="current-password"
@@ -98,12 +100,13 @@ function Login() {
             className="landing-shimmer h-11 w-full rounded-xl bg-primary font-bold text-on-primary"
             disabled={loading}
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? t("login.loading") : t("login.submit")}
           </Button>
           <GoogleSignInButton
             onClick={handleGoogleSignIn}
             loading={loading}
-            idleLabel="Continuar con Google"
+            idleLabel={t("login.google")}
+            loadingLabel={t("login.googleLoading")}
           />
         </div>
 
@@ -111,7 +114,7 @@ function Login() {
           to="/forgot-password"
           className="mt-4 block text-center text-sm text-on-surface/70 underline underline-offset-4 transition-colors hover:text-on-surface"
         >
-          ¿Has olvidado la contraseña?
+          {t("login.forgot")}
         </Link>
       </form>
     </AuthLayout>

@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FileSpreadsheet, Link2, Text } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { useDashboardStore } from "../store/dashboardStore";
@@ -104,6 +105,7 @@ function DashboardLayout({
 
 /** Página raiz del dashboard que monta layout, rutas anidadas y modales. */
 function Dashboard() {
+  const { t } = useTranslation("dashboard");
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const role = useAuthStore((state) => state.role);
@@ -117,23 +119,23 @@ function Dashboard() {
 
   const planLabel = formatPlanLabel(plan);
   const canUseCsvAnalysis = role === USER_ROLE.ADMIN || plan === USER_PLAN.ULTRA;
-  const accountLabel = profile?.display_name || user?.email || "Mi cuenta";
+  const accountLabel = profile?.display_name || user?.email || t("account.myAccount");
 
   const analysisFlow = useAnalysisFlow({ canUseCsvAnalysis });
   const { handleChangeAccountPassword, handleDeleteAccount } = useAccountActions();
 
   const modeOptions = [
-    { id: ANALYSIS_MODE.TEXT, label: "Texto", Icon: Text, locked: false },
-    { id: ANALYSIS_MODE.URL, label: "URL", Icon: Link2, locked: false },
-    { id: ANALYSIS_MODE.CSV, label: "Lote .CSV", Icon: FileSpreadsheet, locked: !canUseCsvAnalysis },
+    { id: ANALYSIS_MODE.TEXT, label: t("modes.text"), Icon: Text, locked: false },
+    { id: ANALYSIS_MODE.URL, label: t("modes.url"), Icon: Link2, locked: false },
+    { id: ANALYSIS_MODE.CSV, label: t("modes.csv"), Icon: FileSpreadsheet, locked: !canUseCsvAnalysis },
   ];
 
   const modeTagline =
     analysisFlow.analysisMode === ANALYSIS_MODE.TEXT
-      ? "Motor semántico para texto libre"
+      ? t("modes.taglineText")
       : analysisFlow.analysisMode === ANALYSIS_MODE.URL
-      ? "Extraccion y verificacion desde fuente web"
-      : "Procesamiento masivo de titulares en lote";
+      ? t("modes.taglineUrl")
+      : t("modes.taglineCsv");
 
   const location = useLocation();
   const isHomeView = resolveActiveNavId(location.pathname) === DASHBOARD_VIEW.HOME;

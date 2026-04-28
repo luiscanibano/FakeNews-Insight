@@ -1,0 +1,230 @@
+{
+  "result": {
+    "empty": {
+      "title": "Waiting for your first analysis",
+      "subtitle": "Once you analyze a news article, you'll see the verdict, SVM strength and available actions here.",
+      "verdictLabel": "Verdict",
+      "svmStrengthLabel": "SVM strength"
+    },
+    "actions": {
+      "saveHistory": "Save to history",
+      "savedHistory": "Saved to history",
+      "saving": "Saving...",
+      "publicLink": "Generate public link",
+      "report": "Report issue",
+      "downloadReport": "Download report"
+    },
+    "analysing": {
+      "title": "AI engine running",
+      "subtitle": "Running multi-layer analysis",
+      "phaseLabel": "Phase {{index}}",
+      "phases": ["Collecting source", "Extracting patterns", "Computing verdict"]
+    },
+    "single": {
+      "intro": "We have the results for your news",
+      "headingSuffix": "SVM STRENGTH",
+      "sourceLabel": "Analyzed source",
+      "svmAbsolute": "SVM strength (absolute value): {{value}}",
+      "detailsSummary": "What SVM strength means",
+      "detailsLine1": "It's the algorithm's confidence level.",
+      "detailsLine2": "A value close to 0 means the news has contradictory patterns and the AI isn't 100% sure.",
+      "detailsLine3": "High values indicate a clear and confident detection."
+    },
+    "batch": {
+      "intro": "Batch processed successfully",
+      "headingSuffix": "news items analyzed",
+      "fileLabel": "File",
+      "totalsLabel": "Totals",
+      "suspiciousLabel": "Suspicious"
+    },
+    "verdicts": {
+      "FIABLE": "RELIABLE",
+      "FALSA": "FALSE",
+      "DUDOSA": "DOUBTFUL",
+      "uncertainBadge": "UNCERTAIN / DOUBTFUL"
+    }
+  },
+  "header": {
+    "openAccount": "Open account panel",
+    "manageAccount": "Manage account",
+    "logout": "Sign out",
+    "logoutLong": "Sign out",
+    "openMenu": "Open dashboard menu",
+    "menuTitle": "Dashboard menu",
+    "menuDescription": "Main panel navigation.",
+    "currentPlan": "Current plan: {{plan}}"
+  },
+  "nav": {
+    "home": "Home",
+    "analyze": "Analyze",
+    "history": "My history",
+    "extension": "Browser extension",
+    "apiKeys": "Developers",
+    "admin": "Admin"
+  },
+  "hero": {
+    "eyebrow": "Analysis center",
+    "titlePrefix": "Pick an option and ",
+    "titleSoft": "start analyzing.",
+    "subtitle": "Switch modes in one click and process news by text, URL or CSV batches. Every analysis runs against the same model trained in Spanish."
+  },
+  "modes": {
+    "text": "Text",
+    "url": "URL",
+    "csv": "CSV batch",
+    "ultraBadge": "Ultra",
+    "modeTitleText": "Text mode",
+    "modeTitleUrl": "URL mode",
+    "modeTitleCsv": "CSV batch mode",
+    "taglineText": "Semantic engine for free text",
+    "taglineUrl": "Extraction and verification from a web source",
+    "taglineCsv": "Bulk processing of headlines in batch"
+  },
+  "analysisPanel": {
+    "title": "Configure the analysis",
+    "tabsLabel": "Analysis mode",
+    "textPlaceholder": "Paste or type the news you want to verify...",
+    "urlLabel": "News URL",
+    "urlPlaceholder": "https://example.com/news",
+    "urlHint": "We extract headline, context and metadata for a traceable verdict.",
+    "csvSelect": "Select CSV file",
+    "csvHint": "Upload a batch of headlines to process them in bulk.",
+    "csvLockedUltra": "CSV batch analysis unlocks on the Ultra plan.",
+    "ready": "Ready to analyze",
+    "processing": "Processing...",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "progress": "Processing signals · {{progress}}%"
+  },
+  "home": {
+    "eyebrow": "Account summary",
+    "titlePrefix": "Your activity,",
+    "titleSoft": "at a glance.",
+    "subtitle": "Usage, recent evolution and your latest analyses. All connected in real time with your account.",
+    "ctaAnalyze": "Analyze a text",
+    "remainingToday": "Analyses left today",
+    "remainingTodayOf": "of {{limit}}",
+    "remainingTodayFoot": "Daily quota available for your plan.",
+    "currentPlan": "Current plan",
+    "currentPlanFoot": "Active subscription.",
+    "thisMonth": "This month",
+    "thisMonthFoot": "Total analyses.",
+    "recentActivity": "Recent activity",
+    "recentActivityMeta": "Last 10 days · {{total}} analyses",
+    "peak": "Peak: {{peak}}",
+    "chartAria": "Analyses per day in the last 10 days",
+    "loadingActivity": "Loading activity...",
+    "recentAnalyses": "Recent analyses",
+    "recentAnalysesSub": "Your last 3 logged analyses.",
+    "emptyRecent": "No recent analyses on your account yet.",
+    "today": "Today",
+    "unlimited": "Unlimited",
+    "unlimitedRemaining": "Unlimited"
+  },
+  "history": {
+    "eyebrow": "Your personal archive",
+    "titlePrefix": "Saved analyses",
+    "titleSoft": "history.",
+    "subtitle": "Quick view of your 5 most recent analyses or full view with search and pagination to browse your whole archive.",
+    "savedRecords": "Saved records",
+    "matchesFound": "{{count}} analyses match the search",
+    "previewMeta": "Showing preview of {{count}} analyses",
+    "manualSave": "Manual save",
+    "loadingHistory": "Loading saved history...",
+    "emptyHistory": "You haven't saved any analyses to your history yet.",
+    "emptySearch": "No results for that search. Try another keyword.",
+    "showAll": "Show all analyses",
+    "backToPreview": "Back to preview",
+    "filterPlaceholder": "Search by title, snippet, source or verdict...",
+    "pageOf": "Page {{current}} of {{total}}",
+    "previous": "Previous",
+    "next": "Next",
+    "previousAria": "Previous page",
+    "nextAria": "Next page"
+  },
+  "extension": {
+    "eyebrow": "Browser extension",
+    "titlePrefix": "Verify from your browser,",
+    "titleSoft": "without opening the dashboard.",
+    "subtitle": "The extension reuses your FakeNews Insight account, respects your daily quota and lets you save results to your history with one click.",
+    "downloadCta": "Download extension",
+    "compatibility": "Compatible with Google Chrome and Microsoft Edge (Manifest V3).",
+    "howToInstall": "How to install it",
+    "installSubtitle": "For now the extension is installed manually in developer mode.",
+    "steps": [
+      {
+        "title": "Download the ZIP",
+        "description": "Click 'Download extension' to open the repository's Releases page and download the latest extension ZIP."
+      },
+      {
+        "title": "Unzip the folder",
+        "description": "Extract the ZIP to a stable location on your computer (do not delete it while using the extension)."
+      },
+      {
+        "title": "Enable developer mode",
+        "description": "Open chrome://extensions or edge://extensions and turn on the 'Developer mode' toggle in the top-right corner."
+      },
+      {
+        "title": "Load the unpacked extension",
+        "description": "Click 'Load unpacked' and pick the folder you just extracted. Pin the icon to the toolbar for easy access."
+      },
+      {
+        "title": "Sign in",
+        "description": "Open the popup, use the same email and password as FakeNews Insight and start analyzing texts without leaving the page you're reading."
+      }
+    ]
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "subtitle": "This page will connect with Supabase to manage keys, rotation and API permissions."
+  },
+  "account": {
+    "myAccount": "My account",
+    "manageTitle": "Manage your account and privacy",
+    "sessionAs": "Signed in as {{email}}.",
+    "sessionGeneric": "Signed in.",
+    "currentPlan": "Current plan: {{plan}}.",
+    "closePanelAria": "Close account panel"
+  },
+  "password": {
+    "title": "Change password",
+    "oauthIntro": "You signed in with {{provider}}, so your password is managed directly at {{provider}} and is not stored on our platform.",
+    "oauthIntroFallbackProvider": "an external provider",
+    "oauthOpen": "Open security of {{provider}}",
+    "intro": "For security, we'll ask for your current password before applying the change.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm password",
+    "submit": "Update password",
+    "submitting": "Updating...",
+    "errorMismatch": "The new password and its confirmation do not match.",
+    "successMessage": "Password updated successfully.",
+    "fallbackError": "Couldn't update the password."
+  },
+  "subscription": {
+    "title": "Manage subscription",
+    "intro": "Change plan, schedule the return to Free at the end of the cycle or reactivate a subscription from the plan selector.",
+    "planChip": "{{plan}} plan",
+    "openSelector": "Open plan selector"
+  },
+  "planSelector": {
+    "eyebrow": "Plan management",
+    "title": "Choose your subscription",
+    "subtitle": "Pick the plan that best fits your needs.",
+    "closeAria": "Close plan selector",
+    "recommended": "Recommended",
+    "currentTag": "Current plan",
+    "currentAction": "Current plan",
+    "activate": "Activate {{plan}}"
+  },
+  "delete": {
+    "title": "Delete account (GDPR)",
+    "intro": "This action is irreversible. We will delete your account and associated data. To confirm, type",
+    "confirmation": "Confirmation",
+    "confirmPlaceholder": "Type ELIMINAR",
+    "submit": "Delete my account",
+    "submitting": "Deleting...",
+    "errorPattern": "Type ELIMINAR in the field to confirm the deletion.",
+    "fallbackError": "Couldn't delete the account."
+  }
+}

@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import PasswordChangeSection from "./account/PasswordChangeSection";
 import SubscriptionSection from "./account/SubscriptionSection";
 import DeleteAccountSection from "./account/DeleteAccountSection";
@@ -22,6 +23,7 @@ function DashboardAccountPanel({
   onOpenPlanSelector,
   onDeleteAccount,
 }) {
+  const { t } = useTranslation("dashboard");
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -73,14 +75,14 @@ function DashboardAccountPanel({
           <div>
             <span className="dash-home-eyebrow">
               <span className="dash-home-eyebrow-dot" aria-hidden="true" />
-              Mi cuenta
+              {t("account.myAccount")}
             </span>
             <h2 className="dash-home-h1 mt-3" style={{ fontSize: "clamp(1.4rem, 2.6vw, 1.8rem)" }}>
-              Gestiona tu cuenta y privacidad
+              {t("account.manageTitle")}
             </h2>
             <p className="dash-home-sub" style={{ marginTop: "0.4rem" }}>
-              {email ? `Sesión iniciada como ${email}.` : "Sesión iniciada."} Plan actual:{" "}
-              {planLabel}.
+              {email ? t("account.sessionAs", { email }) : t("account.sessionGeneric")}{" "}
+              {t("account.currentPlan", { plan: planLabel })}
             </p>
           </div>
           <button
@@ -88,7 +90,7 @@ function DashboardAccountPanel({
             className="dash-modal-close"
             onClick={onClose}
             disabled={isAnyActionInFlight}
-            aria-label="Cerrar panel de cuenta"
+            aria-label={t("account.closePanelAria")}
           >
             <X className="size-4" />
           </button>

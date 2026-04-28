@@ -16,9 +16,12 @@ import ResetPassword from "./pages/ResetPassword";
 import Landing from "./pages/Landing";
 import { USER_ROLE } from "./lib/accessControl";
 import { useInactivityLogout } from "./hooks/useInactivityLogout";
+import LanguageSwitcher from "./components/common/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 /** Componente raiz: inicializa auth y define rutas publicas/privadas según rol. */
 function App() {
+  const { t } = useTranslation("common");
   const user = useAuthStore((state) => state.user);
   const role = useAuthStore((state) => state.role);
   const authReady = useAuthStore((state) => state.authReady);
@@ -58,13 +61,15 @@ function App() {
   if (!authReady) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-        Cargando sesión...
+        <LanguageSwitcher />
+        {t("actions.loading")}
       </div>
     );
   }
 
   return (
     <BrowserRouter>
+      <LanguageSwitcher />
       <Routes>
         <Route
           path="/"

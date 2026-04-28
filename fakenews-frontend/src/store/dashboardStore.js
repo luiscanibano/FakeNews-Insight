@@ -4,6 +4,7 @@
  */
 
 import { create } from "zustand";
+import i18next from "i18next";
 import { getDashboardHomeData } from "../services/dashboard";
 
 /** Estado base de métricas para evitar nulos en primer render. */
@@ -16,22 +17,38 @@ const EMPTY_USAGE_METRICS = {
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-/** Serie inicial de 10 dias con ceros para renderizar el grafico antes de cargar datos. */
-const EMPTY_LAST_30_DAYS_SERIES = Array.from({ length: 10 }, (_, index) => {
-  const offset = 9 - index;
-  const referenceDate = new Date(Date.now() - offset * DAY_IN_MS);
-  const label =
-    offset === 0
-      ? "Hoy"
-      : new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit" }).format(
-          referenceDate
-        );
+/** Devuelve el locale BCP47 para Intl segun el idioma activo de i18next. */
+const resolveDateLocale = () => {
+  const lang = (i18next.language || "es").toLowerCase().split("-")[0];
+  return lang === "en" ? "en-US" : "es-ES";
+};
 
-  return {
-    label,
-    count: 0,
-  };
-});
+/** Etiqueta localizada para "Hoy". */
+const resolveTodayLabel = () =>
+  i18next.t("home.today", { ns: "dashboard", defaultValue: "Hoy" });
+
+/** Construye la serie de 10 dias con etiquetas en el idioma activo. */
+const buildEmptyLast30DaysSeries = () => {
+  const locale = resolveDateLocale();
+  const todayLabel = resolveTodayLabel();
+  return Array.from({ length: 10 }, (_, index) => {
+    const offset = 9 - index;
+    const referenceDate = new Date(Date.now() - offset * DAY_IN_MS);
+    const label =
+      offset === 0
+        ? todayLabel
+        : new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit" }).format(
+            referenceDate
+          );
+
+    return {
+      label,
+      count: 0,
+    };
+  });
+};
+
+const EMPTY_LAST_30_DAYS_SERIES = buildEmptyLast30DaysSeries();
 
 export const useDashboardStore = create((set) => ({
   homeLoading: false,

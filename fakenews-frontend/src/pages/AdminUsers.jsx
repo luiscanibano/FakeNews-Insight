@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, UsersRound } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import AdminUsersTable from "../components/admin/AdminUsersTable";
@@ -13,9 +14,11 @@ import { useAdminStore } from "../store/adminStore";
 
 const PAGE_SIZE = 8;
 
-/** Listado completo de usuarios para gestion administrativa ampliada. */
+/** Listado completo de usuarios para gestion administrativa ampliada.
+ */
 function AdminUsers() {
   const navigate = useNavigate();
+  const { t } = useTranslation("admin");
   const users = useAdminStore((state) => state.users);
   const totalUsersCount = useAdminStore((state) => state.totalUsersCount);
   const loadingUsers = useAdminStore((state) => state.loadingUsers);
@@ -29,7 +32,8 @@ function AdminUsers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  /** Debounce simple para evitar peticiones en cada pulsacion de tecla. */
+  /** Debounce simple para evitar peticiones en cada pulsacion de tecla.
+ */
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setSearchTerm(searchInput.trim());
@@ -38,7 +42,8 @@ function AdminUsers() {
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
 
-  /** Carga la página actual de usuarios según filtro de busqueda en servidor. */
+  /** Carga la página actual de usuarios según filtro de busqueda en servidor.
+ */
   useEffect(() => {
     loadUsers({
       includeAdmins: false,
@@ -51,33 +56,36 @@ function AdminUsers() {
   const totalPages = Math.max(1, Math.ceil(totalUsersCount / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  /** Reinicia a primera página cuando cambia el filtro de busqueda aplicado. */
+  /** Reinicia a primera página cuando cambia el filtro de busqueda aplicado.
+ */
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  /** Evita páginas fuera de rango cuando cambia el total filtrado. */
+  /** Evita páginas fuera de rango cuando cambia el total filtrado.
+ */
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  /** Solicita el cambio de plan usando la acción de estado global del modulo admin. */
+  /** Solicita el cambio de plan usando la acción de estado global del modulo admin.
+ */
   const handleChangePlan = async (targetUser, plan) => {
     try {
       await setUserPlan({ targetUser, plan });
     } catch {
-      /** Error is already handled in the store state. */
+      /** Error is already handled in the store state.
+ */
     }
   };
 
-  /** Elimina el perfil de usuario tras confirmacion explicita del admin. */
+  /** Elimina el perfil de usuario tras confirmacion explicita del admin.
+ */
   const handleDeactivateUser = async (targetUser) => {
     const label = targetUser.display_name || targetUser.id.slice(0, 8);
-    const accepted = window.confirm(
-      `Vas a dar de baja a ${label}. Esta acción elimina su perfil y análisis. ¿Continuar?`
-    );
+    const accepted = window.confirm(t("confirmDeactivate", { name: label }));
 
     if (!accepted) {
       return;
@@ -92,7 +100,8 @@ function AdminUsers() {
         searchTerm,
       });
     } catch {
-      /** Error is already handled in the store state. */
+      /** Error is already handled in the store state.
+ */
     }
   };
 
@@ -102,11 +111,11 @@ function AdminUsers() {
         <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="flex items-center gap-2 font-headline text-3xl font-bold">
             <UsersRound className="size-6 text-primary" />
-            Todos los usuarios
+            {t("users.title")}
           </h1>
           <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => navigate("/admin")}>
             <ArrowLeft className="size-4" />
-            Volver al panel
+            {t("users.back")}
           </Button>
         </header>
 
@@ -121,16 +130,16 @@ function AdminUsers() {
             type="search"
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
-            placeholder="Buscar por nombre o ID completo..."
+            placeholder={t("users.searchPlaceholder")}
             className="h-10 border-outline-variant/30 bg-surface-container-high/60 text-on-surface"
           />
           <p className="text-sm text-on-surface-variant">
-            {totalUsersCount} usuario(s) encontrados
+            {t("users.found", { count: totalUsersCount })}
           </p>
         </section>
 
         <AdminUsersTable
-          title="Todos los usuarios"
+          title={t("users.title")}
           users={users}
           loading={loadingUsers}
           actionLoadingUserId={actionLoadingUserId}
@@ -141,7 +150,7 @@ function AdminUsers() {
 
         <section className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-on-surface-variant">
-            Página {safeCurrentPage} de {totalPages}
+            {t("users.page", { current: safeCurrentPage, total: totalPages })}
           </p>
           <div className="flex w-full items-center gap-2 sm:w-auto">
             <Button
@@ -151,7 +160,7 @@ function AdminUsers() {
               onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
               disabled={safeCurrentPage === 1}
             >
-              Anterior
+              {t("users.previous")}
             </Button>
             <Button
               type="button"
@@ -160,7 +169,7 @@ function AdminUsers() {
               onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
               disabled={safeCurrentPage === totalPages}
             >
-              Siguiente
+              {t("users.next")}
             </Button>
           </div>
         </section>

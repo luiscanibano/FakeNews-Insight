@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { ExternalLink, KeyRound } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import FeedbackBanner from "./FeedbackBanner";
 
 /** Formulario para cambiar contraseña, deshabilitado para usuarios OAuth-only. */
@@ -15,6 +16,8 @@ function PasswordChangeSection({
   onChangePassword,
   onSubmittingChange,
 }) {
+  const { t } = useTranslation("dashboard");
+  const providerLabel = primaryOauthLabel || t("password.oauthIntroFallbackProvider");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -35,7 +38,7 @@ function PasswordChangeSection({
     setPasswordTone("error");
 
     if (newPassword !== confirmPassword) {
-      setPasswordMessage("La nueva contraseña y su confirmación no coinciden.");
+      setPasswordMessage(t("password.errorMismatch"));
       return;
     }
 
@@ -43,13 +46,13 @@ function PasswordChangeSection({
 
     try {
       await onChangePassword({ currentPassword, newPassword });
-      setPasswordMessage("Contraseña actualizada correctamente.");
+      setPasswordMessage(t("password.successMessage"));
       setPasswordTone("success");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      setPasswordMessage(error.message || "No se pudo actualizar la contraseña.");
+      setPasswordMessage(error.message || t("password.fallbackError"));
     } finally {
       updateSubmitting(false);
     }
@@ -59,15 +62,13 @@ function PasswordChangeSection({
     <div className="dash-section">
       <div className="dash-section-head">
         <KeyRound className="size-4 text-on-surface-variant" aria-hidden="true" />
-        <h3 className="dash-section-title-sm">Cambiar contraseña</h3>
+        <h3 className="dash-section-title-sm">{t("password.title")}</h3>
       </div>
 
       {isOauthOnly ? (
         <div className="space-y-3">
           <p className="dash-section-text">
-            Iniciaste sesión con {primaryOauthLabel || "un proveedor externo"}, por lo que tu
-            contraseña se gestiona directamente en {primaryOauthLabel || "el proveedor"} y no
-            está almacenada en nuestra plataforma.
+            {t("password.oauthIntro", { provider: providerLabel })}
           </p>
           {primaryOauthUrl ? (
             <a
@@ -77,20 +78,20 @@ function PasswordChangeSection({
               className="dash-btn"
             >
               <ExternalLink className="size-3.5" />
-              Abrir seguridad de {primaryOauthLabel}
+              {t("password.oauthOpen", { provider: providerLabel })}
             </a>
           ) : null}
         </div>
       ) : (
         <>
           <p className="dash-section-text">
-            Por seguridad, te pediremos tu contraseña actual antes de aplicar el cambio.
+            {t("password.intro")}
           </p>
 
           <form onSubmit={handleSubmitPassword} className="dash-form-grid mt-4">
             <div className="dash-form-grid">
               <label htmlFor="account-current-password" className="dash-form-label">
-                Contraseña actual
+                {t("password.current")}
               </label>
               <input
                 id="account-current-password"
@@ -107,7 +108,7 @@ function PasswordChangeSection({
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="dash-form-grid">
                 <label htmlFor="account-new-password" className="dash-form-label">
-                  Nueva contraseña
+                  {t("password.new")}
                 </label>
                 <input
                   id="account-new-password"
@@ -123,7 +124,7 @@ function PasswordChangeSection({
               </div>
               <div className="dash-form-grid">
                 <label htmlFor="account-confirm-password" className="dash-form-label">
-                  Confirmar contraseña
+                  {t("password.confirm")}
                 </label>
                 <input
                   id="account-confirm-password"
@@ -141,7 +142,7 @@ function PasswordChangeSection({
 
             <div className="dash-form-actions">
               <button type="submit" className="dash-cta" disabled={isPasswordSubmitting}>
-                {isPasswordSubmitting ? "Actualizando..." : "Actualizar contraseña"}
+                {isPasswordSubmitting ? t("password.submitting") : t("password.submit")}
               </button>
             </div>
 
