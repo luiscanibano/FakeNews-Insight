@@ -215,7 +215,37 @@
     "recommended": "Recommended",
     "currentTag": "Current plan",
     "currentAction": "Current plan",
-    "activate": "Activate {{plan}}"
+    "activate": "Activate {{plan}}",
+    "subscribe": "Subscribe to {{plan}}",
+    "upgradeNow": "Upgrade to {{plan}} (prorated)",
+    "downgradeAtPeriodEnd": "Switch to {{plan}} at period end",
+    "cancelToFree": "Cancel at period end",
+    "resume": "Resume subscription",
+    "processing": "Processing...",
+    "managePortal": "Manage billing",
+    "managePortalHint": "Open the Stripe portal to update your card or view invoices.",
+    "scheduledNoticeDowngrade": "You keep your {{currentPlan}} plan for {{days}} more day(s). On {{date}} you'll move to {{nextPlan}}.",
+    "scheduledNoticeCancel": "Your subscription stays active {{days}} more day(s). On {{date}} you'll return to the FREE plan.",
+    "proratedExplain": "You'll only pay the prorated difference for the current period.",
+    "downgradeExplain": "You'll keep all the perks of your current plan until the billing cycle ends.",
+    "confirmDowngradeTitle": "Confirm plan change",
+    "confirmCancelTitle": "Confirm cancellation",
+    "confirmCancelBody": "No additional charges. Your account will return to the FREE plan at period end.",
+    "confirmContinue": "Yes, continue",
+    "confirmAbort": "Go back",
+    "feedback": {
+      "checkoutRedirect": "Taking you to Stripe to complete the payment...",
+      "upgradeSuccess": "Plan upgraded to {{plan}}. Stripe charged only the prorated difference.",
+      "downgradeScheduled": "Switch to {{plan}} scheduled. You keep your current plan for {{days}} more day(s).",
+      "cancelScheduled": "Cancellation scheduled. You keep your plan for {{days}} more day(s).",
+      "resumed": "Subscription resumed successfully.",
+      "confirmedSuccess": "Payment confirmed! Plan {{plan}} active.",
+      "checkoutCancelled": "Payment cancelled. No charges were made."
+    },
+    "errors": {
+      "loadSnapshot": "Couldn't load your subscription state.",
+      "genericAction": "Couldn't complete the operation."
+    }
   },
   "delete": {
     "title": "Delete account (GDPR)",

@@ -163,3 +163,30 @@ export const fetchBillingSnapshot = async ({ jwtToken }) => {
 
 	return response.json();
 };
+
+/** Cancela la suscripcion al final del periodo (downgrade programado a FREE). */
+export const cancelBillingSubscription = ({ jwtToken }) =>
+	sendBillingRequest({
+		endpoint: `${BILLING_API_BASE_URL}/billing/cancel`,
+		body: {},
+		jwtToken,
+		fallbackMessage: "No se pudo programar la cancelación de la suscripción.",
+	});
+
+/** Revierte un downgrade o cancelación programados. */
+export const resumeBillingSubscription = ({ jwtToken }) =>
+	sendBillingRequest({
+		endpoint: `${BILLING_API_BASE_URL}/billing/resume`,
+		body: {},
+		jwtToken,
+		fallbackMessage: "No se pudo reactivar tu suscripción.",
+	});
+
+/** Abre una sesión del Customer Portal de Stripe para autoservicio. */
+export const openBillingPortal = ({ jwtToken }) =>
+	sendBillingRequest({
+		endpoint: `${BILLING_API_BASE_URL}/billing/portal`,
+		body: {},
+		jwtToken,
+		fallbackMessage: "No se pudo abrir el portal de facturación.",
+	});

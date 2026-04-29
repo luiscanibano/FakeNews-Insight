@@ -18,6 +18,8 @@ import {
 import { collectIdentityProviders } from "../lib/identityProviders";
 import { useAnalysisFlow } from "../hooks/useAnalysisFlow";
 import { useAccountActions } from "../hooks/useAccountActions";
+import { useBillingActions } from "../hooks/useBillingActions";
+import { useBillingStore } from "../store/billingStore";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import DashboardPlanSelectorModal from "../components/dashboard/DashboardPlanSelectorModal";
 import DashboardAccountPanel from "../components/dashboard/DashboardAccountPanel";
@@ -123,6 +125,8 @@ function Dashboard() {
 
   const analysisFlow = useAnalysisFlow({ canUseCsvAnalysis });
   const { handleChangeAccountPassword, handleDeleteAccount } = useAccountActions();
+  const { confirmCheckout } = useBillingActions();
+  const loadBillingSnapshot = useBillingStore((state) => state.loadSnapshot);
 
   const modeOptions = [
     { id: ANALYSIS_MODE.TEXT, label: t("modes.text"), Icon: Text, locked: false },
@@ -138,6 +142,7 @@ function Dashboard() {
       : t("modes.taglineCsv");
 
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomeView = resolveActiveNavId(location.pathname) === DASHBOARD_VIEW.HOME;
 
   useEffect(() => {
@@ -146,6 +151,31 @@ function Dashboard() {
     }
     fetchHomeData({ userId: user.id, fallbackPlan: plan });
   }, [isHomeView, user?.id, plan, fetchHomeData]);
+
+  /** Captura el retorno de Stripe Checkout (?billing=success&session_id=...) y confirma el pago. */
+  useEffect(() => {
+    if (!user?.id) return;
+    const params = new URLSearchParams(location.search);
+    const billingFlag = params.get("billing");
+    if (!billingFlag) return;
+
+    const sessionId = params.get("session_id");
+    if (billingFlag === "success" && sessionId) {
+      confirmCheckout(sessionId).catch(() => {
+        /* error reflejado en billingStore */
+      });
+    } else if (billingFlag === "success") {
+      loadBillingSnapshot().catch(() => {});
+    }
+
+    params.delete("billing");
+    params.delete("session_id");
+    const cleanSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: cleanSearch ? `?${cleanSearch}` : "" },
+      { replace: true }
+    );
+  }, [user?.id, location.pathname, location.search, confirmCheckout, loadBillingSnapshot, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -188,7 +218,6 @@ function Dashboard() {
         isOpen={isPlanSelectorOpen}
         currentPlan={plan}
         onClose={() => setIsPlanSelectorOpen(false)}
-        onSelectPlan={() => {}}
       />
 
       <DashboardAccountPanel

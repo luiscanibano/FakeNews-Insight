@@ -744,3 +744,9 @@ def borrar_cuenta_usuario(
         "deleted": True,
         "user_id": user_id,
     }
+
+
+"""Registro de endpoints de billing (Stripe). Import diferido para evitar dependencia circular."""
+from billing import router as _billing_router  # noqa: E402
+
+app.include_router(_billing_router)

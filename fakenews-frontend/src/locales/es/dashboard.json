@@ -215,7 +215,37 @@
     "recommended": "Recomendado",
     "currentTag": "Plan actual",
     "currentAction": "Plan actual",
-    "activate": "Activar {{plan}}"
+    "activate": "Activar {{plan}}",
+    "subscribe": "Suscribirse a {{plan}}",
+    "upgradeNow": "Subir a {{plan}} (prorrateado)",
+    "downgradeAtPeriodEnd": "Cambiar a {{plan}} al final del periodo",
+    "cancelToFree": "Cancelar al final del periodo",
+    "resume": "Reanudar suscripción",
+    "processing": "Procesando...",
+    "managePortal": "Gestionar facturación",
+    "managePortalHint": "Abre el portal de Stripe para actualizar tu tarjeta o ver facturas.",
+    "scheduledNoticeDowngrade": "Conservas tu plan {{currentPlan}} durante {{days}} día(s). El {{date}} pasarás a {{nextPlan}}.",
+    "scheduledNoticeCancel": "Tu suscripción seguirá activa {{days}} día(s) más. El {{date}} pasarás al plan FREE.",
+    "proratedExplain": "Pagarás solo la diferencia prorrateada del periodo actual.",
+    "downgradeExplain": "Mantendrás todas las ventajas de tu plan actual hasta que finalice el ciclo de facturación.",
+    "confirmDowngradeTitle": "Confirma el cambio de plan",
+    "confirmCancelTitle": "Confirma la cancelación",
+    "confirmCancelBody": "No se hará ningún cargo adicional. Tu cuenta volverá al plan FREE al final del periodo.",
+    "confirmContinue": "Sí, continuar",
+    "confirmAbort": "Volver atrás",
+    "feedback": {
+      "checkoutRedirect": "Te llevamos a Stripe para completar el pago...",
+      "upgradeSuccess": "Plan actualizado a {{plan}}. Stripe ha cobrado solo la diferencia.",
+      "downgradeScheduled": "Cambio a {{plan}} programado. Conservas tu plan actual {{days}} día(s) más.",
+      "cancelScheduled": "Cancelación programada. Mantienes tu plan {{days}} día(s) más.",
+      "resumed": "Suscripción reactivada correctamente.",
+      "confirmedSuccess": "¡Pago confirmado! Plan {{plan}} activo.",
+      "checkoutCancelled": "Has cancelado el pago. No se ha realizado ningún cargo."
+    },
+    "errors": {
+      "loadSnapshot": "No se pudo cargar el estado de tu suscripción.",
+      "genericAction": "No se pudo completar la operación."
+    }
   },
   "delete": {
     "title": "Eliminar cuenta (RGPD)",
