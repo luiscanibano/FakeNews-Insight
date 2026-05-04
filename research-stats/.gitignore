@@ -1,0 +1,36 @@
+# Datos crudos / procesados (pesados, no se commitean)
+data/raw/
+data/processed/
+data/cache/
+
+# Artefactos de entrenamiento
+checkpoints/
+runs/
+wandb/
+mlruns/
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.joblib
+*.pkl
+
+# Reports generados (se generan con scripts; los figures finales para memoria
+# se commitean explicitamente con git add -f)
+reports/figures/
+reports/tables/
+!reports/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Entornos
+.venv/
+.env
+__pycache__/
+*.pyc
+
+# Editor
+.vscode/
+.idea/

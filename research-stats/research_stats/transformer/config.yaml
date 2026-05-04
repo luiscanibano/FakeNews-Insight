@@ -1,0 +1,17 @@
+# Hiperparametros baseline para fine-tune DeBERTa-v3-base sobre FEVER 3-way.
+# Documentar cualquier desviacion en la memoria de Estadistica (Capitulo
+# "Diseno experimental").
+model_name: microsoft/deberta-v3-base
+max_length: 256
+batch_size: 32
+learning_rate: 2.0e-5
+num_train_epochs: 3
+weight_decay: 0.01
+warmup_ratio: 0.06
+gradient_accumulation_steps: 1
+eval_strategy: epoch
+save_strategy: epoch
+load_best_model_at_end: true
+metric_for_best_model: macro_f1
+fp16: true
+seed: 42
