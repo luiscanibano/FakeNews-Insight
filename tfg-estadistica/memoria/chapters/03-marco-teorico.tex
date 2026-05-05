@@ -1,0 +1,145 @@
+\chapter{Marco teórico}\label{cap:marco-teorico}
+
+\section{Clasificación multinomial supervisada}
+
+Sea $\mathcal{X}$ el espacio de entradas y $\mathcal{Y} = \{1, \dots, K\}$
+el conjunto de etiquetas. Disponemos de una muestra independiente e
+idénticamente distribuida (i.i.d.)
+$\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N$ generada por una distribución
+desconocida $P_{X,Y}$. El objetivo es estimar
+$\eta_k(x) \coloneqq \Prb(Y = k \mid X = x)$ y, en la fase de
+predicción, decidir
+\[
+  \hat{y}(x) = \argmax_{k \in \mathcal{Y}} \hat{\eta}_k(x).
+\]
+
+\subsection{Riesgo, función de pérdida y aprendizaje empírico}
+
+Con una función de pérdida $\ell : \mathcal{Y} \times \Delta^{K-1} \to
+[0, \infty)$, el \emph{riesgo} de un clasificador
+$f : \mathcal{X} \to \Delta^{K-1}$ es
+\[
+  R(f) = \E_{(X,Y) \sim P_{X,Y}} \bigl[ \ell(Y, f(X)) \bigr],
+\]
+estimado en la práctica por su versión empírica
+$\hat{R}(f) = N^{-1} \sum_i \ell(y_i, f(x_i))$. Para la clasificación
+multinomial la pérdida estándar es la \emph{entropía cruzada}
+(equivalente a $-\log$-verosimilitud bajo modelo categórico):
+\[
+  \ell_{\text{CE}}(y, f(x)) = -\sum_{k=1}^K \mathbb{1}\{y = k\}
+  \log f_k(x).
+\]
+
+\subsection{Regresión logística multinomial}
+
+El modelo logístico multinomial parametriza
+$\eta_k(x) = \softmax_k(W x + b)$ con
+$W \in \R^{K \times d}$, $b \in \R^K$:
+\[
+  \softmax_k(z) = \frac{\exp(z_k)}{\sum_{j=1}^K \exp(z_j)}.
+\]
+La estimación por máxima verosimilitud regularizada con norma $\ell_2$
+resuelve el problema convexo
+\[
+  \min_{W, b}\;
+  \frac{1}{N} \sum_{i=1}^N \ell_{\text{CE}}(y_i, \softmax(W x_i + b))
+  \;+\; \frac{\lambda}{2} \lVert W \rVert_F^2,
+\]
+con $\lambda > 0$ el coeficiente de regularización. Es el clasificador
+empleado en el baseline TF-IDF (capítulo~\ref{cap:baseline}).
+
+\section{Representaciones del texto}
+
+\subsection{TF-IDF y modelo de \emph{bag-of-words}}
+
+Sea $\mathcal{V}$ el vocabulario; un texto $x$ se representa por su
+vector de frecuencias $\mathbf{tf}(x) \in \R^{|\mathcal{V}|}$. La
+ponderación TF-IDF transforma cada componente como
+\[
+  \text{tfidf}_t(x) = \mathrm{tf}_t(x) \cdot
+  \log \frac{N + 1}{\mathrm{df}_t + 1},
+\]
+con $\mathrm{df}_t$ el número de documentos que contienen el término
+$t$ (suavizado para evitar divisiones por cero). La representación
+admite extensiones a $n$-gramas de palabras y caracteres y se proyecta
+después en un clasificador lineal.
+
+\subsection{\emph{Embeddings} contextuales y \emph{transformers}}
+
+La arquitectura \emph{transformer} \citep{vaswani2017attention} prescinde
+de recurrencia y procesa la secuencia mediante atención de producto
+escalar escalada:
+\[
+  \operatorname{Attn}(Q, K, V) = \softmax\!\left(
+    \frac{QK^\top}{\sqrt{d_k}}
+  \right) V.
+\]
+Apilando capas de auto-atención multi-cabezal y conexiones residuales
+con normalización por capas, se obtienen representaciones contextuales
+$h_i \in \R^d$ por cada \emph{token} de la entrada. El preentrenamiento
+auto-supervisado sobre corpus masivos (BERT, RoBERTa, DeBERTa) produce
+$h_i$ útiles como entrada de tareas \emph{downstream} mediante un
+ajuste fino con cabeza específica.
+
+DeBERTa \citep{he2021deberta} introduce \emph{disentangled attention},
+desacoplando posición y contenido en la matriz de atención, lo que
+mejora sistemáticamente el rendimiento en tareas de inferencia
+semántica. La versión v3 \citep{he2023debertav3} sustituye además el
+objetivo \emph{Masked Language Modeling} por \emph{Replaced Token
+Detection} (estilo ELECTRA), incrementando la eficiencia muestral del
+preentrenamiento.
+
+\section{Inferencia de lenguaje natural como clasificación condicional}
+
+Sea $C$ el espacio de \emph{claims} y $E$ el espacio de evidencias. La
+NLI sobre evidencias se formaliza como la estimación de
+\[
+  \Prb(Y \mid c, e), \quad
+  Y \in \{\textsc{sup}, \textsc{ref}, \textsc{nei}\}.
+\]
+En la práctica se concatena la evidencia y el \emph{claim} con un
+separador especial: $x = [\text{CLS}]\,e\,[\text{SEP}]\,c\,[\text{SEP}]$
+y se aplica un cabezal lineal sobre el \emph{embedding} del \emph{token}
+\texttt{[CLS]}.
+
+\section{Calibración de probabilidades}
+
+Un clasificador $f$ está \emph{perfectamente calibrado} cuando
+\[
+  \Prb\bigl(Y = \hat{y}(X) \mid \max_k f_k(X) = p\bigr) = p,
+  \quad \forall p \in [0, 1].
+\]
+Es decir: entre los ejemplos donde el modelo predice clase con
+confianza $p$, una fracción $p$ son efectivamente correctos. La
+\emph{Expected Calibration Error} (ECE) cuantifica la desviación:
+particionando $[0,1]$ en $M$ intervalos $B_1, \dots, B_M$,
+\[
+  \mathrm{ECE} = \sum_{m=1}^M \frac{|B_m|}{N}
+  \bigl| \mathrm{acc}(B_m) - \mathrm{conf}(B_m) \bigr|,
+\]
+con $\mathrm{acc}(B_m)$ la proporción de aciertos en el bin y
+$\mathrm{conf}(B_m)$ la confianza media. Los \emph{diagramas de
+fiabilidad} representan visualmente $(\mathrm{conf}(B_m),
+\mathrm{acc}(B_m))$.
+
+\subsection{Métodos \emph{post-hoc}: Platt e isotónica}
+
+\paragraph{Platt scaling.} En el caso binario, ajusta una sigmoide a las
+puntuaciones del modelo:
+$\hat{p}(s) = (1 + \exp(a s + b))^{-1}$, con $(a, b)$ estimados por MLE
+sobre un conjunto de validación independiente. En el caso multinomial
+se generaliza a \emph{temperature scaling}: $f^T_k(x) =
+\softmax_k(z(x) / T)$ con $T > 0$ optimizado por NLL.
+
+\paragraph{Regresión isotónica.} Estima $\hat{p} = g(s)$ con $g$ no
+decreciente arbitraria, por mínimos cuadrados con restricciones de
+monotonía (algoritmo PAV). Más flexible pero con mayor riesgo de
+sobreajuste si el conjunto de calibración es pequeño.
+
+\section{Notación y convenciones}
+
+A lo largo de la memoria emplearemos vectores en negrita minúscula
+($\mathbf{x}$), matrices en mayúscula ($W$), conjuntos caligráficos
+($\mathcal{D}$) y la indicatriz $\mathbb{1}\{\cdot\}$. La función
+\emph{softmax} se entiende siempre normalizada sobre el último eje. La
+notación $\hat\theta$ denota un estimador.

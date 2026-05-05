@@ -1,0 +1,79 @@
+\chapter{Baseline: TF-IDF + Regresión Logística multinomial}\label{cap:baseline}
+
+\section{Motivación}
+
+El baseline cumple un doble propósito: (i) servir como punto de
+referencia honesto frente al modelo neuronal y (ii) aislar la dificultad
+intrínseca de la tarea de la sofisticación del modelo. Un baseline
+basado en representaciones léxicas y un clasificador lineal es además
+\emph{interpretable}: los pesos del modelo se asocian directamente a
+términos del vocabulario y permiten un análisis cualitativo.
+
+\section{Especificación del modelo}
+
+Sea $\phi : \mathcal{X} \to \R^d$ la transformación TF-IDF aplicada a
+la concatenación $[c\,\Vert\,e]$ del \emph{claim} y la evidencia. Sobre
+$\phi(x)$ se ajusta una regresión logística multinomial con
+regularización $\ell_2$:
+\[
+  \hat\theta = \argmin_{W, b}\;
+  \frac{1}{N} \sum_i \ell_{\text{CE}}(y_i, \softmax(W \phi(x_i) + b))
+  + \frac{\lambda}{2} \lVert W \rVert_F^2.
+\]
+
+\paragraph{Hiperparámetros.}
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Vocabulario: $n$-gramas de palabras de orden $\{1, 2\}$,
+        \emph{min\_df} $= 2$, \emph{max\_df} $= 0.95$.
+  \item Vocabulario máximo: 200\,000 términos.
+  \item Optimizador: \texttt{liblinear} para multiclase \emph{one-vs-rest}
+        o \texttt{lbfgs} para multinomial directa.
+  \item $\lambda$ seleccionado por validación cruzada estratificada
+        $k = 5$ sobre la rejilla
+        $\{10^{-3}, 10^{-2}, 10^{-1}, 1, 10\}$.
+\end{itemize}
+
+\section{Justificación estadística}
+
+La regresión logística multinomial es el \emph{estimador de máxima
+verosimilitud} bajo el modelo categórico
+$Y \mid X = x \sim \mathrm{Cat}(\softmax(W x + b))$. La regularización
+$\ell_2$ corresponde a un \emph{prior} Gaussiano isótropo
+$W \sim \mathcal{N}(0, \lambda^{-1} I)$, equivalente a estimación MAP.
+La función objetivo es estrictamente convexa, garantizando óptimo
+global único.
+
+La validación cruzada estratificada preserva las proporciones de clase
+en cada \emph{fold}, lo que reduce la varianza de las estimaciones de
+F1 macro respecto a una validación cruzada simple.
+
+\section{Implementación}
+
+El código se encuentra en
+\path{research-stats/research_stats/baseline/train_tfidf_lr.py}. Las
+métricas se calculan con \path{research_stats/evaluation/metrics.py} y
+se serializan en formato \texttt{parquet} para su análisis posterior.
+
+\section{Resultados sobre validación interna}
+
+% TODO(resultados): completar tras ejecución sobre FEVER.
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lcccc}
+    \toprule
+    Modelo & Acc. & F1 macro & NLL & ECE \\
+    \midrule
+    TF-IDF + LR ($\lambda = 1$) & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+  \caption{Métricas sobre la partición \emph{dev} (media $\pm$ desv.
+  típica sobre tres semillas).}
+  \label{tab:baseline}
+\end{table}
+
+\section{Análisis de los pesos}
+
+Se reportarán los 20 términos con mayor peso positivo y los 20 con
+mayor peso negativo por clase, lo que ilustra qué señales léxicas
+explota el modelo. Esta tabla se incluye en el anexo por extensión, y
+en la memoria sólo se discute cualitativamente.

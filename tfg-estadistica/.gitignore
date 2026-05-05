@@ -1,0 +1,24 @@
+# Artefactos LaTeX
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.nav
+*.snm
+*.vrb
+*.idx
+*.ind
+*.ilg
+
+# No ignorar PDF final compilado.
+!memoria/main.pdf
+!anexos/main.pdf

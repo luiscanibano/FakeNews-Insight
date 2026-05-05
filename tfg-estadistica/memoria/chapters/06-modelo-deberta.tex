@@ -1,0 +1,88 @@
+\chapter{Modelo neuronal: DeBERTa-v3 \emph{fine-tuned}}\label{cap:deberta}
+
+\section{Arquitectura}
+
+DeBERTa-v3-base \citep{he2023debertav3} es un modelo \emph{transformer}
+de codificador con 12 capas, 768 dimensiones por capa, 12 cabezales de
+atención y aproximadamente 184\,M parámetros. Las dos contribuciones
+arquitectónicas centrales son:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{\emph{Disentangled attention}}: la matriz de atención
+        se descompone en cuatro términos correspondientes a las
+        interacciones contenido--contenido, contenido--posición,
+        posición--contenido y posición--posición. Cada componente
+        emplea proyecciones independientes:
+        \[
+          A_{ij} = Q^c_i K^{c\top}_j + Q^c_i K^{p\top}_{j|i} +
+                   K^c_j Q^{p\top}_{i|j}.
+        \]
+  \item \textbf{Preentrenamiento RTD} (\emph{Replaced Token
+        Detection}): un generador propone sustituciones léxicas y un
+        discriminador (el modelo principal) clasifica cada \emph{token}
+        como original o reemplazado. Esta señal binaria por
+        \emph{token} resulta más eficiente que el clásico
+        \emph{Masked Language Modeling}.
+\end{enumerate}
+
+\section{Adaptación a NLI sobre evidencias}
+
+La entrada al modelo es la cadena tokenizada
+\[
+  [\text{CLS}]\, e \,[\text{SEP}]\, c \,[\text{SEP}],
+\]
+truncada a un máximo de 256 \emph{tokens} (la mayoría de los pares
+encajan en este límite; los casos restantes se truncan eliminando los
+\emph{tokens} finales de la evidencia). Sobre la representación del
+\emph{token} \texttt{[CLS]} se aplica una capa lineal con $K = 3$
+salidas, seguida de \emph{softmax}.
+
+\section{Procedimiento de \emph{fine-tuning}}
+
+\paragraph{Optimizador y \emph{schedule}.} AdamW
+\citep{loshchilov2019decoupled} con $\beta_1 = 0.9$, $\beta_2 = 0.999$,
+$\epsilon = 10^{-8}$ y \emph{weight decay} $= 0.01$ (excluyendo
+\emph{bias} y parámetros de \emph{layer norm}). Tasa de aprendizaje
+máxima $2 \cdot 10^{-5}$ con calentamiento lineal del 6\,\% de los
+pasos totales y decaimiento lineal posterior.
+
+\paragraph{Otros hiperparámetros.} Tamaño de lote efectivo 32
+(\emph{gradient accumulation} cuando la memoria de GPU lo requiera),
+3 épocas, precisión mixta \texttt{fp16}, \emph{label smoothing}
+$\epsilon = 0.05$.
+
+\paragraph{Reproducibilidad.} Las semillas (\texttt{42, 1337, 2025}) se
+fijan en \texttt{torch}, \texttt{numpy} y \texttt{random}, y se activa
+\texttt{torch.use\_deterministic\_algorithms(True)} en la medida en que
+las operaciones de cuDNN lo permiten.
+
+\section{Implementación}
+
+Pipeline en \path{research-stats/research_stats/transformer/finetune.py}
+empleando la API \texttt{Trainer} de \texttt{transformers}. La
+exportación a ONNX para servir el modelo en producción se realiza con
+\texttt{optimum} en \path{research_stats/export/to_onnx.py}.
+
+\section{Resultados}
+
+% TODO(resultados): completar tras entrenamiento real.
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lcccc}
+    \toprule
+    Modelo & Acc. & F1 macro & NLL & ECE \\
+    \midrule
+    TF-IDF + LR & --- & --- & --- & --- \\
+    DeBERTa-v3 \emph{fine-tuned} & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabular}
+  \caption{Comparativa baseline vs.\ modelo neuronal sobre la partición
+  \emph{dev} de FEVER (media $\pm$ desv.\ típica, 3 semillas).}
+  \label{tab:deberta-vs-baseline}
+\end{table}
+
+\section{Discusión preliminar}
+
+Se discutirán los \emph{trade-offs} entre coste computacional
+(entrenamiento e inferencia) y ganancia en calidad. La cuantificación
+formal de la diferencia se aborda en el capítulo~\ref{cap:tests}.

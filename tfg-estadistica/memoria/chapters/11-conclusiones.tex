@@ -1,0 +1,48 @@
+\chapter{Conclusiones y trabajo futuro}\label{cap:conclusiones}
+
+\section{Conclusiones}
+
+Este trabajo ha planteado la verificación automática de afirmaciones
+como un problema estadístico de clasificación condicional sobre pares
+\emph{claim}--evidencia, alineado con el dataset FEVER y con la
+literatura de inferencia de lenguaje natural. Las contribuciones
+principales son:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.3em]
+  \item Una formulación explícita del problema y de su evaluación
+        (capítulos~\ref{cap:marco-teorico} y~\ref{cap:diseno}).
+  \item La implementación y evaluación honesta de un baseline lineal
+        TF-IDF + regresión logística multinomial regularizada
+        (capítulo~\ref{cap:baseline}).
+  \item El \emph{fine-tuning} y comparación de DeBERTa-v3-base como
+        modelo de referencia neuronal (capítulo~\ref{cap:deberta}).
+  \item La aplicación sistemática de calibración \emph{post-hoc}
+        (capítulo~\ref{cap:calibracion}), garantizando que las
+        probabilidades emitidas tengan interpretación frecuentista.
+  \item La aplicación de contrastes estadísticos formales (McNemar,
+        \emph{bootstrap}) para comparar modelos
+        (capítulo~\ref{cap:tests}).
+  \item Una regla de agregación probabilística que extiende el
+        veredicto FEVER con la categoría \textsc{conflicting},
+        documentada formalmente en el capítulo~\ref{cap:agregacion} e
+        implementada en producción.
+\end{enumerate}
+
+\section{Trabajo futuro}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Modelos más grandes.} Evaluar DeBERTa-v3-large o
+        modelos NLI de la familia LLaMA / Mistral con \emph{adapters},
+        manteniendo las mismas pruebas estadísticas.
+  \item \textbf{Recuperación entrenable.} Sustituir la búsqueda web por
+        un recuperador denso (DPR, ColBERT) y medir el efecto sobre
+        precisión y cobertura.
+  \item \textbf{Evaluación cruzada de dominio.} Aplicar el sistema
+        entrenado en FEVER a datasets como MultiFC o claims extraídos
+        de noticias reales en español, midiendo degradación.
+  \item \textbf{Calibración condicional.} Estudiar calibración por clase
+        y por longitud de evidencia.
+  \item \textbf{Modelado bayesiano del agregador.} Sustituir la regla
+        determinista por un modelo gráfico que estime conjuntamente la
+        verdad latente y la fiabilidad de cada evidencia.
+\end{itemize}

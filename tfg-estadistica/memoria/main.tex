@@ -1,0 +1,56 @@
+% =============================================================
+%  TFG Estadística — FakeNews Insight (componente estadístico)
+%  Cumple normas: TNR 12, interlineado sencillo, márgenes 2/2.5 cm,
+%  páginas 1..N solo del desarrollo (frontmatter en romanos).
+% =============================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+\input{preamble}
+
+% ---- Datos del trabajo --------------------------------------
+\newcommand{\TFGTitulo}{Modelización predictiva para la detección automática de noticias falsas mediante aprendizaje automático y procesamiento del lenguaje natural}
+\newcommand{\TFGSubtitulo}{Verificación de afirmaciones sobre evidencias mediante NLI con DeBERTa y FEVER}
+\newcommand{\TFGAutor}{Luis Cañibano}
+\newcommand{\TFGTutor}{Por confirmar}
+\newcommand{\TFGAnio}{2026}
+
+\begin{document}
+
+% =====================  FRONTMATTER  ==========================
+% Cubierta, portada, doc. acreditativo e índice NO cuentan en la
+% paginación oficial (1..N empieza en la introducción).
+\pagenumbering{roman}
+
+\input{chapters/00-cubierta}
+\cleardoublepage
+\input{chapters/00b-portada}
+\cleardoublepage
+\input{chapters/00c-acreditativo}
+\cleardoublepage
+
+\tableofcontents
+\cleardoublepage
+
+% =====================  MAINMATTER  ===========================
+% Página 1 = inicio introducción (norma TFGE).
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/01-introduccion}
+\input{chapters/02-estado-arte}
+\input{chapters/03-marco-teorico}
+\input{chapters/04-diseno-experimental}
+\input{chapters/05-baseline-tfidf-lr}
+\input{chapters/06-modelo-deberta}
+\input{chapters/07-calibracion}
+\input{chapters/08-tests-estadisticos}
+\input{chapters/09-agregacion-claims}
+\input{chapters/10-resultados}
+\input{chapters/11-conclusiones}
+
+% =====================  BIBLIOGRAFÍA  =========================
+\printbibliography[heading=bibintoc,title={Bibliografía y referencias}]
+
+% Los anexos se entregan en fichero separado (anexos/main.tex).
+
+\end{document}
