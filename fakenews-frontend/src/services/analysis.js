@@ -6,6 +6,7 @@
 const DEFAULT_ANALYSIS_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_ANALYSIS_TEXT_PATH = "/predecir/";
 const DEFAULT_ANALYSIS_SAVE_PATH = "/analyses/save";
+const DEFAULT_ANALYSIS_VERIFY_PATH = "/verify";
 
 /** Normaliza la URL base eliminando barras finales para evitar dobles separadores. */
 const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
@@ -31,8 +32,13 @@ const ANALYSIS_SAVE_PATH = normalizePath(
   import.meta.env.VITE_ANALYSIS_SAVE_PATH?.trim() || DEFAULT_ANALYSIS_SAVE_PATH
 );
 
+const ANALYSIS_VERIFY_PATH = normalizePath(
+  import.meta.env.VITE_ANALYSIS_VERIFY_PATH?.trim() || DEFAULT_ANALYSIS_VERIFY_PATH
+);
+
 const ANALYSIS_TEXT_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_TEXT_PATH}`;
 const ANALYSIS_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_SAVE_PATH}`;
+const ANALYSIS_VERIFY_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_VERIFY_PATH}`;
 
 /** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semántico. */
 const getErrorMessage = async (response, fallbackMessage) => {
@@ -111,6 +117,40 @@ export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
       response,
       "No se pudo guardar el análisis en historial."
     );
+    throw new Error(message);
+  }
+
+  return response.json();
+};
+
+/**
+ * Ejecuta el agente FEVER de verificacion de afirmaciones (plan Super Pro).
+ * Devuelve el veredicto global, claims con evidencias, citas y cupo restante.
+ */
+export const verifyClaims = async ({ text, jwtToken }) => {
+  if (!jwtToken) {
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
+  }
+
+  if (!text || text.trim().length < 10) {
+    throw new Error("El texto a verificar es demasiado corto.");
+  }
+
+  const response = await fetch(ANALYSIS_VERIFY_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+    body: JSON.stringify({ texto: text }),
+  });
+
+  if (!response.ok) {
+    const fallback =
+      response.status === 403
+        ? "El agente de verificacion solo está disponible en el plan Super Pro."
+        : "No se pudo verificar el texto en este momento.";
+    const message = await getErrorMessage(response, fallback);
     throw new Error(message);
   }
 

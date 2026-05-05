@@ -256,5 +256,31 @@
     "submitting": "Eliminando...",
     "errorPattern": "Escribe ELIMINAR en el campo para confirmar la baja.",
     "fallbackError": "No se pudo eliminar la cuenta."
+  },
+  "verify": {
+    "title": "Verificación de afirmaciones",
+    "subtitle": "Extrae afirmaciones del texto y las contrasta contra evidencias web.",
+    "action": "Verificar",
+    "submitting": "Verificando...",
+    "claimsLabel": "Afirmaciones extraídas",
+    "evidencesLabel": "Evidencias",
+    "noEvidence": "Sin evidencias web suficientes para esta afirmación.",
+    "verdict": {
+      "SUPPORTED": "Verificado",
+      "REFUTED": "Refutado",
+      "NOT_ENOUGH_INFO": "Información insuficiente",
+      "CONFLICTING": "Evidencia contradictoria"
+    },
+    "nli": {
+      "supports": "Apoya",
+      "refutes": "Refuta",
+      "nei": "Inconcluyente"
+    },
+    "meta": {
+      "modelVersion": "Modelo",
+      "duration": "Duración",
+      "confidence": "Confianza agregada",
+      "remaining": "Verificaciones restantes hoy"
+    }
   }
 }

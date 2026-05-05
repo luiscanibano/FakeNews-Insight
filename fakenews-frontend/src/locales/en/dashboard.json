@@ -256,5 +256,31 @@
     "submitting": "Deleting...",
     "errorPattern": "Type ELIMINAR in the field to confirm the deletion.",
     "fallbackError": "Couldn't delete the account."
+  },
+  "verify": {
+    "title": "Claim verification",
+    "subtitle": "Extracts atomic claims and checks them against web evidence.",
+    "action": "Verify",
+    "submitting": "Verifying...",
+    "claimsLabel": "Extracted claims",
+    "evidencesLabel": "Evidence",
+    "noEvidence": "Not enough web evidence for this claim.",
+    "verdict": {
+      "SUPPORTED": "Supported",
+      "REFUTED": "Refuted",
+      "NOT_ENOUGH_INFO": "Not enough info",
+      "CONFLICTING": "Conflicting evidence"
+    },
+    "nli": {
+      "supports": "Supports",
+      "refutes": "Refutes",
+      "nei": "Inconclusive"
+    },
+    "meta": {
+      "modelVersion": "Model",
+      "duration": "Duration",
+      "confidence": "Aggregated confidence",
+      "remaining": "Remaining verifications today"
+    }
   }
 }
