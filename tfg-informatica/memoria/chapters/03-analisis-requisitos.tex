@@ -1,0 +1,69 @@
+\chapter{Análisis de requisitos}\label{cap:requisitos}
+
+\section{Actores}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Usuario anónimo:} consume la \emph{landing page};
+        puede registrarse o iniciar sesión.
+  \item \textbf{Usuario autenticado (plan \emph{free}):} accede al
+        dashboard, realiza un número limitado de análisis al mes.
+  \item \textbf{Usuario \emph{pro} / \emph{ultra}:} cuotas ampliadas y
+        funcionalidades adicionales (historial completo, claves API).
+  \item \textbf{Usuario \emph{super pro}:} además accede al agente de
+        verificación con evidencias.
+  \item \textbf{Administrador:} acceso al panel administrativo
+        (gestión de usuarios, métricas).
+  \item \textbf{Sistema externo Stripe:} notifica eventos de
+        \emph{billing} mediante \emph{webhooks}.
+\end{itemize}
+
+\section{Requisitos funcionales}
+
+\begin{enumerate}[label=RF-\arabic*,leftmargin=*,itemsep=0.2em]
+  \item Registro y autenticación con correo/contraseña y con Google
+        OAuth.
+  \item Recuperación y cambio de contraseña.
+  \item Análisis de un texto contra el clasificador con devolución de
+        veredicto y probabilidad.
+  \item Verificación de afirmaciones (agente FEVER) con devolución de
+        veredicto global, claims con confianza y evidencias asociadas
+        (\emph{Super Pro}).
+  \item Persistencia del historial de análisis por usuario.
+  \item Gestión de claves API por usuario (creación, revocación).
+  \item Suscripción y cambio de plan vía Stripe.
+  \item Cancelación y borrado completo de cuenta (RGPD).
+  \item Panel de administración: listado, búsqueda y baneo de usuarios.
+  \item Internacionalización (es/en) con cambio en caliente.
+  \item Cierre de sesión por inactividad.
+\end{enumerate}
+
+\section{Requisitos no funcionales}
+
+\begin{enumerate}[label=RNF-\arabic*,leftmargin=*,itemsep=0.2em]
+  \item \textbf{Rendimiento.} Latencia $<$ 1\,s para inferencia
+        clásica; $<$ 10\,s para verificación.
+  \item \textbf{Disponibilidad.} Diseño \emph{stateless} en backend
+        para permitir escalado horizontal.
+  \item \textbf{Seguridad.} Contraseñas almacenadas con \emph{hash}
+        bcrypt por Supabase; tokens JWT firmados; RLS activo en todas
+        las tablas con datos de usuario.
+  \item \textbf{Trazabilidad.} \emph{Logs} estructurados en backend.
+  \item \textbf{Mantenibilidad.} Cobertura de tests $>$ 70\,\% en
+        módulos críticos.
+  \item \textbf{Portabilidad.} Despliegue en Docker Compose;
+        configuración via variables de entorno.
+  \item \textbf{Accesibilidad.} Componentes UI basados en Radix UI
+        (compatibles con WAI-ARIA).
+\end{enumerate}
+
+\section{Casos de uso principales}
+
+% TODO: añadir diagramas UML PlantUML / TikZ.
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item CU-01: \emph{Registrarse y verificar email}.
+  \item CU-02: \emph{Analizar texto y guardar en historial}.
+  \item CU-03: \emph{Verificar afirmaciones (Super Pro)}.
+  \item CU-04: \emph{Suscribirse a plan Pro / Ultra / Super Pro}.
+  \item CU-05: \emph{Borrar cuenta}.
+  \item CU-06: \emph{Administrar usuarios}.
+\end{itemize}

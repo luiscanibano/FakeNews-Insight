@@ -1,0 +1,58 @@
+\chapter{Resultados y discusión}\label{cap:resultados}
+
+\section{Estado funcional alcanzado}
+
+% TODO: contrastar con el listado de RF.
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Backend FastAPI con $\geq 5$ endpoints productivos (predict,
+        verify, save, delete, billing).
+  \item Frontend React con autenticación, dashboard, historial,
+        gestión de claves API, suscripciones Stripe, panel
+        administrativo, multi-idioma, cierre por inactividad.
+  \item Extensión MV3 con login, análisis y verificación.
+  \item Supabase con migraciones SQL versionadas y RLS activa.
+\end{itemize}
+
+\section{Métricas técnicas}
+
+% TODO: completar con cifras reales tras una pasada de medición.
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    Componente & Líneas de código & Tests \\
+    \midrule
+    Backend FastAPI         & --- & 25 \\
+    Frontend React          & --- & --- \\
+    Extensión navegador     & --- & --- \\
+    Módulo \texttt{fever}   & --- & 17 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Volumen y cobertura de pruebas por componente.}
+  \label{tab:metricas}
+\end{table}
+
+\section{Latencias observadas}
+
+% TODO: incluir mediciones reales (p50/p95) por endpoint.
+
+\section{Limitaciones}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item No se ha implementado escalado horizontal automático.
+  \item No se ha integrado un sistema de \emph{tracing} distribuido
+        (OpenTelemetry).
+  \item La extensión está probada en navegadores Chromium; falta
+        validación exhaustiva en Firefox.
+\end{itemize}
+
+\section{Aprendizajes}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item La separación estricta UI / Estado / Servicios ha facilitado
+        las pruebas y la incorporación posterior del agente sin
+        introducir regresiones.
+  \item RLS en Supabase reduce significativamente el riesgo de fugas
+        accidentales de datos entre usuarios, pero exige disciplina
+        en migraciones y revisiones de código.
+\end{itemize}

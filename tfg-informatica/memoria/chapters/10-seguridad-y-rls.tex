@@ -1,0 +1,72 @@
+\chapter{Seguridad y Row Level Security}\label{cap:seguridad}
+
+\section{Modelo de amenazas}
+
+Se consideran las amenazas más relevantes del OWASP Top 10:
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Acceso no autorizado a recursos de otros usuarios
+        (\emph{broken access control}).
+  \item Inyección SQL (\emph{injection}).
+  \item Exposición de datos sensibles (\emph{cryptographic failures}).
+  \item \emph{Cross-Site Scripting} (XSS).
+  \item Configuración insegura (\emph{security misconfiguration}).
+  \item \emph{Server-Side Request Forgery} en el agente.
+\end{itemize}
+
+\section{Autenticación y autorización}
+
+La autenticación se delega en Supabase Auth (correo/contraseña +
+Google OAuth). Cada petición autenticada al backend incluye un JWT en
+\texttt{Authorization: Bearer <token>}, verificado contra las claves
+públicas del proyecto Supabase. El \emph{claim} \texttt{sub} del JWT
+identifica al usuario y se propaga a la consulta SQL como
+\texttt{auth.uid()}.
+
+\section{Row Level Security}
+
+Todas las tablas con datos de usuario activan RLS. La política básica
+es:
+
+\begin{lstlisting}[language=SQL,caption={Política RLS por usuario.}]
+CREATE POLICY user_isolation
+  ON public.analyses
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+\end{lstlisting}
+
+Las consultas administrativas usan la \emph{service role key} y
+\texttt{set local role = service\_role}.
+
+\section{Protección frente a XSS y abuso del DOM}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item En React, todo el texto dinámico se renderiza con
+        \texttt{\{variable\}}, que escapa por defecto.
+  \item En la extensión, la composición del informe de verificación
+        usa \texttt{textContent} y \texttt{createElement}, evitando
+        \texttt{innerHTML}.
+  \item Los enlaces externos llevan \texttt{rel="noopener noreferrer"}
+        y \texttt{target="\_blank"}.
+\end{itemize}
+
+\section{Inyección y validación}
+
+La validación tipada de Pydantic en el backend rechaza payloads
+malformados. Las consultas a Supabase usan PostgREST con parámetros
+nombrados; no se construye SQL con concatenación de cadenas.
+
+\section{Gestión de secretos}
+
+Todos los secretos (\texttt{SUPABASE\_SERVICE\_ROLE\_KEY},
+\texttt{STRIPE\_SECRET\_KEY}, \texttt{STRIPE\_WEBHOOK\_SECRET},
+\texttt{TAVILY\_API\_KEY}) se inyectan vía variables de entorno y se
+documentan en \path{.env.example}. El repositorio nunca incluye
+secretos reales.
+
+\section{RGPD: borrado de cuenta}
+
+El endpoint \texttt{POST /account/delete} elimina en cascada los datos
+del usuario y solicita la baja en Supabase Auth, cumpliendo el
+derecho al olvido.

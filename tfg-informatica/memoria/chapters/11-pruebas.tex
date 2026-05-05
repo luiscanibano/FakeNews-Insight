@@ -1,0 +1,57 @@
+\chapter{Estrategia de pruebas}\label{cap:pruebas}
+
+\section{Pirámide de pruebas}
+
+Se siguen tres niveles:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Unitarias.} Cubren funciones puras y módulos
+        independientes (agregación FEVER, validadores, utilidades).
+  \item \textbf{Integración.} En el backend, prueban endpoints REST
+        con la base de datos sustituida por un mock o por una
+        \emph{fixture} \emph{in-memory}.
+  \item \textbf{Componente / UI.} En el frontend, React Testing
+        Library renderiza páginas completas con servicios mockeados.
+\end{enumerate}
+
+\section{Backend (Pytest)}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \path{fakenews-backend/tests/test_smoke.py}: \texttt{/health},
+        endpoints públicos básicos.
+  \item \path{tests/test_billing.py}: lógica de cuotas y planes.
+  \item Tests del módulo \path{fever/}: extracción, recuperación
+        (con \emph{stub}), inferencia, agregación, agente \emph{end-to-end}
+        contra mocks.
+\end{itemize}
+
+Se ejecutan con \texttt{pytest -q} y configuración en
+\path{pytest.ini}.
+
+\section{Frontend (Vitest + RTL)}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \path{src/pages/__tests__/}: tests de páginas
+        (login, register, dashboard, admin).
+  \item \path{src/lib/__tests__/}: utilidades (i18n, validadores,
+        \emph{access control}).
+  \item Mocks de servicios para aislar UI/estado.
+\end{itemize}
+
+Se ejecutan con \texttt{npm run test}.
+
+\section{Linting y formato}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Frontend: ESLint con configuración en
+        \path{eslint.config.js}, integrado con Vite.
+  \item Backend: \texttt{ruff} para \emph{lint}, \texttt{black}
+        opcional para formato.
+\end{itemize}
+
+\section{Cobertura}
+
+Pytest con \texttt{pytest --cov} reporta cobertura por módulo.
+Se establece como objetivo $\geq$ 70\,\% en módulos críticos
+(\texttt{billing}, \texttt{fever}). El detalle por archivo se
+incluye en el anexo.

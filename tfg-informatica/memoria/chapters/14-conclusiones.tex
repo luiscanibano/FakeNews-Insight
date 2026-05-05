@@ -1,0 +1,39 @@
+\chapter{Conclusiones y trabajo futuro}\label{cap:conclusiones}
+
+\section{Conclusiones}
+
+Este Trabajo Fin de Grado en Ingeniería Informática ha cubierto el
+diseño y la implementación de una plataforma SaaS completa para la
+detección y verificación automática de noticias falsas, con cuatro
+componentes desplegables independientes (backend, frontend, extensión
+y base de datos) y un agente de verificación basado en FEVER expuesto
+como funcionalidad diferencial del plan \emph{Super Pro}.
+
+Las contribuciones más relevantes son:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item Una arquitectura desacoplada con flujo unidireccional de
+        datos en el frontend y separación por dominio en el backend.
+  \item La integración real con Supabase Auth, RLS, Stripe Billing y
+        una API de búsqueda externa para evidencias.
+  \item Una extensión MV3 con renderizado seguro y reutilización de
+        autenticación y servicios.
+  \item Una estrategia de pruebas automatizada que cubre los módulos
+        críticos.
+  \item Un despliegue contenedorizado reproducible.
+\end{enumerate}
+
+\section{Trabajo futuro}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Sustituir la API de búsqueda externa por un recuperador propio
+        sobre un índice mantenido (Elasticsearch / OpenSearch).
+  \item Añadir soporte multilenguaje real al modelo (modelos NLI
+        multilingües).
+  \item Migrar el despliegue a Kubernetes con \emph{autoscaling}
+        horizontal.
+  \item Incorporar OpenTelemetry para \emph{tracing} y métricas
+        Prometheus.
+  \item Publicar la extensión en Chrome Web Store y Firefox Add-ons
+        tras una auditoría de privacidad.
+\end{itemize}

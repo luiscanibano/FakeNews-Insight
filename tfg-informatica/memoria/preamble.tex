@@ -1,0 +1,67 @@
+% =============================================================
+%  Preámbulo común — TFG Informática
+% =============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{newtxtext,newtxmath}
+
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm]{geometry}
+\linespread{1.0}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue!50!black
+}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{bib/refs.bib}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\Large\bfseries}{\thechapter.}{1em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{1em}
+
+% Listings: estilo de código.
+\definecolor{codebg}{HTML}{F7F7F7}
+\definecolor{codekw}{HTML}{0033B3}
+\definecolor{codestr}{HTML}{067D17}
+\definecolor{codecom}{HTML}{8C8C8C}
+\lstdefinestyle{tfgcode}{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codekw}\bfseries,
+  stringstyle=\color{codestr},
+  commentstyle=\color{codecom}\itshape,
+  breaklines=true,
+  showstringspaces=false,
+  frame=single,
+  framerule=0pt,
+  framesep=4pt,
+  numbers=left,
+  numberstyle=\tiny\color{codecom},
+  numbersep=8pt,
+  tabsize=2,
+}
+\lstset{style=tfgcode}
+
+% Macros.
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\E}{\mathbb{E}}
+\providecommand{\Prb}{\mathbb{P}}

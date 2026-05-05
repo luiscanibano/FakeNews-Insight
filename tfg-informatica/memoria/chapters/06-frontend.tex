@@ -1,0 +1,61 @@
+\chapter{Frontend React}\label{cap:frontend}
+
+\section{Estructura}
+
+\begin{lstlisting}[caption={Layout del frontend}]
+fakenews-frontend/src/
+├── App.jsx, main.jsx
+├── components/        # Componentes reutilizables (UI, dashboard,
+│                      # admin, auth, landing, common)
+├── hooks/             # Hooks reutilizables
+├── lib/               # Utilidades genéricas, i18n, constantes
+├── locales/{en,es}/   # JSONs de traducción
+├── pages/             # Vistas de ruta
+├── services/          # Capa de servicios (auth, billing, analysis,
+│                      # supabase, history, account, admin)
+├── store/             # Stores Zustand
+└── test/              # Configuración Vitest
+\end{lstlisting}
+
+\section{Enrutamiento y vistas}
+
+React Router v6 organiza las rutas en públicas (\texttt{/},
+\texttt{/login}, \texttt{/register}, \texttt{/forgot-password},
+\texttt{/reset-password}) y autenticadas (\texttt{/dashboard/*},
+\texttt{/admin/*}). Una capa de protección consulta
+\texttt{authStore} para redirigir a \texttt{/login} a usuarios sin
+sesión, y a \texttt{/dashboard} a usuarios sin permisos
+administrativos que intenten acceder al panel.
+
+\section{Internacionalización}
+
+i18next con detección automática de idioma del navegador y persistencia
+en \texttt{localStorage}. Cambio en caliente desde el menú de
+preferencias. Traducciones organizadas en \texttt{namespaces}
+(\texttt{auth.json}, \texttt{dashboard.json}, \texttt{landing.json}).
+
+\section{Sistema de diseño}
+
+Tailwind CSS configurado con tokens propios de marca (colores
+primarios, tipografía). Componentes shadcn/ui generados con CLI
+(\path{components.json}) sobre Radix UI.
+
+\section{Análisis y verificación}
+
+El \emph{hook} \path{src/hooks/useAnalysisFlow.js} centraliza el flujo
+de análisis: validación del input, llamada al servicio
+\path{src/services/analysis.js} y actualización del store. La función
+\texttt{verifyClaims} llama a \texttt{POST /verify} y, ante 403,
+muestra un mensaje localizado indicando que la funcionalidad sólo está
+disponible en el plan \emph{Super Pro}.
+
+El componente
+\path{src/components/dashboard/VerificationReport.jsx} renderiza el
+veredicto global, la lista de \emph{claims} con su confianza y los
+enlaces a evidencias (\texttt{rel="noopener noreferrer"}).
+
+\section{Pruebas}
+
+Vitest + React Testing Library cubren componentes críticos
+(\path{src/pages/__tests__/}, \path{src/lib/__tests__/}). Los tests
+mockean los servicios para aislar la capa UI/estado.

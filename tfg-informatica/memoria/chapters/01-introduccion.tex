@@ -1,0 +1,77 @@
+\chapter{Introducción}\label{cap:introduccion}
+
+\section{Contexto}
+
+La desinformación se ha consolidado como uno de los principales riesgos
+sociotécnicos de la última década, con consecuencias documentadas en
+salud pública, procesos electorales y reputación corporativa
+\cite{lazer2018science,vosoughi2018spread}. Las grandes plataformas y
+los medios de comunicación han desplegado equipos de
+\emph{fact-checking}, pero el volumen y la velocidad de difusión de
+contenidos hace inviable una revisión manual completa, lo que ha
+impulsado la aparición de soluciones asistidas por inteligencia
+artificial.
+
+Este Trabajo Fin de Grado en Ingeniería Informática presenta
+\textbf{FakeNews Insight}: una plataforma SaaS que permite a un usuario
+final analizar un artículo o afirmación textual y obtener (i) un
+veredicto clasificatorio basado en un modelo entrenado y (ii) un
+informe de verificación a nivel de \emph{claim} con evidencias
+externas, generado por un agente de verificación basado en el dataset
+FEVER \cite{thorne2018fever}.
+
+\section{Motivación}
+
+El proyecto surge de la combinación de tres motivaciones:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Investigadora.} La parte estadística y de modelado se
+        desarrolla en una memoria independiente del Grado en
+        Estadística del mismo autor, lo que permite enfocar este TFG
+        de Informática en los aspectos puramente \emph{software} y de
+        sistemas.
+  \item \textbf{Producto.} Se busca diseñar e implementar una
+        plataforma usable, multicliente, multi-idioma y con planes de
+        suscripción gestionados, no un mero \emph{prototipo}
+        académico.
+  \item \textbf{Industrial.} Aplicar metodologías de ingeniería de
+        software actuales: arquitectura desacoplada, despliegue
+        contenedorizado, control de acceso basado en filas, autenticación
+        federada, observabilidad básica y \emph{testing} automatizado.
+\end{enumerate}
+
+\section{Objetivos}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item Diseñar e implementar un \textbf{backend} REST en FastAPI con
+        endpoints de inferencia, gestión de cuenta, historial,
+        \emph{billing} con Stripe y verificación de afirmaciones.
+  \item Desarrollar un \textbf{frontend} SPA en React con
+        arquitectura unidireccional UI $\to$ Estado $\to$ Servicios,
+        soporte i18n (es/en), tests Vitest y diseño \emph{mobile-first}.
+  \item Construir una \textbf{extensión de navegador MV3} que reutilice
+        la API y la autenticación de la plataforma.
+  \item Integrar un \textbf{agente de verificación} basado en
+        recuperación de evidencias y NLI, expuesto como servicio
+        diferenciado del plan \emph{Super Pro}.
+  \item Implantar un modelo de datos sobre Supabase con \textbf{Row
+        Level Security} y migraciones SQL versionadas.
+  \item Empaquetar todo en \textbf{Docker Compose} y dejar
+        configuración lista para despliegue en una VPS.
+\end{enumerate}
+
+\section{Estructura de la memoria}
+
+El capítulo~\ref{cap:estado-arte} revisa soluciones similares y
+tecnologías candidatas. El capítulo~\ref{cap:requisitos} formaliza
+requisitos funcionales y no funcionales. El capítulo~\ref{cap:arquitectura}
+expone la arquitectura general. Los
+capítulos~\ref{cap:backend},~\ref{cap:frontend} y~\ref{cap:extension}
+documentan los tres componentes principales. El
+capítulo~\ref{cap:agente} describe el agente de verificación. El
+capítulo~\ref{cap:billing} cubre el subsistema de \emph{billing} y
+planes. El capítulo~\ref{cap:seguridad} desarrolla seguridad y RLS.
+El capítulo~\ref{cap:pruebas} resume la estrategia de pruebas. El
+capítulo~\ref{cap:despliegue} describe el despliegue. Los
+capítulos~\ref{cap:resultados} y~\ref{cap:conclusiones} cierran con
+resultados y conclusiones.

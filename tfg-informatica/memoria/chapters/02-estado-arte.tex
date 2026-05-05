@@ -1,0 +1,74 @@
+\chapter{Estado del arte}\label{cap:estado-arte}
+
+\section{Plataformas y servicios de \emph{fact-checking} asistido}
+
+Existen diversas iniciativas, tanto académicas como comerciales, que
+abordan total o parcialmente el problema:
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{ClaimBuster} \cite{hassan2017claimbuster}: pipeline
+        académico que identifica afirmaciones susceptibles de
+        verificación.
+  \item \textbf{Full Fact} y \textbf{Chequeado}: organizaciones de
+        verificación humana que han incorporado herramientas asistidas
+        para priorizar contenido a revisar.
+  \item \textbf{Google Fact Check Tools} y \textbf{ClaimReview}:
+        infraestructura abierta para indexar verificaciones publicadas
+        por terceros.
+\end{itemize}
+
+Frente a estas, el presente trabajo persigue un sistema integrado
+\emph{end-to-end}: el usuario introduce un texto, el sistema lo
+procesa y devuelve un veredicto con evidencias. La parte de
+\emph{retrieval} se delega a una API de búsqueda externa para evitar
+mantener un índice propio de la web.
+
+\section{Tecnologías candidatas y decisiones}
+
+\subsection{Backend}
+
+\paragraph{Python con FastAPI.} Se elige FastAPI por su
+\emph{performance} (basado en Starlette y Pydantic), tipado estático
+y generación automática de OpenAPI. La alternativa Flask se descarta
+por carecer de validación tipada nativa; Django REST Framework por
+imponer una capa ORM no necesaria, dado que se usa Supabase.
+
+\subsection{Frontend}
+
+\paragraph{React + Vite + Tailwind + shadcn/ui.} React se selecciona
+por madurez y ecosistema. Vite ofrece tiempos de arranque y \emph{hot
+reload} significativamente mejores que Create React App. Tailwind
+permite construir un sistema de diseño consistente sin abandonar el
+flujo \emph{utility-first}. shadcn/ui aporta componentes accesibles
+sobre Radix UI sin acoplar a un \emph{theme provider} cerrado.
+
+\paragraph{Estado: Zustand.} Frente a Redux (boilerplate) o Context API
+(rendimiento), Zustand ofrece una API minimalista, integración
+inmediata con React 18 y \emph{stores} compuestos.
+
+\subsection{Backend como servicio: Supabase}
+
+Supabase ofrece PostgreSQL gestionado, Auth (incluyendo OAuth con
+Google) y \emph{storage}, con Row Level Security activable por tabla.
+La alternativa Firebase se descarta por su modelo NoSQL menos adecuado
+para datos relacionales (cuentas, suscripciones, historial).
+
+\subsection{Pagos: Stripe}
+
+Stripe es el estándar \emph{de facto} para SaaS por API estable,
+documentación, integración con \emph{webhooks} y soporte de
+suscripciones recurrentes con periodos de prueba.
+
+\subsection{Extensión de navegador}
+
+Manifest V3 es el formato vigente en Chromium y Firefox; impone uso de
+\emph{service workers} y restricciones más estrictas de CSP. La
+implementación reutiliza el mismo cliente de Supabase y la misma API
+REST que el frontend principal.
+
+\section{Conclusión}
+
+La combinación FastAPI + React + Supabase + Stripe + Docker Compose
+representa un \emph{stack} probado en SaaS modernos y permite cumplir
+los objetivos del proyecto sin acoplar el sistema a un proveedor
+\emph{cloud} concreto.

@@ -1,0 +1,68 @@
+\chapter{Backend FastAPI}\label{cap:backend}
+
+\section{Estructura del proyecto}
+
+\begin{lstlisting}[language=, caption={Layout del backend}]
+fakenews-backend/
+├── main.py            # Puntos de entrada y endpoints REST
+├── billing.py         # Lógica de planes, cuotas y Stripe
+├── fever/             # Agente de verificación
+│   ├── agent.py
+│   ├── aggregation.py
+│   ├── claim_extraction.py
+│   ├── inference.py
+│   ├── retrieval.py
+│   └── schemas.py
+├── migrations/        # Esquema SQL versionado
+├── tests/             # Pytest
+├── Dockerfile
+├── requirements.txt
+└── requirements-dev.txt
+\end{lstlisting}
+
+\section{Endpoints principales}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \texttt{GET /health} — verificación de estado.
+  \item \texttt{POST /predecir/} — clasificación clásica fake/real,
+        consume cuota.
+  \item \texttt{POST /verify} — agente FEVER (\emph{Super Pro}),
+        consume cuota.
+  \item \texttt{POST /analyses/save} — persistencia de un análisis en
+        el historial del usuario.
+  \item \texttt{POST /account/delete} — borrado de cuenta y datos
+        asociados.
+  \item Endpoints de \emph{billing}: creación de \emph{checkout},
+        consulta de plan, \emph{webhook} de Stripe.
+\end{itemize}
+
+\section{Validación e inyección de dependencias}
+
+Cada endpoint declara los \emph{schemas} de entrada y salida con
+Pydantic, lo que garantiza validación automática y generación de
+OpenAPI. La autenticación se resuelve con una dependencia que extrae
+el JWT del encabezado \texttt{Authorization}, lo verifica contra las
+claves públicas de Supabase y devuelve el \emph{usuario actual}.
+
+\section{Gestión de cuotas}
+
+La función \texttt{\_consume\_verification\_quota} encapsula:
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item Lectura del plan vigente del usuario (tabla
+        \texttt{billing.subscriptions}).
+  \item Cómputo de uso del periodo (tabla \texttt{usage}).
+  \item Comprobación de cuota; respuesta HTTP 402 / 403 si excede.
+  \item Registro atómico de un nuevo evento de uso.
+\end{enumerate}
+
+\section{Pruebas}
+
+La carpeta \path{tests/} contiene 25 tests (Pytest) cubriendo
+\emph{billing}, \emph{smoke} y agente. Se ejecutan en cada
+\emph{commit} mediante \texttt{pytest -q}.
+
+\section{Empaquetado}
+
+\path{Dockerfile} parte de una imagen Python 3.12 \emph{slim},
+instala dependencias en una capa cacheada y expone el puerto 8000 vía
+\texttt{uvicorn}.

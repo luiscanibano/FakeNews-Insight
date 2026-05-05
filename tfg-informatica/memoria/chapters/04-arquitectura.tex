@@ -1,0 +1,85 @@
+\chapter{Arquitectura del sistema}\label{cap:arquitectura}
+
+\section{Vista general}
+
+FakeNews Insight se estructura en cuatro componentes desplegables
+independientes:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Backend FastAPI} (\path{fakenews-backend/}).
+  \item \textbf{Frontend React} (\path{fakenews-frontend/}).
+  \item \textbf{Extensión de navegador MV3}
+        (\path{browser-extension/}).
+  \item \textbf{Supabase} (PostgreSQL + Auth + Storage), gestionado en
+        la nube.
+\end{enumerate}
+
+% TODO: incluir diagrama de despliegue (TikZ o imagen).
+
+\section{Patrón arquitectónico}
+
+\subsection{Frontend: MVC adaptado}
+
+El tutor del proyecto exige una separación estricta de
+responsabilidades en el frontend. El flujo de datos es estrictamente
+unidireccional:
+\[
+  \text{UI (componentes/páginas)}
+  \;\to\;
+  \text{Estado centralizado (Zustand)}
+  \;\to\;
+  \text{Servicios (Supabase / FastAPI)}
+  \;\to\;
+  \text{Base de datos}.
+\]
+
+\paragraph{Capa UI.} En \path{src/components/} y \path{src/pages/};
+no hace \texttt{fetch} ni accede directamente a Supabase.
+
+\paragraph{Capa de estado.} En \path{src/store/} con Zustand; expone
+acciones (\texttt{login}, \texttt{analyze}, \texttt{verify}, \dots) que
+delegan en servicios.
+
+\paragraph{Capa de servicios.} En \path{src/services/}; único lugar que
+importa \texttt{@supabase/supabase-js} o realiza \texttt{fetch} al
+backend.
+
+\subsection{Backend: separación por dominio}
+
+El backend organiza su código por dominios:
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \path{main.py}: ensamblado de \emph{routers} y dependencias.
+  \item \path{billing.py}: suscripciones, cuotas, integración Stripe.
+  \item \path{fever/}: agente de verificación
+        (\path{schemas.py}, \path{retrieval.py},
+        \path{claim_extraction.py}, \path{inference.py},
+        \path{aggregation.py}, \path{agent.py}).
+  \item \path{tests/}: pruebas con \texttt{pytest}.
+\end{itemize}
+
+\section{Comunicación entre componentes}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item Frontend $\leftrightarrow$ Backend: HTTP/JSON con \emph{Bearer
+        token} JWT emitido por Supabase Auth.
+  \item Frontend $\leftrightarrow$ Supabase: SDK oficial.
+  \item Backend $\leftrightarrow$ Supabase: PostgREST sobre PostgreSQL
+        usando \emph{service role key} para operaciones administrativas.
+  \item Backend $\leftrightarrow$ Stripe: API REST + recepción de
+        \emph{webhooks} firmados.
+  \item Extensión $\leftrightarrow$ Backend: igual que frontend
+        (Bearer JWT).
+\end{itemize}
+
+\section{Decisiones transversales}
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+  \item \textbf{Versionado de API}: prefijo implícito \texttt{/} (no
+        se versiona aún; preparado para introducir \texttt{/v1/}).
+  \item \textbf{Idempotencia}: claves idempotentes en \emph{webhooks}
+        de Stripe.
+  \item \textbf{Configuración}: 12-factor app; variables de entorno
+        documentadas en \path{.env.example}.
+  \item \textbf{Errores}: respuesta uniforme JSON
+        \texttt{\{detail: string\}} con códigos HTTP apropiados.
+\end{itemize}
