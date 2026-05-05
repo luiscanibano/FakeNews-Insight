@@ -2,22 +2,22 @@
 
 \section{Estructura del proyecto}
 
-\begin{lstlisting}[language=, caption={Layout del backend}]
+\begin{lstlisting}[caption={Layout del backend}]
 fakenews-backend/
-├── main.py            # Puntos de entrada y endpoints REST
-├── billing.py         # Lógica de planes, cuotas y Stripe
-├── fever/             # Agente de verificación
-│   ├── agent.py
-│   ├── aggregation.py
-│   ├── claim_extraction.py
-│   ├── inference.py
-│   ├── retrieval.py
-│   └── schemas.py
-├── migrations/        # Esquema SQL versionado
-├── tests/             # Pytest
-├── Dockerfile
-├── requirements.txt
-└── requirements-dev.txt
+|-- main.py            # Puntos de entrada y endpoints REST
+|-- billing.py         # Logica de planes, cuotas y Stripe
+|-- fever/             # Agente de verificacion
+|   |-- agent.py
+|   |-- aggregation.py
+|   |-- claim_extraction.py
+|   |-- inference.py
+|   |-- retrieval.py
+|   `-- schemas.py
+|-- migrations/        # Esquema SQL versionado
+|-- tests/             # Pytest
+|-- Dockerfile
+|-- requirements.txt
+`-- requirements-dev.txt
 \end{lstlisting}
 
 \section{Endpoints principales}

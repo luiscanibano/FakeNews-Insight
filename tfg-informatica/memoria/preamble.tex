@@ -4,6 +4,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-tabla]{babel}
+% IMPORTANTE: cargar amssymb ANTES de newtxmath para evitar el conflicto
+% "Command \Bbbk already defined".
+\usepackage{amssymb}
 \usepackage{newtxtext,newtxmath}
 
 \usepackage[a4paper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm]{geometry}
@@ -12,7 +15,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{enumitem}
-\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsmath,mathtools}
 \usepackage{booktabs}
 \usepackage{caption}
 \captionsetup{font=small,labelfont=bf}
@@ -58,6 +61,12 @@
   numberstyle=\tiny\color{codecom},
   numbersep=8pt,
   tabsize=2,
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=%
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {¿}{?`}1 {¡}{!`}1 {ü}{{\"u}}1 {Ü}{{\"U}}1,
 }
 \lstset{style=tfgcode}
 

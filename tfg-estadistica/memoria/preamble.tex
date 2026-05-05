@@ -6,6 +6,9 @@
 
 % Fuente: Times New Roman (la norma admite Calibri 12 / Arial 11 / TNR 12).
 % TNR es la opción más portable en pdfLaTeX.
+% IMPORTANTE: cargar amssymb ANTES de newtxmath para evitar el conflicto
+% "Command \Bbbk already defined".
+\usepackage{amssymb}
 \usepackage{newtxtext,newtxmath}
 
 % Márgenes: superior/inferior 2 cm, izquierdo/derecho 2.5 cm.
@@ -22,7 +25,7 @@
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black}
 \usepackage{caption}
 \captionsetup{font=small,labelfont=bf}
-\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{amsmath,mathtools}
 
 % Bibliografía
 \usepackage[backend=biber,style=authoryear,natbib=true,sorting=nyt]{biblatex}

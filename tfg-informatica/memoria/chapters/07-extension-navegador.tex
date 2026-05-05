@@ -11,15 +11,15 @@ abandonar la página que está consultando, lo que resulta especialmente
 La extensión se ajusta a Manifest V3, que sustituye \emph{background
 pages} por \emph{service workers} y endurece la CSP. La estructura es:
 
-\begin{lstlisting}[caption={Layout de la extensión}]
+\begin{lstlisting}[caption={Layout de la extension}]
 browser-extension/
-├── manifest.json
-├── background/service_worker.js
-├── content/{content.js, content.css}
-├── popup/{popup.html, popup.css, popup.js}
-├── lib/{api.js, config.js, supabase.js,
-│       google-auth.js, storage.js}
-└── icons/
+|-- manifest.json
+|-- background/service_worker.js
+|-- content/{content.js, content.css}
+|-- popup/{popup.html, popup.css, popup.js}
+|-- lib/{api.js, config.js, supabase.js,
+|       google-auth.js, storage.js}
+`-- icons/
 \end{lstlisting}
 
 \section{Autenticación}
