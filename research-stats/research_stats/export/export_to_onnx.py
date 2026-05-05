@@ -41,8 +41,9 @@ def export(checkpoint: Path, version: str,
         f"""# Model card — {version}
 
 - Tarea: Natural Language Inference 3-way (SUPPORTS / REFUTES / NOT ENOUGH INFO)
-- Dataset de entrenamiento: FEVER 1.0
-- Backbone: DeBERTa-v3-base
+- Dataset de entrenamiento: FEVER-NLI (`pietrolesci/nli_fever`, subset train estratificado)
+- Backbone: DeBERTa-v3-small (`microsoft/deberta-v3-small`)
+- Checkpoint fuente: `{checkpoint}`
 - Formato: ONNX (consumido por fakenews-backend/fever/inference.py)
 - Generado por: research-stats/export/export_to_onnx.py
 """,

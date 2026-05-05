@@ -44,6 +44,12 @@ yarn-error.log*
 *.tar
 *.tar.gz
 
+# --- ML artefacts ---
+models/fever/**
+!models/fever/
+!models/fever/*/
+!models/fever/*/model_card.md
+
 # --- Memoria del agente Copilot (no es código del proyecto) ---
 .copilot/
 
