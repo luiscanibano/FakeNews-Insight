@@ -10,6 +10,9 @@ contra el backend de **FakeNews Insight** sin abrir el dashboard.
 - Llamada al backend (`/predecir/`) y muestra del veredicto, fuerza SVM y cuota
   diaria del plan.
 - Botón **Guardar en historial** (`/analyses/save`) con detección de duplicado.
+- Botón **Verificar afirmaciones** (`/verify`, agente FEVER): extrae claims,
+  busca evidencias web y devuelve veredicto por afirmación con citas
+  (disponible solo en plan **Super Pro**).
 - Sesión persistente en `chrome.storage.local` con refresco automático del JWT.
 
 ## Estructura

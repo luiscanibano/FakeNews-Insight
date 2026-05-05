@@ -101,6 +101,11 @@
           <span class="button-label">Analizar</span>
           <span class="spinner hidden" aria-hidden="true"></span>
         </button>
+        <button type="button" class="secondary-button" id="verify-button" disabled
+          title="Verificación con evidencias web (plan Super Pro)">
+          <span class="button-label">Verificar afirmaciones</span>
+          <span class="spinner hidden" aria-hidden="true"></span>
+        </button>
       </section>
 
       <!-- VISTA: RESULT -->
@@ -130,6 +135,27 @@
           </button>
           <button type="button" class="secondary-button" id="new-analysis-button">
             Nuevo análisis
+          </button>
+        </div>
+      </section>
+
+      <!-- VISTA: VERIFY -->
+      <section class="view hidden" id="view-verify" data-view="verify">
+        <h1 class="view-title">Verificación de afirmaciones</h1>
+
+        <div class="verdict-card" id="verify-overall-card">
+          <span class="verdict-label" id="verify-overall-label">—</span>
+          <p class="verdict-strength" id="verify-summary"></p>
+        </div>
+
+        <p class="quota-info" id="verify-quota-info"></p>
+        <p class="banner banner-error hidden" id="verify-error" role="alert"></p>
+
+        <ol class="claims-list" id="verify-claims-list"></ol>
+
+        <div class="actions-row stacked">
+          <button type="button" class="secondary-button" id="verify-back-button">
+            Volver
           </button>
         </div>
       </section>

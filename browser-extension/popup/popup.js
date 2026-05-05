@@ -6,7 +6,7 @@
  */
 
 import { CONFIG } from "../lib/config.js";
-import { analyzeText, saveAnalysis } from "../lib/api.js";
+import { analyzeText, saveAnalysis, verifyText } from "../lib/api.js";
 import { loadSession, clearSession } from "../lib/storage.js";
 import { SessionExpiredError, signIn, signOut } from "../lib/supabase.js";
 
@@ -23,6 +23,7 @@ const elements = {
     login: document.getElementById("view-login"),
     analyze: document.getElementById("view-analyze"),
     result: document.getElementById("view-result"),
+    verify: document.getElementById("view-verify"),
   },
 
   // Login
@@ -39,6 +40,15 @@ const elements = {
   charCounter: document.getElementById("char-counter"),
   analyzeError: document.getElementById("analyze-error"),
   analyzeButton: document.getElementById("analyze-button"),
+  verifyButton: document.getElementById("verify-button"),
+
+  // Verify view
+  verifyOverallLabel: document.getElementById("verify-overall-label"),
+  verifySummary: document.getElementById("verify-summary"),
+  verifyQuotaInfo: document.getElementById("verify-quota-info"),
+  verifyError: document.getElementById("verify-error"),
+  verifyClaimsList: document.getElementById("verify-claims-list"),
+  verifyBackButton: document.getElementById("verify-back-button"),
 
   // Result
   verdictLabel: document.getElementById("verdict-label"),
@@ -174,7 +184,9 @@ elements.logoutButton.addEventListener("click", async () => {
 const updateAnalyzeButtonState = () => {
   const length = elements.analyzeTextarea.value.trim().length;
   elements.charCounter.textContent = `${length} caracter${length === 1 ? "" : "es"}`;
-  elements.analyzeButton.disabled = length < MIN_TEXT_LENGTH;
+  const disabled = length < MIN_TEXT_LENGTH;
+  elements.analyzeButton.disabled = disabled;
+  if (elements.verifyButton) elements.verifyButton.disabled = disabled;
 };
 
 elements.analyzeTextarea.addEventListener("input", updateAnalyzeButtonState);
@@ -335,6 +347,129 @@ elements.newAnalysisButton.addEventListener("click", () => {
   updateAnalyzeButtonState();
   showView("analyze");
 });
+
+// ----- Verify (agente FEVER, plan Super Pro) --------------------------------
+
+const VERIFY_LABEL_TEXT = {
+  SUPPORTED: "VERIFICADO",
+  REFUTED: "DESMENTIDO",
+  CONFLICTING: "EVIDENCIAS CONTRADICTORIAS",
+  NOT_ENOUGH_INFO: "EVIDENCIA INSUFICIENTE",
+};
+
+const VERIFY_LABEL_TONE = {
+  SUPPORTED: "real",
+  REFUTED: "fake",
+  CONFLICTING: "unknown",
+  NOT_ENOUGH_INFO: "unknown",
+};
+
+const renderVerifyReport = (report) => {
+  setBanner(elements.verifyError, "", false);
+
+  const overall = (report?.overall_label || "").toUpperCase();
+  elements.verifyOverallLabel.dataset.tone = VERIFY_LABEL_TONE[overall] || "unknown";
+  elements.verifyOverallLabel.textContent = VERIFY_LABEL_TEXT[overall] || overall || "—";
+  elements.verifySummary.textContent = report?.summary || "";
+
+  const plan = report?.plan || "";
+  const remaining = report?.remaining_today;
+  if (remaining !== undefined && remaining !== null) {
+    elements.verifyQuotaInfo.textContent =
+      `Plan ${plan.toUpperCase()} · Quedan ${remaining} verificaciones hoy.`;
+  } else {
+    elements.verifyQuotaInfo.textContent = plan
+      ? `Plan ${plan.toUpperCase()} · Sin límite diario.`
+      : "";
+  }
+
+  // Render claims (sin innerHTML para evitar XSS).
+  elements.verifyClaimsList.replaceChildren();
+  const claims = Array.isArray(report?.claims) ? report.claims : [];
+  claims.forEach((claim) => {
+    const li = document.createElement("li");
+    li.className = "claim-item";
+
+    const text = document.createElement("p");
+    text.className = "claim-text";
+    text.textContent = claim?.text || "";
+    li.appendChild(text);
+
+    const meta = document.createElement("p");
+    meta.className = "claim-meta";
+    const label = (claim?.label || "").toUpperCase();
+    const conf = Number.isFinite(claim?.confidence)
+      ? ` · ${(claim.confidence * 100).toFixed(0)}%`
+      : "";
+    meta.textContent = `${VERIFY_LABEL_TEXT[label] || label}${conf}`;
+    meta.dataset.tone = VERIFY_LABEL_TONE[label] || "unknown";
+    li.appendChild(meta);
+
+    if (claim?.rationale) {
+      const rationale = document.createElement("p");
+      rationale.className = "claim-rationale";
+      rationale.textContent = claim.rationale;
+      li.appendChild(rationale);
+    }
+
+    const evidences = Array.isArray(claim?.evidences) ? claim.evidences : [];
+    if (evidences.length > 0) {
+      const ul = document.createElement("ul");
+      ul.className = "evidence-list";
+      evidences.forEach((ev) => {
+        const evLi = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = ev?.url || "#";
+        a.textContent = ev?.title || ev?.url || "fuente";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        evLi.appendChild(a);
+        ul.appendChild(evLi);
+      });
+      li.appendChild(ul);
+    }
+
+    elements.verifyClaimsList.appendChild(li);
+  });
+};
+
+if (elements.verifyButton) {
+  elements.verifyButton.addEventListener("click", async () => {
+    setBanner(elements.analyzeError, "", false);
+    const text = elements.analyzeTextarea.value.trim();
+    if (text.length < MIN_TEXT_LENGTH) {
+      setBanner(
+        elements.analyzeError,
+        `El texto debe tener al menos ${MIN_TEXT_LENGTH} caracteres.`
+      );
+      return;
+    }
+
+    setButtonLoading(elements.verifyButton, true);
+    try {
+      const report = await verifyText(text);
+      renderVerifyReport(report);
+      showView("verify");
+    } catch (error) {
+      if (error instanceof SessionExpiredError) {
+        await handleSessionExpired();
+        return;
+      }
+      setBanner(
+        elements.analyzeError,
+        error.message || "No se pudo verificar el texto."
+      );
+    } finally {
+      setButtonLoading(elements.verifyButton, false);
+    }
+  });
+}
+
+if (elements.verifyBackButton) {
+  elements.verifyBackButton.addEventListener("click", () => {
+    showView("analyze");
+  });
+}
 
 // ----- Inicio ----------------------------------------------------------------
 

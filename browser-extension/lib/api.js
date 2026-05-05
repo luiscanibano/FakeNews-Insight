@@ -10,6 +10,7 @@ import { clearSession } from "./storage.js";
 
 const ANALYSIS_TEXT_PATH = "/predecir/";
 const ANALYSIS_SAVE_PATH = "/analyses/save";
+const ANALYSIS_VERIFY_PATH = "/verify";
 
 const buildEndpoint = (path) => `${CONFIG.ANALYSIS_API_BASE_URL}${path}`;
 
@@ -65,3 +66,11 @@ export const analyzeText = (text) =>
 /** Guarda el run_id devuelto por /predecir/ en el historial del usuario. */
 export const saveAnalysis = (runId) =>
   authorizedFetch(buildEndpoint(ANALYSIS_SAVE_PATH), { run_id: runId });
+
+/**
+ * Lanza el agente FEVER de verificacion de afirmaciones (plan Super Pro).
+ * Devuelve { run_id, overall_label, summary, claims, plan, remaining_today }.
+ * Lanza Error con mensaje legible si el plan del usuario no lo permite (403).
+ */
+export const verifyText = (text) =>
+  authorizedFetch(buildEndpoint(ANALYSIS_VERIFY_PATH), { texto: text });
