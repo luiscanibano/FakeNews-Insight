@@ -3,7 +3,7 @@
 \section{Diagnóstico inicial}
 
 Para cada modelo entrenado se computan las probabilidades $\hat{p}_k(x)$
-sobre la partición \emph{dev} y se evalúan:
+sobre la partición de prueba y se evalúan:
 \begin{itemize}[leftmargin=*,itemsep=0.2em]
   \item \emph{Expected Calibration Error} (ECE) con $M = 15$ bins
         equidistantes.
@@ -13,7 +13,12 @@ sobre la partición \emph{dev} y se evalúan:
   \item Histograma de confianzas $\max_k \hat{p}_k(x)$.
 \end{itemize}
 
-\section{Métodos \emph{post-hoc}}
+\section{Métodos \emph{post-hoc} considerados}
+
+Los siguientes métodos se incluyen como referencia metodológica y como
+línea de extensión. En el experimento final no se ajustan calibradores
+\emph{post-hoc}; se reporta únicamente el diagnóstico de las
+probabilidades originales.
 
 \subsection{\emph{Temperature scaling}}
 
@@ -22,8 +27,8 @@ La temperatura $T > 0$ reescala los \emph{logits} previos a
 \[
   \hat{p}^T_k(x) = \softmax_k\bigl(z(x) / T\bigr).
 \]
-$T$ se estima por NLL sobre un conjunto de calibración
-(20\,\% del \emph{dev}, estratificado), resolviendo el problema convexo
+$T$ se estimaría por NLL sobre un conjunto de calibración
+estratificado, resolviendo el problema convexo
 unidimensional
 \[
   \hat{T} = \argmin_{T > 0}\;
@@ -42,33 +47,41 @@ ajuste se renormalizan las probabilidades para que sumen 1.
 
 \section{Evaluación}
 
-Sobre la partición de prueba se reportan, antes y después de la
-calibración:
+Sobre la partición de prueba se reporta el diagnóstico sin recalibración
+\emph{post-hoc}:
 \begin{itemize}[leftmargin=*,itemsep=0.2em]
   \item NLL.
   \item ECE.
   \item \emph{Brier score} multiclase.
-  \item Diagrama de fiabilidad superpuesto (antes vs.\ después).
+  \item Diagrama de fiabilidad del modelo neuronal.
 \end{itemize}
 
-% TODO(resultados): tabla comparativa de calibración.
 \begin{table}[h]
   \centering
   \begin{tabular}{llccc}
     \toprule
     Modelo & Calibración & NLL & ECE & Brier \\
     \midrule
-    TF-IDF + LR & ninguna           & --- & --- & --- \\
-                & temperature       & --- & --- & --- \\
-                & isotónica         & --- & --- & --- \\
-    DeBERTa-v3  & ninguna           & --- & --- & --- \\
-                & temperature       & --- & --- & --- \\
-                & isotónica         & --- & --- & --- \\
+    TF-IDF + LR       & ninguna & 1.0897 & 0.1585 & 0.6342 \\
+    DeBERTa-v3-small  & ninguna & 0.8070 & 0.1277 & 0.4231 \\
     \bottomrule
   \end{tabular}
-  \caption{Efecto de la calibración \emph{post-hoc}.}
+  \caption{Diagnóstico de calibración sin recalibración \emph{post-hoc}.}
   \label{tab:calibration}
 \end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.78\textwidth]{../../research-stats/reports/figures/deberta_v1_reliability.png}
+  \caption{Diagrama de fiabilidad de DeBERTa-v3-small sobre la partición de prueba.}
+  \label{fig:deberta-reliability}
+\end{figure}
+
+El valor ECE de DeBERTa-v3-small (0.1277) mejora al baseline, pero no
+es lo bastante bajo como para considerar las probabilidades finales
+plenamente calibradas. Por ello la calibración por temperatura o
+isotónica se mantiene como extensión natural antes de usar los scores
+como probabilidades operativas en decisiones de alto impacto.
 
 \section{Implicaciones para la regla de agregación}
 

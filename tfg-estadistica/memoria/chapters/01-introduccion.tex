@@ -62,15 +62,14 @@ del mismo autor. Los objetivos específicos son:
         cuando las evidencias se contradicen).
   \item Implementar y evaluar un \textbf{baseline} basado en
         representaciones TF-IDF y regresión logística multinomial, con
-        regularización $\ell_2$, validado mediante \emph{stratified
-        $k$-fold} y diagnóstico de calibración.
+        regularización $\ell_2$, sobre una partición de prueba
+        estratificada y diagnóstico de calibración.
   \item Realizar el \emph{fine-tuning} de un modelo neuronal
         \textsc{DeBERTa-v3} sobre FEVER y comparar su rendimiento con el
         baseline en términos de exactitud, F1 macro, log-loss y
         \emph{Expected Calibration Error} (ECE).
-  \item Aplicar técnicas de \textbf{calibración \emph{post-hoc}} (Platt e
-        isotónica) sobre las probabilidades del clasificador y cuantificar
-        su efecto mediante diagramas de fiabilidad.
+  \item Diagnosticar la \textbf{calibración} de las probabilidades del
+        clasificador mediante NLL, Brier, ECE y diagramas de fiabilidad.
   \item Realizar \textbf{contrastes estadísticos} formales para comparar
         modelos: test de McNemar para diferencias en error de
         clasificación pareadas, y \emph{bootstrap} no paramétrico para
@@ -93,7 +92,7 @@ formulación NLI. El capítulo~\ref{cap:diseno} describe el diseño
 experimental sobre FEVER (particiones, métricas y protocolo de
 evaluación). Los capítulos~\ref{cap:baseline} y~\ref{cap:deberta}
 desarrollan respectivamente el baseline lineal y el modelo neuronal. El
-capítulo~\ref{cap:calibracion} aborda la calibración \emph{post-hoc}. El
+capítulo~\ref{cap:calibracion} aborda el diagnóstico de calibración. El
 capítulo~\ref{cap:tests} formaliza los contrastes estadísticos
 empleados. El capítulo~\ref{cap:agregacion} estudia la regla de
 agregación de claims. Finalmente, el capítulo~\ref{cap:resultados}

@@ -56,7 +56,7 @@ de variables independientes. Empleamos \emph{bootstrap} no paramétrico
 la diferencia $\Delta = F1^B_{\text{macro}} - F1^A_{\text{macro}}$:
 
 \begin{enumerate}[leftmargin=*,itemsep=0.2em]
-  \item Para $b = 1, \dots, B$ con $B = 10\,000$:
+  \item Para $b = 1, \dots, B$ con $B = 1\,000$:
         \begin{enumerate}
           \item Muestrear $N$ índices con reemplazo del conjunto de
                 prueba.
@@ -83,16 +83,24 @@ conservadora; alternativas como Benjamini--Hochberg controlando la
 
 \section{Resultados}
 
-% TODO(resultados): rellenar con valores reales.
 \begin{table}[h]
   \centering
   \begin{tabular}{lccc}
     \toprule
     Comparación & $\chi^2_{\text{McN}}$ & $p$-valor & IC 95\,\% $\Delta F1$ \\
     \midrule
-    DeBERTa vs.\ TF-IDF+LR & --- & --- & $[\,---,\;---\,]$ \\
+    DeBERTa vs.\ TF-IDF+LR & 1532.2167 & $<10^{-300}$ & $[\,0.2289,\;0.2503\,]$ \\
     \bottomrule
   \end{tabular}
-  \caption{Contrastes estadísticos pareados sobre \emph{dev}.}
+  \caption{Contrastes estadísticos pareados sobre la partición de prueba.}
   \label{tab:tests}
 \end{table}
+
+La tabla de discordancias fue
+$\begin{psmallmatrix}4551 & 2603 \\ 442 & 2230\end{psmallmatrix}$,
+donde DeBERTa acierta 2603 ejemplos que el baseline falla, frente a
+442 casos en sentido contrario. El p-valor queda por debajo de la
+precisión numérica de doble precisión y se reporta como menor que
+$10^{-300}$. El intervalo bootstrap para la diferencia de F1 macro no
+contiene cero, por lo que la mejora observada no es atribuible a ruido
+de muestreo.

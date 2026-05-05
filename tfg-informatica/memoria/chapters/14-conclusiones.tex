@@ -18,6 +18,9 @@ Las contribuciones más relevantes son:
         una API de búsqueda externa para evidencias.
   \item Una extensión MV3 con renderizado seguro y reutilización de
         autenticación y servicios.
+  \item La integración de un clasificador NLI DeBERTa-v3-small
+        entrenado sobre FEVER-NLI, exportado a ONNX y conectado al
+        agente de verificación del backend.
   \item Una estrategia de pruebas automatizada que cubre los módulos
         críticos.
   \item Un despliegue contenedorizado reproducible.
@@ -30,6 +33,8 @@ Las contribuciones más relevantes son:
         sobre un índice mantenido (Elasticsearch / OpenSearch).
   \item Añadir soporte multilenguaje real al modelo (modelos NLI
         multilingües).
+  \item Calibrar \emph{post-hoc} las probabilidades del clasificador
+        NLI antes de utilizarlas como probabilidades operativas.
   \item Migrar el despliegue a Kubernetes con \emph{autoscaling}
         horizontal.
   \item Incorporar OpenTelemetry para \emph{tracing} y métricas

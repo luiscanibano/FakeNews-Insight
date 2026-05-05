@@ -29,9 +29,9 @@ El agente de verificación es la funcionalidad diferencial del plan
         texto (heurística + LLM).
   \item \path{retrieval.py}: cliente de búsqueda (p.\ ej.\ Tavily) con
         cache opcional.
-  \item \path{inference.py}: clase \texttt{FeverNLIClassifier} con
-        método \texttt{classify(claim, evidence)} y \emph{stub}
-        determinista para tests.
+  \item \path{inference.py}: clases \texttt{FeverNLIClassifier},
+        \texttt{OnnxNLIClassifier} y \texttt{StubNLIClassifier}, todas
+        con método \texttt{predict(claim, evidence)}.
   \item \path{aggregation.py}: regla determinista de agregación con
         umbral configurable.
   \item \path{agent.py}: orquestador que ensambla los pasos.
@@ -49,7 +49,21 @@ El agente de verificación es la funcionalidad diferencial del plan
         NLI implementa una interfaz que admite tanto el modelo
         DeBERTa exportado a ONNX como un \emph{stub} determinista para
         pruebas.
+      \item \textbf{Carga automática de ONNX}. En tiempo de arranque se
+                        selecciona \texttt{OnnxNLIClassifier} cuando
+                        \texttt{FEVER\_MODEL\_PATH} apunta a una carpeta con
+                        \texttt{model.onnx}; en caso contrario se conserva el fallback
+                        ligero para entornos de CI o desarrollo sin artefactos ML.
 \end{itemize}
+
+El modelo final integrado es \texttt{deberta-v3-small-fever-v1},
+entrenado sobre FEVER-NLI y exportado a
+\path{models/fever/deberta-v3-small-fever-v1}. En la partición de
+prueba alcanza 0.7281 de exactitud y 0.7231 de F1 macro, frente a
+0.5081 y 0.4842 del baseline TF-IDF + regresión logística. La prueba de
+integración local cargó el ONNX con \texttt{onnxruntime} y produjo
+veredictos coherentes para pares de ejemplo \textsc{sup} y
+\textsc{ref}.
 
 \section{Persistencia}
 

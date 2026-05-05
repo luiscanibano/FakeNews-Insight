@@ -1,4 +1,4 @@
-"""Fine-tune de un transformer (default DeBERTa-v3-base) sobre FEVER 3-way.
+"""Fine-tune de un transformer (default DeBERTa-v3-small) sobre FEVER 3-way.
 
 Carga `transformer/config.yaml` por defecto. Usa HuggingFace `Trainer`.
 
@@ -6,7 +6,7 @@ Uso:
     python -m research_stats.transformer.train_deberta \
         --train data/processed/train.parquet \
         --dev   data/processed/validation.parquet \
-        --out   checkpoints/deberta-v3-fever-v1
+        --out   checkpoints/deberta-v3-small-fever-v1
 """
 
 from __future__ import annotations

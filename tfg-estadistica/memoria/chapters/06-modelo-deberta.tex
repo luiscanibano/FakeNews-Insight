@@ -2,9 +2,11 @@
 
 \section{Arquitectura}
 
-DeBERTa-v3-base \citep{he2023debertav3} es un modelo \emph{transformer}
-de codificador con 12 capas, 768 dimensiones por capa, 12 cabezales de
-atención y aproximadamente 184\,M parámetros. Las dos contribuciones
+DeBERTa-v3-small \citep{he2023debertav3} es un modelo \emph{transformer}
+de codificador con 6 capas, 768 dimensiones por capa, 12 cabezales de
+atención y aproximadamente 44\,M parámetros. Se elige la variante
+\emph{small} porque permite entrenar en una GPU de 6\,GB sin degradar
+el protocolo estadístico de comparación. Las dos contribuciones
 arquitectónicas centrales son:
 
 \begin{enumerate}[leftmargin=*,itemsep=0.2em]
@@ -27,11 +29,11 @@ arquitectónicas centrales son:
 
 \section{Adaptación a NLI sobre evidencias}
 
-La entrada al modelo es la cadena tokenizada
+La entrada al modelo es el par tokenizado
 \[
-  [\text{CLS}]\, e \,[\text{SEP}]\, c \,[\text{SEP}],
+  [\text{CLS}]\, c \,[\text{SEP}]\, e \,[\text{SEP}],
 \]
-truncada a un máximo de 256 \emph{tokens} (la mayoría de los pares
+truncada a un máximo de 192 \emph{tokens} (la mayoría de los pares
 encajan en este límite; los casos restantes se truncan eliminando los
 \emph{tokens} finales de la evidencia). Sobre la representación del
 \emph{token} \texttt{[CLS]} se aplica una capa lineal con $K = 3$
@@ -47,42 +49,44 @@ máxima $2 \cdot 10^{-5}$ con calentamiento lineal del 6\,\% de los
 pasos totales y decaimiento lineal posterior.
 
 \paragraph{Otros hiperparámetros.} Tamaño de lote efectivo 32
-(\emph{gradient accumulation} cuando la memoria de GPU lo requiera),
-3 épocas, precisión mixta \texttt{fp16}, \emph{label smoothing}
-$\epsilon = 0.05$.
+(tamaño físico 8 y \emph{gradient accumulation} 4), una época,
+precisión mixta \texttt{fp16} y semilla 42. Para acotar el tiempo de
+entrenamiento se usa un subconjunto estratificado de 50\,000 ejemplos
+del \emph{train}.
 
-\paragraph{Reproducibilidad.} Las semillas (\texttt{42, 1337, 2025}) se
-fijan en \texttt{torch}, \texttt{numpy} y \texttt{random}, y se activa
-\texttt{torch.use\_deterministic\_algorithms(True)} en la medida en que
-las operaciones de cuDNN lo permiten.
+\paragraph{Reproducibilidad.} La semilla \texttt{42} se fija mediante
+\texttt{transformers.set\_seed}. La partición de prueba es fija y el
+intervalo de confianza se estima por remuestreo \emph{bootstrap}.
 
 \section{Implementación}
 
-Pipeline en \path{research-stats/research_stats/transformer/finetune.py}
+Pipeline en \path{research-stats/research_stats/transformer/train_deberta.py}
 empleando la API \texttt{Trainer} de \texttt{transformers}. La
 exportación a ONNX para servir el modelo en producción se realiza con
-\texttt{optimum} en \path{research_stats/export/to_onnx.py}.
+\texttt{optimum} en \path{research_stats/export/export_to_onnx.py}.
 
 \section{Resultados}
 
-% TODO(resultados): completar tras entrenamiento real.
 \begin{table}[h]
   \centering
   \begin{tabular}{lcccc}
     \toprule
     Modelo & Acc. & F1 macro & NLL & ECE \\
     \midrule
-    TF-IDF + LR & --- & --- & --- & --- \\
-    DeBERTa-v3 \emph{fine-tuned} & --- & --- & --- & --- \\
+    TF-IDF + LR & 0.5081 & 0.4842 & 1.0897 & 0.1585 \\
+    DeBERTa-v3-small \emph{fine-tuned} & 0.7281 & 0.7231 & 0.8070 & 0.1277 \\
     \bottomrule
   \end{tabular}
   \caption{Comparativa baseline vs.\ modelo neuronal sobre la partición
-  \emph{dev} de FEVER (media $\pm$ desv.\ típica, 3 semillas).}
+  de prueba.}
   \label{tab:deberta-vs-baseline}
 \end{table}
 
 \section{Discusión preliminar}
 
-Se discutirán los \emph{trade-offs} entre coste computacional
-(entrenamiento e inferencia) y ganancia en calidad. La cuantificación
+El modelo neuronal mejora el F1 macro en 0.2389 puntos absolutos frente
+al baseline, con ganancias claras en las tres clases. La mejora más
+relevante se observa en \textsc{nei}, donde el F1 pasa de 0.3550 a
+0.6257, reflejando la capacidad del \emph{transformer} para modelar
+relaciones semánticas y no sólo solapamiento léxico. La cuantificación
 formal de la diferencia se aborda en el capítulo~\ref{cap:tests}.

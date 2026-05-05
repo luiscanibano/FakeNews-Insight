@@ -4,48 +4,50 @@
 
 \subsection{Composición y particiones}
 
-El dataset FEVER \citep{thorne2018fever} contiene 185\,445 \emph{claims}
-sintéticos generados por anotadores humanos a partir de
-aproximadamente 50\,000 artículos de Wikipedia. Cada \emph{claim} está
-etiquetado como \textsc{supported} (\textsc{sup}), \textsc{refuted}
-(\textsc{ref}) o \textsc{not-enough-info} (\textsc{nei}). En el caso
-de las dos primeras etiquetas, los anotadores aportan además al menos
-un conjunto de evidencias en forma de \emph{(página, número de frase)}.
+El dataset FEVER \citep{thorne2018fever} contiene \emph{claims}
+sintéticos generados por anotadores humanos a partir de artículos de
+Wikipedia. Cada \emph{claim} se etiqueta como \textsc{supported}
+(\textsc{sup}), \textsc{refuted} (\textsc{ref}) o
+	extsc{not-enough-info} (\textsc{nei}). Para evitar depender del
+volcado completo de Wikipedia, los experimentos emplean la variante
+FEVER-NLI publicada como \texttt{pietrolesci/nli\_fever}, que ya
+proporciona pares \emph{premise}--\emph{hypothesis} con evidencia
+textual.
 
-La distribución oficial de FEVER incluye particiones \emph{train},
-\emph{dev} y \emph{test}; esta última no incorpora etiquetas
-públicamente disponibles. El presente trabajo utiliza la partición
-\emph{train} para ajuste de parámetros, una partición de validación
-construida estratificando un 10\,\% del \emph{train} (semilla fija,
-\texttt{random\_state=42}) y la partición oficial \emph{dev} como
-conjunto de prueba para evaluación final.
+La distribución descargada contiene particiones \emph{train},
+\emph{dev} y \emph{test}. La partición \emph{test} pública mantiene la
+etiqueta ciega \emph{not available}, por lo que no puede usarse para
+evaluación supervisada. En consecuencia, se descarta esa partición y se
+divide \emph{dev} en validación y prueba mediante un corte 50/50
+estratificado con semilla fija (\texttt{random\_state=42}). Tras el
+preprocesado quedan 196\,805 ejemplos de entrenamiento, 9\,826 de
+validación y 9\,826 de prueba.
 
 \subsection{Preprocesado}
 
 Para los experimentos se construye una tabla
 $(\text{claim}, \text{evidencia}, \text{etiqueta})$ donde cada fila
-corresponde a un par claim--evidencia. En el caso \textsc{nei}, sin
-evidencia anotada, se muestrea aleatoriamente una frase del mismo
-artículo de Wikipedia (estrategia \emph{nearest neighbor sampling}). La
-implementación del preprocesado se encuentra en
+corresponde a un par claim--evidencia. Las etiquetas se normalizan a
+las tres clases anteriores y se eliminan las filas sin etiqueta
+supervisada. La implementación del preprocesado se encuentra en
 \path{research-stats/research_stats/data/preprocess.py}.
 
 \subsection{Distribución de clases}
 
 La distribución conjunta de etiquetas en \emph{train} (tras
-preprocesado) es aproximadamente equilibrada:
-% TODO(resultados): completar con números reales tras descarga de FEVER.
+preprocesado) no es completamente equilibrada, mientras que validación
+y prueba sí quedan balanceadas por construcción estratificada:
 \begin{table}[h]
   \centering
   \begin{tabular}{lrr}
     \toprule
     Etiqueta & Frecuencia & Proporción \\
     \midrule
-    \textsc{supported}        & --- & --- \\
-    \textsc{refuted}          & --- & --- \\
-    \textsc{not-enough-info}  & --- & --- \\
+    \textsc{supported}        & 116\,069 & 0.5898 \\
+    \textsc{refuted}          & 46\,741  & 0.2375 \\
+    \textsc{not-enough-info}  & 33\,995  & 0.1727 \\
     \midrule
-    Total & --- & 1.00 \\
+    Total & 196\,805 & 1.00 \\
     \bottomrule
   \end{tabular}
   \caption{Distribución empírica de etiquetas en \emph{train}.}
@@ -79,17 +81,17 @@ Adicionalmente reportamos:
 
 \section{Protocolo de evaluación}
 
-Cada experimento se ejecuta con tres semillas (\texttt{42, 1337, 2025})
-y se reporta la media y la desviación típica de las métricas. Para la
+El experimento final se ejecuta con semilla fija \texttt{42}. Para la
 comparación entre el baseline y el modelo neuronal se aplica el test
 de McNemar pareado (capítulo~\ref{cap:tests}) sobre la partición de
 prueba; para la diferencia de F1 macro se construye un intervalo de
-confianza por \emph{bootstrap} no paramétrico con $B = 10\,000$
+confianza por \emph{bootstrap} no paramétrico con $B = 1\,000$
 remuestreos.
 
 \section{Recursos computacionales}
 
 Los modelos lineales se entrenan en CPU. El \emph{fine-tuning} de
-DeBERTa-v3-base se realiza, según disponibilidad, en una GPU NVIDIA
-de memoria $\geq$ 16\,GB con precisión mixta \texttt{fp16}. Las
-configuraciones detalladas se reportan en el anexo.
+DeBERTa-v3-small se realiza en una NVIDIA GTX 1660 SUPER de 6\,GB con
+precisión mixta \texttt{fp16}; por limitación de memoria se usa tamaño
+de lote físico 8 y acumulación de gradiente 4, equivalente a lote
+efectivo 32.

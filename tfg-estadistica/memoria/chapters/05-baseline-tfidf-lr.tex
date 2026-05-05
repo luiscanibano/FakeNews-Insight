@@ -26,11 +26,10 @@ regularización $\ell_2$:
   \item Vocabulario: $n$-gramas de palabras de orden $\{1, 2\}$,
         \emph{min\_df} $= 2$, \emph{max\_df} $= 0.95$.
   \item Vocabulario máximo: 200\,000 términos.
-  \item Optimizador: \texttt{liblinear} para multiclase \emph{one-vs-rest}
-        o \texttt{lbfgs} para multinomial directa.
-  \item $\lambda$ seleccionado por validación cruzada estratificada
-        $k = 5$ sobre la rejilla
-        $\{10^{-3}, 10^{-2}, 10^{-1}, 1, 10\}$.
+    \item Optimizador: \texttt{lbfgs} para regresión logística
+      multinomial directa.
+    \item Regularización: $C = 1.0$ (equivalente a una penalización
+      $\ell_2$ moderada) y máximo 1000 iteraciones.
 \end{itemize}
 
 \section{Justificación estadística}
@@ -43,9 +42,9 @@ $W \sim \mathcal{N}(0, \lambda^{-1} I)$, equivalente a estimación MAP.
 La función objetivo es estrictamente convexa, garantizando óptimo
 global único.
 
-La validación cruzada estratificada preserva las proporciones de clase
-en cada \emph{fold}, lo que reduce la varianza de las estimaciones de
-F1 macro respecto a una validación cruzada simple.
+El uso de una partición de prueba estratificada preserva las
+proporciones de clase y permite comparar el baseline con el modelo
+neuronal de forma pareada, ejemplo a ejemplo.
 
 \section{Implementación}
 
@@ -54,22 +53,26 @@ El código se encuentra en
 métricas se calculan con \path{research_stats/evaluation/metrics.py} y
 se serializan en formato \texttt{parquet} para su análisis posterior.
 
-\section{Resultados sobre validación interna}
+\section{Resultados sobre prueba}
 
-% TODO(resultados): completar tras ejecución sobre FEVER.
 \begin{table}[h]
   \centering
   \begin{tabular}{lcccc}
     \toprule
     Modelo & Acc. & F1 macro & NLL & ECE \\
     \midrule
-    TF-IDF + LR ($\lambda = 1$) & --- & --- & --- & --- \\
+    TF-IDF + LR ($C = 1.0$) & 0.5081 & 0.4842 & 1.0897 & 0.1585 \\
     \bottomrule
   \end{tabular}
-  \caption{Métricas sobre la partición \emph{dev} (media $\pm$ desv.
-  típica sobre tres semillas).}
+  \caption{Métricas del baseline sobre la partición de prueba.}
   \label{tab:baseline}
 \end{table}
+
+El baseline supera claramente el azar en tres clases, pero presenta un
+sesgo léxico hacia \textsc{supported}: alcanza F1 0.5690 en
+\textsc{sup}, 0.5287 en \textsc{ref} y sólo 0.3550 en \textsc{nei}. La
+última clase exige razonar sobre ausencia de evidencia suficiente, una
+señal difícil de capturar con n-gramas.
 
 \section{Análisis de los pesos}
 

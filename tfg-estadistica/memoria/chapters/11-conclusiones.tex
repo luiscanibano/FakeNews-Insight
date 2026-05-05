@@ -14,11 +14,12 @@ principales son:
   \item La implementación y evaluación honesta de un baseline lineal
         TF-IDF + regresión logística multinomial regularizada
         (capítulo~\ref{cap:baseline}).
-  \item El \emph{fine-tuning} y comparación de DeBERTa-v3-base como
+  \item El \emph{fine-tuning} y comparación de DeBERTa-v3-small como
         modelo de referencia neuronal (capítulo~\ref{cap:deberta}).
-  \item La aplicación sistemática de calibración \emph{post-hoc}
-        (capítulo~\ref{cap:calibracion}), garantizando que las
-        probabilidades emitidas tengan interpretación frecuentista.
+  \item El diagnóstico sistemático de calibración
+        (capítulo~\ref{cap:calibracion}), identificando que las
+        probabilidades del modelo mejoran al baseline pero aún no son
+        plenamente calibradas.
   \item La aplicación de contrastes estadísticos formales (McNemar,
         \emph{bootstrap}) para comparar modelos
         (capítulo~\ref{cap:tests}).

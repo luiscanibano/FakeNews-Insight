@@ -2,7 +2,6 @@
 
 \section{Estado funcional alcanzado}
 
-% TODO: contrastar con el listado de RF.
 \begin{itemize}[leftmargin=*,itemsep=0.2em]
   \item Backend FastAPI con $\geq 5$ endpoints productivos (predict,
         verify, save, delete, billing).
@@ -11,21 +10,22 @@
         administrativo, multi-idioma, cierre por inactividad.
   \item Extensión MV3 con login, análisis y verificación.
   \item Supabase con migraciones SQL versionadas y RLS activa.
+      \item Clasificador NLI FEVER exportado a ONNX e integrado en el
+                        backend mediante \texttt{FEVER\_MODEL\_PATH}.
 \end{itemize}
 
 \section{Métricas técnicas}
 
-% TODO: completar con cifras reales tras una pasada de medición.
 \begin{table}[h]
   \centering
   \begin{tabular}{lcc}
     \toprule
     Componente & Líneas de código & Tests \\
     \midrule
-    Backend FastAPI         & --- & 25 \\
-    Frontend React          & --- & --- \\
-    Extensión navegador     & --- & --- \\
-    Módulo \texttt{fever}   & --- & 17 \\
+      Backend FastAPI         & 2\,696 & 38 \\
+      Frontend React          & 8\,549 & build y tests autom. \\
+      Extensión navegador     & 2\,223 & validación manual \\
+      Módulo experimental FEVER & 869 & evaluación estadística \\
     \bottomrule
   \end{tabular}
   \caption{Volumen y cobertura de pruebas por componente.}
@@ -34,7 +34,40 @@
 
 \section{Latencias observadas}
 
-% TODO: incluir mediciones reales (p50/p95) por endpoint.
+La validación local previa a la entrega confirmó el arranque del
+backend y del frontend de desarrollo. El \emph{healthcheck} del backend
+respondió correctamente en entorno local; los endpoints que consumen
+cuota y guardan historial requieren una sesión Supabase válida, por lo
+que se validan mediante tests de backend y pruebas manuales con usuario
+autenticado. No se ha realizado un benchmark p50/p95 exhaustivo, de
+modo que las latencias deben interpretarse como comprobación funcional,
+no como caracterización de rendimiento en producción.
+
+\section{Calidad del agente de verificación}
+
+El clasificador integrado en el agente es DeBERTa-v3-small entrenado
+sobre FEVER-NLI y exportado a ONNX. La tabla~\ref{tab:fever-integrado}
+resume la comparación frente al baseline TF-IDF + regresión logística.
+
+\begin{table}[h]
+      \centering
+      \begin{tabular}{lcccc}
+            \toprule
+            Modelo & Acc. & F1 macro & NLL & ECE \\
+            \midrule
+            TF-IDF + LR & 0.5081 & 0.4842 & 1.0897 & 0.1585 \\
+            DeBERTa-v3-small ONNX & 0.7281 & 0.7231 & 0.8070 & 0.1277 \\
+            \bottomrule
+      \end{tabular}
+      \caption{Resultados FEVER-NLI usados para seleccionar el clasificador integrado.}
+      \label{tab:fever-integrado}
+\end{table}
+
+Además de mejorar la calidad estadística, el formato ONNX permite que
+la inferencia del backend no dependa de cargar \texttt{torch}. Si el
+artefacto \texttt{model.onnx} no está disponible, el backend conserva
+un clasificador determinista de respaldo para que el entorno de pruebas
+arranque de forma reproducible.
 
 \section{Limitaciones}
 
@@ -44,6 +77,9 @@
         (OpenTelemetry).
   \item La extensión está probada en navegadores Chromium; falta
         validación exhaustiva en Firefox.
+  \item Las probabilidades del clasificador NLI no están calibradas
+        \emph{post-hoc}; el ECE mejora al baseline, pero se interpreta
+        la confianza como señal relativa.
 \end{itemize}
 
 \section{Aprendizajes}
@@ -55,4 +91,7 @@
   \item RLS en Supabase reduce significativamente el riesgo de fugas
         accidentales de datos entre usuarios, pero exige disciplina
         en migraciones y revisiones de código.
+  \item Exportar el modelo NLI a ONNX facilita unir investigación y
+        producto: el backend sirve inferencia ligera y mantiene un
+        fallback estable para CI y desarrollo local.
 \end{itemize}
