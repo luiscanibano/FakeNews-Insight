@@ -63,13 +63,22 @@ def _compute_metrics_factory():
     return compute_metrics
 
 
-def _make_dataset(parquet_path: Path, tokenizer, max_length: int):
+def _make_dataset(parquet_path: Path, tokenizer, max_length: int,
+                  max_samples: int | None = None):
     """Carga un parquet (claim, evidence, label) como Dataset HF tokenizado."""
     import pandas as pd
     from datasets import Dataset  # type: ignore
 
     df = pd.read_parquet(parquet_path)
     df = df[df["label"].isin(LABELS_3WAY)].reset_index(drop=True)
+    if max_samples is not None and max_samples > 0 and len(df) > max_samples:
+        # Muestreo estratificado por label.
+        from sklearn.model_selection import train_test_split  # type: ignore
+        df, _ = train_test_split(
+            df, train_size=max_samples, random_state=42,
+            stratify=df["label"],
+        )
+        df = df.reset_index(drop=True)
     df["label_id"] = df["label"].map(LABEL2ID)
 
     ds = Dataset.from_pandas(df[["claim", "evidence", "label_id"]],
@@ -85,7 +94,8 @@ def _make_dataset(parquet_path: Path, tokenizer, max_length: int):
 
 
 def train(train_path: Path, dev_path: Path, out_dir: Path,
-          config_path: Path = DEFAULT_CONFIG) -> None:
+          config_path: Path = DEFAULT_CONFIG,
+          max_train_samples: int | None = None) -> None:
     cfg = TrainConfig.from_yaml(config_path)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -109,7 +119,8 @@ def train(train_path: Path, dev_path: Path, out_dir: Path,
         label2id=LABEL2ID,
     )
 
-    train_ds = _make_dataset(train_path, tokenizer, cfg.max_length)
+    train_ds = _make_dataset(train_path, tokenizer, cfg.max_length,
+                             max_samples=max_train_samples)
     dev_ds = _make_dataset(dev_path, tokenizer, cfg.max_length)
 
     args = TrainingArguments(
@@ -156,9 +167,13 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dev", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--max-train-samples", type=int, default=None,
+                        help="Si se indica, muestrea ese numero de ejemplos"
+                             " del train (estratificado por label).")
     return parser
 
 
 if __name__ == "__main__":
     args = _build_parser().parse_args()
-    train(args.train, args.dev, args.out, args.config)
+    train(args.train, args.dev, args.out, args.config,
+          max_train_samples=args.max_train_samples)

@@ -1,9 +1,11 @@
-"""Preprocesado de FEVER al formato (claim, evidence, label).
+"""Preprocesado de FEVER-NLI al formato (claim, evidence, label).
 
-Para cada ejemplo de FEVER concatena las evidencias gold (sentencias del
-articulo de Wikipedia citado) en un unico texto. Para los ejemplos
-`NOT ENOUGH INFO` no hay evidencias gold, por lo que se utiliza un texto
-sentinela vacio (esto se documenta en la memoria como decision de diseno).
+Lee los parquets crudos de `pietrolesci/nli_fever` (campos `premise`,
+`hypothesis`, `fever_gold_label`) y los renombra al formato interno
+`(claim, evidence, label)` que consume el resto del pipeline.
+
+Splits originales: train (208346) / dev (19998) / test (19998). Renombramos
+`dev` -> `validation` para coincidir con la convencion HF del Trainer.
 
 Genera `data/processed/{train,validation,test}.parquet` con columnas:
     claim: str
@@ -28,63 +30,72 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RAW = ROOT / "data" / "raw"
 DEFAULT_OUT = ROOT / "data" / "processed"
 
+# Splits del HF dataset upstream (pietrolesci/nli_fever).
+SPLIT_RENAME = {"train": "train", "dev": "validation", "test": "test"}
 
-def _flatten_evidence(evidence_field: object) -> str:
-    """Convierte el campo `evidence` (anidado) en texto plano.
 
-    FEVER almacena `evidence` como List[List[[ann_id, ev_id, page, sent_id]]].
-    Aqui solo conservamos el identificador de pagina+sentencia como pista
-    textual; el cuerpo real se obtiene de un dump de Wikipedia, que no
-    descargamos (decision documentada).
-    """
-    if not evidence_field:
-        return ""
-    parts: list[str] = []
+def _safe_normalize(raw: object) -> str | None:
     try:
-        for group in evidence_field:  # type: ignore[union-attr]
-            for item in group:
-                # item ~ [ann_id, ev_id, page, sentence_id]
-                if len(item) >= 4 and item[2] is not None:
-                    page = str(item[2]).replace("_", " ")
-                    parts.append(f"{page} (sent {item[3]})")
-    except (TypeError, IndexError):
-        return ""
-    return " | ".join(dict.fromkeys(parts))  # dedup conservando orden
+        return normalize_label(str(raw))
+    except ValueError:
+        return None
 
 
 def preprocess_split(df: pd.DataFrame) -> pd.DataFrame:
     out = pd.DataFrame({
-        "claim": df["claim"].astype(str),
-        "evidence": df["evidence"].apply(_flatten_evidence),
-        "label": df["label"].apply(normalize_label),
+        "claim": df["premise"].astype(str),
+        "evidence": df["hypothesis"].astype(str),
+        "label": df["fever_gold_label"].apply(_safe_normalize),
     })
     out = out[out["label"].isin(LABELS_3WAY)].reset_index(drop=True)
+    # Quitar duplicados exactos (claim, evidence, label)
+    out = out.drop_duplicates(subset=["claim", "evidence", "label"]).reset_index(drop=True)
     return out
 
 
 def run(raw_dir: Path = DEFAULT_RAW, out_dir: Path = DEFAULT_OUT,
-        splits: Iterable[str] = ("train", "labelled_dev", "paper_dev",
-                                 "validation", "test")) -> None:
+        splits: Iterable[str] = ("train", "dev", "test")) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     found = False
+    val_df: pd.DataFrame | None = None
     for split in splits:
         src = raw_dir / f"{split}.parquet"
         if not src.exists():
             continue
         found = True
         df = pd.read_parquet(src)
-        if "label" not in df.columns:
-            print(f"[preprocess] {split}: sin etiquetas, se salta.")
-            continue
         out = preprocess_split(df)
-        dst = out_dir / f"{split}.parquet"
+        dst_name = SPLIT_RENAME.get(split, split)
+        if dst_name == "test" and len(out) == 0:
+            # El test oficial de FEVER es ciego (labels = "not available").
+            # Mas adelante construimos test desde validation.
+            print(f"[preprocess] {split}: test ciego, se descarta")
+            continue
+        if dst_name == "validation":
+            val_df = out
+            continue
+        dst = out_dir / f"{dst_name}.parquet"
         out.to_parquet(dst, index=False)
-        print(f"[preprocess] {split}: {len(out):>8d} -> {dst.name}")
+        print(f"[preprocess] {split} -> {dst.name}: {len(out):>8d}")
     if not found:
         raise SystemExit(
             f"No se encontro ningun split en {raw_dir}. "
             "Ejecuta primero `python -m research_stats.data.download_fever`."
         )
+    if val_df is not None:
+        # Split estratificado de validation en validation + test (50/50).
+        # Documentado en la memoria como decision para tener test gold.
+        from sklearn.model_selection import train_test_split  # type: ignore
+        v, t = train_test_split(
+            val_df, test_size=0.5, random_state=42,
+            stratify=val_df["label"],
+        )
+        v = v.reset_index(drop=True)
+        t = t.reset_index(drop=True)
+        v.to_parquet(out_dir / "validation.parquet", index=False)
+        t.to_parquet(out_dir / "test.parquet", index=False)
+        print(f"[preprocess] validation -> validation.parquet: {len(v):>8d}")
+        print(f"[preprocess] validation -> test.parquet:       {len(t):>8d}")
 
 
 def _build_parser() -> argparse.ArgumentParser:

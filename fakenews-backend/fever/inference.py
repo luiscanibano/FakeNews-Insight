@@ -74,6 +74,72 @@ class FeverNLIClassifier:
         return NLIScore(label=self.LABELS[idx], score=float(probs[idx]))
 
 
+class OnnxNLIClassifier:
+    """Inferencia NLI sobre un modelo exportado a ONNX.
+
+    Usa `onnxruntime` (CPU por defecto, sin dependencia de torch). El
+    directorio debe contener `model.onnx` + tokenizer (formato HF).
+    El orden de labels lo lee de `config.json` (`id2label`).
+    """
+
+    def __init__(self, model_path: str | os.PathLike[str],
+                 model_version: str = "fever-onnx-v1",
+                 max_length: int = 192) -> None:
+        self.model_path = Path(model_path)
+        self.model_version = model_version
+        self.max_length = max_length
+        self._tokenizer = None
+        self._session = None
+        self._labels: tuple[str, ...] = ("SUPPORTS", "REFUTES", "NOT ENOUGH INFO")
+        self._input_names: list[str] = []
+
+    def _ensure_loaded(self) -> None:
+        if self._session is not None:
+            return
+        onnx_file = self.model_path / "model.onnx"
+        if not onnx_file.exists():
+            raise FileNotFoundError(
+                f"No se encontro {onnx_file}. Genera ONNX con "
+                "research-stats/export/export_to_onnx.py"
+            )
+        # Imports diferidos
+        import json
+        import onnxruntime as ort  # type: ignore
+        from transformers import AutoTokenizer  # type: ignore
+
+        self._tokenizer = AutoTokenizer.from_pretrained(str(self.model_path))
+        providers = ["CPUExecutionProvider"]
+        self._session = ort.InferenceSession(str(onnx_file), providers=providers)
+        self._input_names = [i.name for i in self._session.get_inputs()]
+
+        config_path = self.model_path / "config.json"
+        if config_path.exists():
+            cfg = json.loads(config_path.read_text(encoding="utf-8"))
+            id2label = cfg.get("id2label") or {}
+            ordered = [id2label[str(i)] for i in range(len(id2label))
+                       if str(i) in id2label]
+            if ordered:
+                self._labels = tuple(ordered)
+
+    def predict(self, claim: str, evidence: str) -> NLIScore:
+        self._ensure_loaded()
+        import numpy as np  # type: ignore
+
+        enc = self._tokenizer(
+            claim, evidence,
+            truncation=True, max_length=self.max_length,
+            return_tensors="np", padding=True,
+        )
+        feeds = {name: enc[name] for name in self._input_names if name in enc}
+        logits = self._session.run(None, feeds)[0][0]
+        # softmax estable
+        x = logits - logits.max()
+        exp = np.exp(x)
+        probs = exp / exp.sum()
+        idx = int(np.argmax(probs))
+        return NLIScore(label=self._labels[idx], score=float(probs[idx]))
+
+
 class StubNLIClassifier:
     """Implementacion ligera para entornos sin modelo real (CI, tests).
 

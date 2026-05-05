@@ -51,7 +51,6 @@ def build_pipeline(cfg: BaselineConfig) -> Pipeline:
         ("clf", LogisticRegression(
             C=cfg.C,
             max_iter=cfg.max_iter,
-            multi_class="multinomial",
             solver="lbfgs",
             n_jobs=-1,
             random_state=cfg.seed,

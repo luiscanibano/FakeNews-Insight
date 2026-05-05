@@ -24,7 +24,12 @@ from fever.agent import (
 )
 from fever.aggregation import AggregationConfig
 from fever.claim_extraction import LLMClient
-from fever.inference import FeverNLIClassifier, NLIClassifier, StubNLIClassifier
+from fever.inference import (
+    FeverNLIClassifier,
+    NLIClassifier,
+    OnnxNLIClassifier,
+    StubNLIClassifier,
+)
 from fever.retrieval import StubSearcher, TavilySearcher, WebSearcher
 
 
@@ -54,6 +59,10 @@ def _build_nli() -> NLIClassifier:
     if not model_path or not os.path.exists(model_path):
         return StubNLIClassifier()
     try:
+        # Si el directorio contiene model.onnx, usar el runtime ONNX (sin
+        # dependencia de torch en produccion); si no, fallback a HF.
+        if os.path.exists(os.path.join(model_path, "model.onnx")):
+            return OnnxNLIClassifier(model_path=model_path)
         return FeverNLIClassifier(model_path=model_path)
     except Exception:  # pragma: no cover - defensive fallback
         return StubNLIClassifier()
