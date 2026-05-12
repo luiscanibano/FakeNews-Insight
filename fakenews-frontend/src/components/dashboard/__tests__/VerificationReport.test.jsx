@@ -47,6 +47,13 @@ describe("<VerificationReport />", () => {
     expect(screen.getByText("9 / 10")).toBeInTheDocument();
   });
 
+  it("explica las etiquetas FEVER/NLI del informe", () => {
+    render(<VerificationReport report={sampleReport} />);
+    expect(screen.getByText(/Cómo leer el resultado/i)).toBeInTheDocument();
+    expect(screen.getByText(/No significa que sea falso/i)).toBeInTheDocument();
+    expect(screen.getByText(/no una probabilidad absoluta/i)).toBeInTheDocument();
+  });
+
   it("renderiza claims con cita numerica y evidencias", () => {
     render(<VerificationReport report={sampleReport} />);
     expect(screen.getByText("La tierra orbita el sol")).toBeInTheDocument();

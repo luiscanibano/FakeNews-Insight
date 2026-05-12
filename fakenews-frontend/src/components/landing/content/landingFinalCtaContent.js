@@ -5,25 +5,25 @@
 
 export const landingFinalCtaContent = {
   es: {
-    title: "Activa tu escudo contra la desinformación.",
+    title: "Activa tu verificador de afirmaciones.",
     description:
-      "Crea tu cuenta gratuita y empieza hoy a validar titulares con IA en segundos.",
+      "Crea tu cuenta gratuita y empieza hoy a revisar textos con señales rápidas y evidencias FEVER cuando necesites más profundidad.",
     cta: "Crear cuenta",
     tags: [
-      "Detección en tiempo real",
-      "Análisis multicapa",
-      "Alertas tempranas",
+      "Claims extraídos",
+      "Evidencias enlazadas",
+      "Inferencia NLI",
     ],
   },
   en: {
-    title: "Turn on your shield against misinformation.",
+    title: "Turn on claim verification.",
     description:
-      "Create your free account and start validating headlines with AI in seconds today.",
+      "Create your free account and start reviewing texts with fast signals plus FEVER evidence when you need deeper verification.",
     cta: "Create account",
     tags: [
-      "Real-time detection",
-      "Multilayer analysis",
-      "Early warnings",
+      "Extracted claims",
+      "Linked evidence",
+      "NLI inference",
     ],
   },
 };

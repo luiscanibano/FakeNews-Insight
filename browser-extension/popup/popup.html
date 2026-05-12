@@ -28,8 +28,8 @@
       <section class="view" id="view-login" data-view="login">
         <h1 class="view-title">Inicia sesión</h1>
         <p class="view-subtitle">
-          Usa la cuenta de FakeNews Insight para analizar noticias desde cualquier
-          web sin abrir el panel.
+          Usa la cuenta de FakeNews Insight para revisar textos y verificar
+          afirmaciones desde cualquier web sin abrir el panel.
         </p>
 
         <form id="login-form" class="form" novalidate>
@@ -72,9 +72,9 @@
 
       <!-- VISTA: ANALYZE -->
       <section class="view hidden" id="view-analyze" data-view="analyze">
-        <h1 class="view-title">Analizar noticia</h1>
+        <h1 class="view-title">Revisar texto</h1>
         <p class="view-subtitle">
-          Pega el titular o cuerpo de la noticia, o usa el texto seleccionado en
+          Pega una afirmación, titular o cuerpo de texto, o usa la selección de
           la pestaña actual.
         </p>
 
@@ -85,58 +85,24 @@
         </div>
 
         <label class="field">
-          <span class="field-label">Texto a analizar</span>
+          <span class="field-label">Texto a revisar</span>
           <textarea
             id="analyze-textarea"
             rows="6"
-            placeholder="Pega aquí el texto sospechoso (mínimo 10 caracteres)…"
+            maxlength="12000"
+            placeholder="Pega una afirmación verificable o un fragmento informativo (mínimo 80 caracteres)…"
           ></textarea>
         </label>
 
-        <p class="char-counter" id="char-counter">0 caracteres</p>
+        <p class="char-counter" id="char-counter">0/12.000 caracteres</p>
 
         <p class="banner banner-error hidden" id="analyze-error" role="alert"></p>
 
-        <button type="button" class="primary-button" id="analyze-button" disabled>
-          <span class="button-label">Analizar</span>
-          <span class="spinner hidden" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="secondary-button" id="verify-button" disabled
-          title="Verificación con evidencias web (plan Super Pro)">
+        <button type="button" class="primary-button" id="analyze-button" disabled
+          title="Verificación con evidencias web según tu plan">
           <span class="button-label">Verificar afirmaciones</span>
           <span class="spinner hidden" aria-hidden="true"></span>
         </button>
-      </section>
-
-      <!-- VISTA: RESULT -->
-      <section class="view hidden" id="view-result" data-view="result">
-        <h1 class="view-title">Resultado</h1>
-
-        <div class="verdict-card" id="verdict-card">
-          <span class="verdict-label" id="verdict-label">—</span>
-          <p class="verdict-strength">
-            Fuerza SVM:
-            <strong id="verdict-strength-value">—</strong>
-          </p>
-          <div class="strength-bar" aria-hidden="true">
-            <div class="strength-bar-fill" id="strength-bar-fill"></div>
-          </div>
-        </div>
-
-        <p class="quota-info" id="quota-info"></p>
-
-        <p class="banner banner-error hidden" id="result-error" role="alert"></p>
-        <p class="banner banner-success hidden" id="result-success" role="status"></p>
-
-        <div class="actions-row stacked">
-          <button type="button" class="primary-button" id="save-button">
-            <span class="button-label">Guardar en historial</span>
-            <span class="spinner hidden" aria-hidden="true"></span>
-          </button>
-          <button type="button" class="secondary-button" id="new-analysis-button">
-            Nuevo análisis
-          </button>
-        </div>
       </section>
 
       <!-- VISTA: VERIFY -->

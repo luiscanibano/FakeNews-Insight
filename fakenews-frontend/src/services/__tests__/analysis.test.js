@@ -7,6 +7,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 import { verifyClaims } from "../analysis";
 
+const VALID_TEXT =
+  "El Gobierno anuncio que la inflacion bajo al dos por ciento durante marzo y que el desempleo juvenil descendio cinco puntos en el ultimo año.";
+
 describe("verifyClaims()", () => {
   beforeEach(() => {
     global.fetch = vi.fn();
@@ -17,7 +20,7 @@ describe("verifyClaims()", () => {
   });
 
   it("rechaza si falta el token JWT", async () => {
-    await expect(verifyClaims({ text: "texto largo de prueba" })).rejects.toThrow(/sesi/i);
+    await expect(verifyClaims({ text: VALID_TEXT })).rejects.toThrow(/sesi/i);
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
@@ -35,7 +38,7 @@ describe("verifyClaims()", () => {
       json: async () => payload,
     });
     const result = await verifyClaims({
-      text: "texto suficientemente largo",
+      text: VALID_TEXT,
       jwtToken: "tok",
     });
     expect(result).toEqual(payload);
@@ -43,19 +46,26 @@ describe("verifyClaims()", () => {
     const [, options] = global.fetch.mock.calls[0];
     expect(options.headers.Authorization).toBe("Bearer tok");
     expect(JSON.parse(options.body)).toEqual({
-      texto: "texto suficientemente largo",
+      texto: VALID_TEXT,
     });
   });
 
-  it("propaga mensaje 403 (plan insuficiente)", async () => {
+  it("rechaza si el texto supera el limite maximo de cliente", async () => {
+    await expect(
+      verifyClaims({ text: "a".repeat(12001), jwtToken: "tok" })
+    ).rejects.toThrow(/superar/i);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("propaga mensaje 403 (cupo agotado)", async () => {
     global.fetch.mockResolvedValueOnce({
       ok: false,
       status: 403,
-      json: async () => ({ detail: "Solo Super Pro" }),
+      json: async () => ({ detail: "Has alcanzado tu limite diario" }),
     });
     await expect(
-      verifyClaims({ text: "texto suficientemente largo", jwtToken: "tok" })
-    ).rejects.toThrow(/super pro/i);
+      verifyClaims({ text: VALID_TEXT, jwtToken: "tok" })
+    ).rejects.toThrow(/limite diario/i);
   });
 
   it("usa fallback cuando el cuerpo no trae detail", async () => {
@@ -65,7 +75,7 @@ describe("verifyClaims()", () => {
       json: async () => ({}),
     });
     await expect(
-      verifyClaims({ text: "texto suficientemente largo", jwtToken: "tok" })
+      verifyClaims({ text: VALID_TEXT, jwtToken: "tok" })
     ).rejects.toThrow(/no se pudo verificar/i);
   });
 });

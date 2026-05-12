@@ -1,5 +1,6 @@
 # --- Python ---
 .venv/
+.venv*/
 venv/
 __pycache__/
 *.py[cod]
@@ -45,6 +46,16 @@ yarn-error.log*
 *.tar.gz
 
 # --- ML artefacts ---
+checkpoints/
+**/checkpoints/
+**/runs/
+**/wandb/
+**/mlruns/
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
 models/fever/**
 !models/fever/
 !models/fever/*/
@@ -53,6 +64,12 @@ models/fever/**
 # --- Memoria del agente Copilot (no es código del proyecto) ---
 .copilot/
 
+# --- Memorias TFG locales (no subir a GitHub) ---
+tfg-informatica/memoria/**
+tfg-informatica/anexos/**
+tfg-estadistica/memoria/**
+tfg-estadistica/anexos/**
+
 # --- Documentación interna (no se versiona) ---
 docs/
 
@@ -60,3 +77,5 @@ docs/
 browser-extension/lib/config.local.js
 browser-extension/dist/
 browser-extension/*.zip
+
+CONTEXTO_LLM.md

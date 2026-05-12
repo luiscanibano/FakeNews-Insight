@@ -34,7 +34,6 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "").strip()
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
 STRIPE_PRICE_PRO = os.getenv("STRIPE_PRICE_PRO", "").strip()
 STRIPE_PRICE_ULTRA = os.getenv("STRIPE_PRICE_ULTRA", "").strip()
-STRIPE_PRICE_SUPER_PRO = os.getenv("STRIPE_PRICE_SUPER_PRO", "").strip()
 BILLING_SUCCESS_URL = os.getenv(
     "BILLING_SUCCESS_URL",
     "http://localhost:5173/dashboard?billing=success&session_id={CHECKOUT_SESSION_ID}",
@@ -55,13 +54,12 @@ if STRIPE_SECRET_KEY:
 PLAN_FREE = "free"
 PLAN_PRO = "pro"
 PLAN_ULTRA = "ultra"
-PLAN_SUPER_PRO = "super_pro"
 
-PLAN_ORDER = {PLAN_FREE: 0, PLAN_PRO: 1, PLAN_ULTRA: 2, PLAN_SUPER_PRO: 3}
-PAID_PLANS = {PLAN_PRO, PLAN_ULTRA, PLAN_SUPER_PRO}
+PLAN_ORDER = {PLAN_FREE: 0, PLAN_PRO: 1, PLAN_ULTRA: 2}
+PAID_PLANS = {PLAN_PRO, PLAN_ULTRA}
 
-# Planes con acceso al agente de verificacion FEVER (/verify).
-PLANS_WITH_VERIFY = {PLAN_SUPER_PRO}
+# Planes con verificacion FEVER/NLI completa o limitada segun cuota.
+PLANS_WITH_VERIFY = {PLAN_FREE, PLAN_PRO, PLAN_ULTRA}
 
 
 def _price_for_plan(plan: str) -> str:
@@ -70,8 +68,6 @@ def _price_for_plan(plan: str) -> str:
         return STRIPE_PRICE_PRO
     if plan == PLAN_ULTRA:
         return STRIPE_PRICE_ULTRA
-    if plan == PLAN_SUPER_PRO:
-        return STRIPE_PRICE_SUPER_PRO
     raise HTTPException(status_code=400, detail=f"Plan no soportado para Stripe: {plan}")
 
 
@@ -83,8 +79,6 @@ def _plan_for_price(price_id: Optional[str]) -> Optional[str]:
         return PLAN_PRO
     if STRIPE_PRICE_ULTRA and price_id == STRIPE_PRICE_ULTRA:
         return PLAN_ULTRA
-    if STRIPE_PRICE_SUPER_PRO and price_id == STRIPE_PRICE_SUPER_PRO:
-        return PLAN_SUPER_PRO
     return None
 
 

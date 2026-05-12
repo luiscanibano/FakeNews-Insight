@@ -1,11 +1,13 @@
-# TFG — FakeNews Insight: Plataforma de detección de Fake News
+# TFG — FakeNews Insight
 
-Plataforma web que clasifica noticias como reales o falsas usando un
-modelo SVM + TF-IDF entrenado sobre un corpus en español. Frontend en
-React + Vite, backend en FastAPI, autenticación y persistencia en
-Supabase.
+Plataforma web para verificacion de afirmaciones con evidencias. El flujo
+principal combina extraccion de claims, recuperacion web, inferencia FEVER/NLI,
+adjudicacion semantica y agregacion de veredictos. El backend esta construido
+con FastAPI y el frontend con React + Vite; Supabase gestiona autenticacion,
+persistencia y RLS.
 
-> Estado: **alpha** — primer despliegue dockerizado con CI/CD.
+> Estado: **alpha** — backend dockerizado en Render y frontend estatico en
+> Cloudflare Pages, ambos con CI/CD desde GitHub Actions.
 
 ---
 
@@ -13,11 +15,10 @@ Supabase.
 
 ```
 .
-├── fakenews-backend/      # FastAPI + scikit-learn (Dockerfile)
-├── fakenews-frontend/     # React 19 + Vite + Tailwind (Dockerfile + nginx)
-├── models/                # Pickles del SVM y el TF-IDF (~220 KB)
-├── docs/                  # Documentación de despliegue y arquitectura
-├── .github/workflows/     # CI, build & publish, deploy
+├── fakenews-backend/      # FastAPI + agente FEVER/NLI (Dockerfile)
+├── fakenews-frontend/     # React 19 + Vite + Tailwind
+├── models/                # Modelo FEVER/NLI exportado para inferencia
+├── .github/workflows/     # CI, build backend, deploy backend/frontend
 ├── docker-compose.yml     # Orquestación local
 └── .env.example           # Variables necesarias para docker compose
 ```
@@ -81,13 +82,24 @@ Cada subproyecto tiene su propio `.env.example`:
 ## CI/CD
 
 - **CI** ([ci.yml](.github/workflows/ci.yml)): lint + smoke tests en cada PR.
-- **Build & Publish** ([build-and-publish.yml](.github/workflows/build-and-publish.yml)):
-  pÃºblica imágenes Docker en GHCR en cada push a `main`.
-- **Deploy** ([deploy-render.yml](.github/workflows/deploy-render.yml)):
-  triggerea los Deploy Hooks de Render.
+- **Build & Publish backend** ([build-and-publish.yml](.github/workflows/build-and-publish.yml)):
+  publica la imagen Docker del backend en GHCR en cada push a `main`.
+- **Deploy backend** ([deploy-render.yml](.github/workflows/deploy-render.yml)):
+  dispara el Deploy Hook de Render para que el backend baje la imagen `latest`.
+- **Deploy frontend** ([deploy-cloudflare-pages.yml](.github/workflows/deploy-cloudflare-pages.yml)):
+  compila el frontend Vite y publica `dist/` en Cloudflare Pages.
 
-Ver guía completa: [docs/DEPLOY.md](docs/DEPLOY.md).
-Ver arquitectura: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+El Dockerfile del frontend se mantiene para desarrollo local y validacion
+containerizada, pero produccion sirve el artefacto estatico desde Cloudflare
+Pages.
+
+Secrets/variables necesarios para despliegue:
+
+- Backend Render: `RENDER_DEPLOY_HOOK_BACKEND`.
+- Frontend Cloudflare: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
+  `CLOUDFLARE_PAGES_PROJECT_NAME`.
+- Build frontend: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
+  `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico de Render.
 
 ---
 
@@ -95,5 +107,5 @@ Ver arquitectura: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 > _Pendientes de cumplimentar tras el primer despliegue:_
 >
-> - Frontend: `https://<TBD>.onrender.com`
+> - Frontend: `https://<proyecto>.pages.dev`
 > - Backend:  `https://<TBD>.onrender.com`

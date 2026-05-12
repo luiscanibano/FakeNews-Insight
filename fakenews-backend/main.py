@@ -74,19 +74,23 @@ app = FastAPI(
 """ConfiguraciÃ³n CORS para permitir comunicacion frontend-backend y extension de navegador.
 
 El regex acepta:
-- Frontend en produccion (Render).
+- Frontend en produccion (Cloudflare Pages o dominio configurado).
 - Frontend en desarrollo local (Vite).
 - Cualquier extension Chrome/Edge (los IDs MV3 usan caracteres a-p, 32 chars).
 """
+default_cors_origin_regex = (
+    r"^("
+    r"https://[a-z0-9-]+\.pages\.dev"
+    r"|https://tfg-informatica-luis-canibano-frontend\.onrender\.com"
+    r"|http://localhost:5173"
+    r"|http://127\.0\.0\.1:5173"
+    r"|chrome-extension://[a-pA-P0-9]{32}"
+    r")$"
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=(
-        r"^("
-        r"https://tfg-informatica-luis-canibano-frontend\.onrender\.com"
-        r"|http://localhost:5173"
-        r"|chrome-extension://[a-pA-P0-9]{32}"
-        r")$"
-    ),
+    allow_origin_regex=os.getenv("CORS_ALLOW_ORIGIN_REGEX") or default_cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -753,33 +757,46 @@ app.include_router(_billing_router)
 
 
 # =====================================================================
-# Agente FEVER de verificacion de afirmaciones (plan Super Pro)
+# Agente FEVER de verificacion de afirmaciones (contraste por planes)
 # =====================================================================
 
 class VerifyRequest(BaseModel):
     texto: str
 
 
-def _is_super_pro(plan: str) -> bool:
-    return plan.strip().lower() == "super_pro"
+VERIFY_TEXT_MIN_LENGTH = 80
+
+VERIFY_PLAN_LIMITS: Dict[str, Dict[str, int]] = {
+    "free": {"daily_limit": 5, "max_claims": 1, "max_evidences": 1, "max_chars": 2000},
+    "pro": {"daily_limit": 50, "max_claims": 3, "max_evidences": 3, "max_chars": 6000},
+    "ultra": {"daily_limit": 200, "max_claims": 8, "max_evidences": 5, "max_chars": 12000},
+}
+
+
+def _normalize_verify_plan(plan: str) -> str:
+    normalized = plan.strip().lower()
+    if normalized in {"pro", "pro_user"}:
+        return "pro"
+    if normalized in {"ultra", "ultra_user"}:
+        return "ultra"
+    return "free"
+
+
+def _verify_limits_for_plan(plan: str) -> Dict[str, int]:
+    return VERIFY_PLAN_LIMITS[_normalize_verify_plan(plan)]
 
 
 def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
                                  jwt_token: str) -> Dict[str, Any]:
-    """Consume una unidad de cuota diaria del agente para plan Super Pro.
+    """Consume una unidad de cuota diaria del contraste FEVER por plan."""
+    raw_plan = str(profile.get("plan") or "free")
+    plan = _normalize_verify_plan(raw_plan)
+    limits = _verify_limits_for_plan(plan)
 
-    Solo `super_pro` (y planes superiores en futuras revisiones) pueden
-    usar /verify. El resto recibe 403.
-    """
-    plan = str(profile.get("plan") or "free")
-
-    if not _is_super_pro(plan):
-        raise HTTPException(
-            status_code=403,
-            detail="El agente de verificacion solo esta disponible en el plan Super Pro.",
-        )
-
-    daily_limit = _to_int(profile.get("daily_verification_limit"), default=50)
+    daily_limit = _to_int(
+        profile.get("daily_verification_limit"),
+        default=limits["daily_limit"],
+    )
     if daily_limit <= 0:
         raise HTTPException(
             status_code=403,
@@ -795,7 +812,7 @@ def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
     if used_today >= daily_limit:
         raise HTTPException(
             status_code=403,
-            detail="Has alcanzado tu limite diario de verificaciones para el plan Super Pro.",
+            detail=f"Has alcanzado tu limite diario de verificaciones para el plan {plan.title()}.",
         )
 
     next_used = used_today + 1
@@ -837,6 +854,9 @@ def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
         "remaining_today": max(0, daily_limit - next_used),
         "daily_limit": daily_limit,
         "used_today": next_used,
+        "max_claims": limits["max_claims"],
+        "max_evidences": limits["max_evidences"],
+        "max_chars": limits["max_chars"],
     }
 
 
@@ -918,34 +938,60 @@ def _persist_verification_report(report, user_id: str, jwt_token: str) -> Option
 
 def _serialize_report(report, *, run_id: Optional[str], quota: Dict[str, Any]) -> Dict[str, Any]:
     """Serializa el VerificationReport a JSON estable para la API publica."""
+    claims = [
+        {
+            "id": cv.claim.id,
+            "texto": cv.claim.text,
+            "text": cv.claim.text,
+            "veredicto": cv.label.value,
+            "label": cv.label.value,
+            "confianza": round(cv.confidence, 4),
+            "confidence": round(cv.confidence, 4),
+            "razonamiento": cv.rationale,
+            "rationale": cv.rationale,
+            "evidencias": [
+                {
+                    "url": s.evidence.url,
+                    "titulo": s.evidence.title,
+                    "title": s.evidence.title,
+                    "snippet": s.evidence.snippet,
+                    "nli_label": s.nli.label,
+                    "nli_score": round(s.nli.score, 4),
+                }
+                for s in cv.evidences
+            ],
+            "evidences": [
+                {
+                    "url": s.evidence.url,
+                    "titulo": s.evidence.title,
+                    "title": s.evidence.title,
+                    "snippet": s.evidence.snippet,
+                    "nli_label": s.nli.label,
+                    "nli_score": round(s.nli.score, 4),
+                }
+                for s in cv.evidences
+            ],
+        }
+        for cv in report.claims
+    ]
     return {
         "run_id": run_id,
+        "plan": quota.get("plan"),
         "veredicto_global": report.overall_label.value,
+        "overall_label": report.overall_label.value,
         "resumen": report.summary,
+        "summary": report.summary,
         "model_version": report.model_version,
         "duracion_ms": report.duration_ms,
+        "duration_ms": report.duration_ms,
         "verificaciones_restantes_hoy": quota.get("remaining_today"),
+        "remaining_today": quota.get("remaining_today"),
         "limite_diario": quota.get("daily_limit"),
-        "claims": [
-            {
-                "id": cv.claim.id,
-                "texto": cv.claim.text,
-                "veredicto": cv.label.value,
-                "confianza": round(cv.confidence, 4),
-                "razonamiento": cv.rationale,
-                "evidencias": [
-                    {
-                        "url": s.evidence.url,
-                        "titulo": s.evidence.title,
-                        "snippet": s.evidence.snippet,
-                        "nli_label": s.nli.label,
-                        "nli_score": round(s.nli.score, 4),
-                    }
-                    for s in cv.evidences
-                ],
-            }
-            for cv in report.claims
-        ],
+        "daily_limit": quota.get("daily_limit"),
+        "max_claims": quota.get("max_claims"),
+        "max_evidences": quota.get("max_evidences"),
+        "max_chars": quota.get("max_chars"),
+        "claims": claims,
     }
 
 
@@ -956,7 +1002,8 @@ def verificar_afirmaciones(
 ):
     """Ejecuta el agente FEVER sobre el texto y devuelve veredicto+evidencias.
 
-    Restringido a plan Super Pro (cuota diaria). Persiste la ejecucion
+    La capacidad se degrada por plan: Free contrasta una afirmacion,
+    Pro varias, y Ultra ejecuta el agente completo. Persiste la ejecucion
     si la migracion 002_fever esta aplicada.
     """
     token = _extract_bearer_token(authorization)
@@ -968,19 +1015,38 @@ def verificar_afirmaciones(
     if not user_id:
         raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
 
-    if not payload.texto or len(payload.texto.strip()) < 10:
-        raise HTTPException(status_code=400, detail="El texto proporcionado es demasiado corto.")
+    text = (payload.texto or "").strip()
+    if len(text) < VERIFY_TEXT_MIN_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"El texto debe tener al menos {VERIFY_TEXT_MIN_LENGTH} caracteres para extraer afirmaciones verificables.",
+        )
 
     profile = _load_profile_for_verify(user_id, token)
+    plan = _normalize_verify_plan(str(profile.get("plan") or "free"))
+    limits = _verify_limits_for_plan(plan)
+    max_chars = limits["max_chars"]
+    if len(text) > max_chars:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Tu plan {plan.title()} permite hasta {max_chars} caracteres por verificacion.",
+        )
+
     quota = _consume_verification_quota(profile, user_id, token)
 
     # Import diferido: evita cargar fever/fever_runtime en arranque para
     # tests del backend que no necesitan el agente.
+    from fever.agent import AgentConfig
+    from fever.aggregation import AggregationConfig
     from fever_runtime import get_verification_agent
 
-    agent = get_verification_agent()
+    agent = get_verification_agent(config=AgentConfig(
+        max_claims=_to_int(quota.get("max_claims"), default=1),
+        max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
+        aggregation=AggregationConfig(),
+    ))
     try:
-        report = agent.verify(payload.texto)
+        report = agent.verify(text)
     except Exception as exc:  # pragma: no cover - bubble up sanitized error
         raise HTTPException(
             status_code=503,

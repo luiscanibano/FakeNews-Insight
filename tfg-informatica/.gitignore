@@ -19,5 +19,7 @@
 *.ind
 *.ilg
 
-!memoria/main.pdf
-!anexos/main.pdf
+# Las memorias y anexos completos se ignoran desde el .gitignore de la raiz.
+# Si se compilan localmente, los PDF finales tampoco deben subirse.
+memoria/main.pdf
+anexos/main.pdf

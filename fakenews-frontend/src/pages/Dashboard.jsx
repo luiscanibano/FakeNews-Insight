@@ -123,7 +123,7 @@ function Dashboard() {
   const canUseCsvAnalysis = role === USER_ROLE.ADMIN || plan === USER_PLAN.ULTRA;
   const accountLabel = profile?.display_name || user?.email || t("account.myAccount");
 
-  const analysisFlow = useAnalysisFlow({ canUseCsvAnalysis });
+  const analysisFlow = useAnalysisFlow({ canUseCsvAnalysis, plan });
   const { handleChangeAccountPassword, handleDeleteAccount } = useAccountActions();
   const { confirmCheckout } = useBillingActions();
   const loadBillingSnapshot = useBillingStore((state) => state.loadSnapshot);

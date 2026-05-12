@@ -1,6 +1,6 @@
 /**
  * @file verdictTone.js
- * @description Helper para derivar estilo visual y badge según veredicto y fuerza SVM.
+ * @description Helper para derivar estilo visual y badge según veredicto y señal del clasificador.
  */
 
 import i18next from "i18next";
@@ -12,7 +12,7 @@ const getUncertainBadgeText = () =>
     defaultValue: "INCIERTO / DUDOSO",
   });
 
-/** Deriva tono visual según veredicto y nivel de incertidumbre de la fuerza SVM. */
+/** Deriva tono visual según veredicto y nivel de incertidumbre de la señal del clasificador. */
 export const getVerdictTone = ({ verdictLabel, svmStrength }) => {
   const hasStrength = typeof svmStrength === "number";
   const threshold = 0.3;

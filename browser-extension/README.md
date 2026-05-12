@@ -1,18 +1,18 @@
 # FakeNews Insight — Extensión de navegador (MVP)
 
-Extensión Manifest V3 (Chrome / Edge) que permite analizar textos sospechosos
-contra el backend de **FakeNews Insight** sin abrir el dashboard.
+Extensión Manifest V3 (Chrome / Edge) que permite revisar textos y verificar
+afirmaciones con evidencias FEVER sin abrir el dashboard.
 
 ## Funcionalidades v0.1.0
 
 - Login con email / contraseña (la misma cuenta que en la web).
 - Pegar texto manualmente o **usar la selección actual** de la pestaña.
-- Llamada al backend (`/predecir/`) y muestra del veredicto, fuerza SVM y cuota
-  diaria del plan.
-- Botón **Guardar en historial** (`/analyses/save`) con detección de duplicado.
-- Botón **Verificar afirmaciones** (`/verify`, agente FEVER): extrae claims,
-  busca evidencias web y devuelve veredicto por afirmación con citas
-  (disponible solo en plan **Super Pro**).
+- Llamada al backend (`/verify`) para extraer claims, buscar evidencias y
+  mostrar veredicto global con cuota diaria.
+- Botón **Verificar afirmaciones**: extrae claims, busca evidencias
+  web y devuelve veredicto por afirmación con citas según los límites del plan.
+- Entrada acotada: mínimo 80 caracteres en popup/selección y máximo 12.000
+  caracteres en cliente; el backend aplica además el máximo real por plan.
 - Sesión persistente en `chrome.storage.local` con refresco automático del JWT.
 
 ## Estructura
@@ -29,7 +29,7 @@ browser-extension/
 └── popup/
     ├── popup.html
     ├── popup.css
-    └── popup.js           # Router de vistas + handlers
+    └── popup.js           # Router de vistas + handlers FEVER/NLI
 ```
 
 ## Configuración
@@ -41,7 +41,7 @@ Antes de cargar la extensión, edita
 SUPABASE_URL: "https://<tu-proyecto>.supabase.co",
 SUPABASE_ANON_KEY: "eyJhbGciOi...",       // mismo VITE_SUPABASE_ANON_KEY que el frontend
 ANALYSIS_API_BASE_URL: "https://tfg-informatica-luis-canibano-backend.onrender.com",
-WEB_REGISTER_URL: "https://tfg-informatica-luis-canibano-frontend.onrender.com/register",
+WEB_REGISTER_URL: "https://<tu-proyecto>.pages.dev/register",
 ```
 
 > El `anon key` de Supabase es público por diseño; la seguridad real reside en

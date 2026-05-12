@@ -5,29 +5,29 @@
 
 export const landingProcessContent = {
   es: {
-    title: "Desarrollado con tecnología de vanguardia.",
-    description: "Tres pasos para blindar tu consumo de información.",
+    title: "Desarrollado para verificar afirmaciones.",
+    description: "Tres pasos para pasar del texto a un veredicto con evidencias.",
     steps: [
       {
         number: "01",
         title: "Introduce la información",
         eta: "Paso inicial · 15s",
         description:
-          "Pega un texto dudoso o el enlace de un artículo directamente en nuestra plataforma o usa el clic derecho en tu navegador.",
+          "Pega un texto dudoso, una URL o selecciona un fragmento desde la extensión para iniciar el análisis.",
         details: [
-          "Acepta texto libre, titulares o URL completas.",
-          "Detección automática de idioma y normalización de contenido.",
+          "Acepta texto libre, titulares, claims o URL completas.",
+          "Normalización del contenido antes de extraer afirmaciones.",
         ],
       },
       {
         number: "02",
-        title: "La IA procesa los datos",
-        eta: "Análisis IA · < 2s",
+        title: "FEVER contrasta las afirmaciones",
+        eta: "NLI + evidencias",
         description:
-          "Nuestra API analiza los patrones lingüísticos, la reputación de la fuente y el contexto semántico en segundos.",
+          "El agente separa claims, recupera evidencias web y usa inferencia NLI para medir si cada evidencia apoya o refuta la afirmación.",
         details: [
-          "Cruce con señales de credibilidad y consistencia narrativa.",
-          "Evaluación de sesgo, manipulación y patrones virales sospechosos.",
+          "Cruce entre afirmación, evidencia y etiqueta FEVER.",
+          "Confianza por claim y resumen agregado del texto.",
         ],
       },
       {
@@ -35,38 +35,38 @@ export const landingProcessContent = {
         title: "Obtén el veredicto",
         eta: "Resultado · inmediato",
         description:
-          "Recibe un indicador visual claro: Fiable o falso, acompañado de un desglose detallado de los motivos de la puntuación.",
+          "Recibe un indicador claro: apoyado, refutado, contradictorio o sin información suficiente, acompañado de fuentes consultadas.",
         details: [
-          "Puntuación de fiabilidad con explicación interpretable.",
-          "Recomendaciones para contrastar con fuentes adicionales.",
+          "Veredicto interpretable con confianza agregada.",
+          "Evidencias enlazadas para revisar el razonamiento.",
         ],
       },
     ],
   },
   en: {
-    title: "Built with cutting-edge technology.",
-    description: "Three steps to shield your news consumption.",
+    title: "Built to verify claims.",
+    description: "Three steps from raw text to an evidence-backed verdict.",
     steps: [
       {
         number: "01",
         title: "Submit the information",
         eta: "Initial step · 15s",
         description:
-          "Paste a suspicious text or article link directly into our platform, or use right-click in your browser.",
+          "Paste a suspicious text, URL or selected fragment from the extension to start the analysis.",
         details: [
-          "Accepts free text, headlines or full URLs.",
-          "Automatic language detection and content normalization.",
+          "Accepts free text, headlines, claims or full URLs.",
+          "Content normalization before extracting claims.",
         ],
       },
       {
         number: "02",
-        title: "AI processes the data",
-        eta: "AI analysis · < 2s",
+        title: "FEVER checks the claims",
+        eta: "NLI + evidence",
         description:
-          "Our API analyzes linguistic patterns, source reputation and semantic context in seconds.",
+          "The agent splits claims, retrieves web evidence and uses NLI inference to estimate whether each evidence supports or refutes the statement.",
         details: [
-          "Cross-checking with credibility signals and narrative consistency.",
-          "Evaluation of bias, manipulation and suspicious viral patterns.",
+          "Cross-checking between claim, evidence and FEVER label.",
+          "Per-claim confidence and aggregate text summary.",
         ],
       },
       {
@@ -74,10 +74,10 @@ export const landingProcessContent = {
         title: "Get the verdict",
         eta: "Result · instant",
         description:
-          "Receive a clear visual indicator: reliable or false, with a detailed breakdown of the score's reasoning.",
+          "Receive a clear indicator: supported, refuted, conflicting or not enough information, with the sources consulted.",
         details: [
-          "Reliability score with interpretable explanation.",
-          "Recommendations to cross-check with additional sources.",
+          "Interpretable verdict with aggregate confidence.",
+          "Linked evidence so you can inspect the reasoning.",
         ],
       },
     ],

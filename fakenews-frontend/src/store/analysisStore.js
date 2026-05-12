@@ -4,7 +4,7 @@
  */
 
 import { create } from "zustand";
-import { analyzeTextNews, saveAnalysisToHistory } from "../services/analysis";
+import { saveAnalysisToHistory, verifyClaims } from "../services/analysis";
 import { getAccessToken } from "../services/auth";
 
 let progressTimerRef = null;
@@ -23,32 +23,15 @@ const clearProgressTimers = () => {
   }
 };
 
-/** Normaliza la respuesta backend al contrato de resultado que consume el dashboard. */
-const toDashboardResult = ({ text, backendResult }) => {
-  const rawDistance = Number(backendResult?.certeza_svm);
-  const hasValidDistance = Number.isFinite(rawDistance);
-
-  const verdictLabel =
-    backendResult?.veredicto === "REAL"
-      ? "FIABLE"
-      : backendResult?.veredicto === "FAKE"
-      ? "FALSA"
-      : "DUDOSA";
-
-  return {
-    kind: "single",
-    mode: "text",
-    verdictLabel,
-    svmStrength: hasValidDistance ? Math.abs(rawDistance) : null,
-    source: "Texto pegado manualmente",
-    excerpt: text.slice(0, 260),
-    modelVerdict: backendResult?.veredicto || null,
-    svmDistance: hasValidDistance ? rawDistance : null,
-    processedWords: Number(backendResult?.palabras_procesadas) || null,
-    analysisRunId: backendResult?.analysis_run_id || null,
-    savedInHistory: Boolean(backendResult?.guardado_en_historial),
-  };
-};
+const toVerificationResult = ({ text, backendResult }) => ({
+  kind: "verification",
+  mode: "text",
+  source: "Texto pegado manualmente",
+  excerpt: text.slice(0, 260),
+  report: backendResult,
+  analysisRunId: backendResult?.run_id || null,
+  savedInHistory: true,
+});
 
 export const useAnalysisStore = create((set) => ({
   result: null,
@@ -75,14 +58,14 @@ export const useAnalysisStore = create((set) => ({
   },
 
   /**
-   * Ejecuta el análisis de texto autenticado con JWT.
+  * Ejecuta el contraste de texto autenticado con JWT.
    * Mantiene progreso visual optimista hasta recibir respuesta de backend.
    */
   analyzeText: async (text) => {
     const trimmedText = text.trim();
 
     if (!trimmedText) {
-      throw new Error("Debes indicar un texto para analizar.");
+      throw new Error("Debes indicar un texto para contrastar.");
     }
 
     clearProgressTimers();
@@ -112,8 +95,8 @@ export const useAnalysisStore = create((set) => ({
 
     try {
       const jwtToken = await getAccessToken();
-      const backendResult = await analyzeTextNews({ text: trimmedText, jwtToken });
-      const result = toDashboardResult({ text: trimmedText, backendResult });
+      const backendResult = await verifyClaims({ text: trimmedText, jwtToken });
+      const result = toVerificationResult({ text: trimmedText, backendResult });
 
       clearProgressTimers();
       set({ result, isAnalysing: false, analysisProgress: 100 });

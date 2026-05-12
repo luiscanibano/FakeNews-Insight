@@ -78,7 +78,7 @@ def _build_config() -> AgentConfig:
     )
 
 
-def get_verification_agent() -> VerificationAgent:
+def get_verification_agent(config: AgentConfig | None = None) -> VerificationAgent:
     """Devuelve el agente de verificacion (cacheado por proceso).
 
     En tests, reasignar `_FACTORY_OVERRIDE` con un agente mockeado.
@@ -93,6 +93,13 @@ def get_verification_agent() -> VerificationAgent:
         config=_build_config(),
     )
     _FACTORY_OVERRIDE = agent
+    if config is not None:
+        return VerificationAgent(
+            llm=agent.llm,
+            searcher=agent.searcher,
+            nli=agent.nli,
+            config=config,
+        )
     return agent
 
 

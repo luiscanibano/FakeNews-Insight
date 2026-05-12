@@ -194,6 +194,11 @@ textarea:focus {
   font-size: 11px;
   color: var(--color-on-surface-dim);
   text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.char-counter[data-warning="true"] {
+  color: #facc15;
 }
 
 /* === Buttons ==================================================================== */

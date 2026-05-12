@@ -3,7 +3,7 @@
 -- Aplicar en Supabase SQL Editor (proyecto > SQL > New query > Run)
 --
 -- Anade:
---   * Cuota diaria de verificaciones para el plan Super Pro.
+--   * Cuota diaria de verificaciones FEVER/NLI por plan.
 --   * Tablas para persistir runs/claims/evidencias del agente.
 --   * RLS: el usuario solo ve sus propias verificaciones.
 -- =====================================================================

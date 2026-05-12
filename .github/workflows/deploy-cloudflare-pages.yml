@@ -1,0 +1,59 @@
+name: Deploy frontend to Cloudflare Pages
+
+# Despliega el frontend Vite como sitio estático en Cloudflare Pages.
+# El Dockerfile del frontend se mantiene para desarrollo local y validación
+# containerizada, pero producción sirve el artefacto dist/ desde Cloudflare.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fakenews-frontend/**"
+      - ".github/workflows/deploy-cloudflare-pages.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and deploy frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fakenews-frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: fakenews-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_ANALYSIS_API_BASE_URL: ${{ secrets.VITE_ANALYSIS_API_BASE_URL }}
+          VITE_ANALYSIS_TEXT_PATH: ${{ vars.VITE_ANALYSIS_TEXT_PATH || '/predecir/' }}
+          VITE_ANALYSIS_VERIFY_PATH: ${{ vars.VITE_ANALYSIS_VERIFY_PATH || '/verify' }}
+          VITE_ANALYSIS_SAVE_PATH: ${{ vars.VITE_ANALYSIS_SAVE_PATH || '/analyses/save' }}
+          VITE_ACCOUNT_DELETE_PATH: ${{ vars.VITE_ACCOUNT_DELETE_PATH || '/account/delete' }}
+          VITE_BILLING_CHECKOUT_PATH: ${{ vars.VITE_BILLING_CHECKOUT_PATH || '/billing/checkout' }}
+          VITE_BILLING_CONFIRM_PATH: ${{ vars.VITE_BILLING_CONFIRM_PATH || '/billing/confirm' }}
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: >-
+          npx wrangler pages deploy dist
+          --project-name "${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}"
+          --branch "${{ github.ref_name }}"

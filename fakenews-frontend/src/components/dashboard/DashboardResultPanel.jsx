@@ -7,6 +7,7 @@ import SingleResultView from "./result/SingleResultView";
 import BatchResultView from "./result/BatchResultView";
 import AnalysingView from "./result/AnalysingView";
 import EmptyResultView from "./result/EmptyResultView";
+import VerificationReport from "./VerificationReport";
 
 /** Selector de vista según el estado actual del flujo de análisis. */
 function DashboardResultPanel({
@@ -19,7 +20,9 @@ function DashboardResultPanel({
   return (
     <section className="dash-in" style={{ "--i": 2 }}>
       <div className="dash-panel">
-        {result?.kind === "single" ? (
+        {result?.kind === "verification" ? (
+          <VerificationReport report={result.report} />
+        ) : result?.kind === "single" ? (
           <SingleResultView
             result={result}
             isSavingResult={isSavingResult}

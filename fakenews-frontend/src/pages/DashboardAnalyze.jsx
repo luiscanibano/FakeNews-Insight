@@ -27,6 +27,8 @@ function DashboardAnalyze() {
     resolvedError,
     analysisProgress,
     result,
+    maxTextLength,
+    minTextLength,
     saveCurrentTextResultToHistory,
     isSavingTextAnalysis,
     saveTextAnalysisError,
@@ -53,6 +55,8 @@ function DashboardAnalyze() {
         onCsvPick={handleCsvPick}
         localError={resolvedError}
         analysisProgress={analysisProgress}
+        maxTextLength={maxTextLength}
+        minTextLength={minTextLength}
       />
 
       <DashboardResultPanel

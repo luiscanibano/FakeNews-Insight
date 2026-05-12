@@ -20,6 +20,7 @@ from typing import List, Optional
 
 from .aggregation import AggregationConfig, aggregate, aggregate_overall
 from .claim_extraction import LLMClient, extract_claims
+from .evidence_adjudication import adjudicate_scored_evidences
 from .inference import NLIClassifier, StubNLIClassifier
 from .retrieval import StubSearcher, WebSearcher, fetch_evidences_for_claim
 from .schemas import (
@@ -95,6 +96,8 @@ class VerificationAgent:
                 continue
             score = self.nli.predict(claim.text, ev.snippet)
             scored.append(ScoredEvidence(evidence=ev, nli=score))
+
+        scored = adjudicate_scored_evidences(claim, scored, llm=self.llm)
 
         label, confidence = aggregate(scored, self.config.aggregation)
         rationale = _build_rationale(claim, scored, label)

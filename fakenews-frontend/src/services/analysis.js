@@ -7,6 +7,8 @@ const DEFAULT_ANALYSIS_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_ANALYSIS_TEXT_PATH = "/predecir/";
 const DEFAULT_ANALYSIS_SAVE_PATH = "/analyses/save";
 const DEFAULT_ANALYSIS_VERIFY_PATH = "/verify";
+const VERIFY_TEXT_MIN_LENGTH = 80;
+const VERIFY_TEXT_MAX_LENGTH = 12000;
 
 /** Normaliza la URL base eliminando barras finales para evitar dobles separadores. */
 const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
@@ -59,7 +61,7 @@ const getErrorMessage = async (response, fallbackMessage) => {
 
 /**
  * Ejecuta el análisis de texto en backend con autenticación JWT.
- * Devuelve el veredicto del modelo, metadatos de fuerza SVM y el identificador de ejecucion.
+ * Devuelve el veredicto del modelo, metadatos de señal del clasificador y el identificador de ejecucion.
  */
 export const analyzeTextNews = async ({ text, jwtToken }) => {
   const payload = {
@@ -124,7 +126,7 @@ export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
 };
 
 /**
- * Ejecuta el agente FEVER de verificacion de afirmaciones (plan Super Pro).
+ * Ejecuta la verificacion de afirmaciones con limites por plan.
  * Devuelve el veredicto global, claims con evidencias, citas y cupo restante.
  */
 export const verifyClaims = async ({ text, jwtToken }) => {
@@ -132,8 +134,13 @@ export const verifyClaims = async ({ text, jwtToken }) => {
     throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
   }
 
-  if (!text || text.trim().length < 10) {
+  const trimmedText = text?.trim() || "";
+  if (trimmedText.length < VERIFY_TEXT_MIN_LENGTH) {
     throw new Error("El texto a verificar es demasiado corto.");
+  }
+
+  if (trimmedText.length > VERIFY_TEXT_MAX_LENGTH) {
+    throw new Error(`El texto no puede superar ${VERIFY_TEXT_MAX_LENGTH.toLocaleString("es-ES")} caracteres.`);
   }
 
   const response = await fetch(ANALYSIS_VERIFY_ENDPOINT, {
@@ -142,13 +149,13 @@ export const verifyClaims = async ({ text, jwtToken }) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${jwtToken}`,
     },
-    body: JSON.stringify({ texto: text }),
+    body: JSON.stringify({ texto: trimmedText }),
   });
 
   if (!response.ok) {
     const fallback =
       response.status === 403
-        ? "El agente de verificacion solo está disponible en el plan Super Pro."
+        ? "No quedan verificaciones disponibles para tu plan."
         : "No se pudo verificar el texto en este momento.";
     const message = await getErrorMessage(response, fallback);
     throw new Error(message);

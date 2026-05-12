@@ -24,6 +24,11 @@ from fever.schemas import (
 
 client = TestClient(main.app)
 
+VALID_TEXT = (
+    "El ministro afirmo que la inflacion bajo al dos por ciento durante marzo "
+    "y que el desempleo juvenil descendio cinco puntos en el ultimo año."
+)
+
 
 # --- helpers de monkeypatch ---
 
@@ -90,14 +95,14 @@ def _reset_agent():
 # --- tests ---
 
 def test_verify_requires_authorization_header():
-    response = client.post("/verify", json={"texto": "texto suficientemente largo"})
+    response = client.post("/verify", json={"texto": VALID_TEXT})
     assert response.status_code == 401
 
 
-def test_verify_returns_verdict_for_super_pro(monkeypatch):
+def test_verify_returns_verdict_for_ultra(monkeypatch):
     spy = _SupabaseSpy(profile={
         "id": "user-1",
-        "plan": "super_pro",
+        "plan": "ultra",
         "daily_verification_limit": 10,
         "daily_verification_used": 0,
         "daily_verification_date": None,
@@ -108,7 +113,7 @@ def test_verify_returns_verdict_for_super_pro(monkeypatch):
 
     response = client.post(
         "/verify",
-        json={"texto": "texto suficientemente largo para verificar"},
+        json={"texto": VALID_TEXT},
         headers={"Authorization": "Bearer faketoken"},
     )
 
@@ -121,7 +126,7 @@ def test_verify_returns_verdict_for_super_pro(monkeypatch):
     assert data["claims"][0]["evidencias"][0]["nli_label"] == "SUPPORTS"
 
 
-def test_verify_rejects_non_super_pro_plan(monkeypatch):
+def test_verify_returns_verdict_for_pro_with_plan_limits(monkeypatch):
     spy = _SupabaseSpy(profile={
         "id": "user-1", "plan": "pro",
         "daily_verification_limit": None,
@@ -134,15 +139,20 @@ def test_verify_rejects_non_super_pro_plan(monkeypatch):
 
     response = client.post(
         "/verify",
-        json={"texto": "texto suficientemente largo"},
+        json={"texto": VALID_TEXT},
         headers={"Authorization": "Bearer faketoken"},
     )
-    assert response.status_code == 403
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["plan"] == "pro"
+    assert data["limite_diario"] == 50
+    assert data["max_claims"] == 3
+    assert data["max_evidences"] == 3
 
 
 def test_verify_rejects_short_text(monkeypatch):
     spy = _SupabaseSpy(profile={
-        "id": "user-1", "plan": "super_pro",
+        "id": "user-1", "plan": "ultra",
         "daily_verification_limit": 10,
         "daily_verification_used": 0,
         "daily_verification_date": None,
@@ -155,9 +165,28 @@ def test_verify_rejects_short_text(monkeypatch):
     assert response.status_code == 400
 
 
+def test_verify_rejects_text_over_plan_limit_before_quota(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1", "plan": "free",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+
+    response = client.post(
+        "/verify", json={"texto": "a" * 2001},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 413
+    assert "2000" in response.json()["detail"]
+    assert not any(call[1] == "PATCH" for call in spy.calls)
+
+
 def test_verify_blocks_when_quota_exhausted(monkeypatch):
     spy = _SupabaseSpy(profile={
-        "id": "user-1", "plan": "super_pro",
+        "id": "user-1", "plan": "ultra",
         "daily_verification_limit": 1,
         "daily_verification_used": 1,
         "daily_verification_date": "2999-01-01",
@@ -175,7 +204,7 @@ def test_verify_blocks_when_quota_exhausted(monkeypatch):
 
     response = client.post(
         "/verify",
-        json={"texto": "texto suficientemente largo"},
+        json={"texto": VALID_TEXT},
         headers={"Authorization": "Bearer faketoken"},
     )
     assert response.status_code == 403

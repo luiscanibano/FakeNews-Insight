@@ -2,15 +2,16 @@
  * @file popup.js
  * @description Controlador principal del popup. Hace de router entre las
  * vistas (login / analyze / result), invoca a Supabase Auth y al backend
- * FastAPI, y maneja errores de sesiÃ³n expirada de forma uniforme.
+ * FastAPI, y maneja errores de sesion expirada de forma uniforme.
  */
 
 import { CONFIG } from "../lib/config.js";
-import { analyzeText, saveAnalysis, verifyText } from "../lib/api.js";
+import { verifyText } from "../lib/api.js";
 import { loadSession, clearSession } from "../lib/storage.js";
 import { SessionExpiredError, signIn, signOut } from "../lib/supabase.js";
 
-const MIN_TEXT_LENGTH = 10;
+const MIN_TEXT_LENGTH = 80;
+const MAX_TEXT_LENGTH = 12000;
 
 const elements = {
   // Header
@@ -22,7 +23,6 @@ const elements = {
   views: {
     login: document.getElementById("view-login"),
     analyze: document.getElementById("view-analyze"),
-    result: document.getElementById("view-result"),
     verify: document.getElementById("view-verify"),
   },
 
@@ -40,7 +40,6 @@ const elements = {
   charCounter: document.getElementById("char-counter"),
   analyzeError: document.getElementById("analyze-error"),
   analyzeButton: document.getElementById("analyze-button"),
-  verifyButton: document.getElementById("verify-button"),
 
   // Verify view
   verifyOverallLabel: document.getElementById("verify-overall-label"),
@@ -49,16 +48,6 @@ const elements = {
   verifyError: document.getElementById("verify-error"),
   verifyClaimsList: document.getElementById("verify-claims-list"),
   verifyBackButton: document.getElementById("verify-back-button"),
-
-  // Result
-  verdictLabel: document.getElementById("verdict-label"),
-  verdictStrengthValue: document.getElementById("verdict-strength-value"),
-  strengthBarFill: document.getElementById("strength-bar-fill"),
-  quotaInfo: document.getElementById("quota-info"),
-  resultError: document.getElementById("result-error"),
-  resultSuccess: document.getElementById("result-success"),
-  saveButton: document.getElementById("save-button"),
-  newAnalysisButton: document.getElementById("new-analysis-button"),
 };
 
 /** Estado en memoria del popup (se reinicia al cerrarlo). */
@@ -111,7 +100,7 @@ const handleSessionExpired = async () => {
   showView("login");
   setBanner(
     elements.loginError,
-    "Tu sesiÃ³n ha expirado. Vuelve a iniciar sesiÃ³n."
+    "Tu sesión ha expirado. Vuelve a iniciar sesión."
   );
 };
 
@@ -129,10 +118,10 @@ const bootstrap = async () => {
       showView("login");
     }
   } catch (error) {
-    console.error("[FakeNews] Error inicializando el popup:", error);
+    console.error("[FEVER] Error inicializando el popup:", error);
     showHeaderForSession(null);
     showView("login");
-    setBanner(elements.loginError, "No se pudo cargar la sesiÃ³n guardada.");
+    setBanner(elements.loginError, "No se pudo cargar la sesión guardada.");
   }
 };
 
@@ -146,7 +135,7 @@ elements.loginForm.addEventListener("submit", async (event) => {
   const password = elements.loginPassword.value;
 
   if (!email || !password) {
-    setBanner(elements.loginError, "Introduce email y contraseÃ±a.");
+    setBanner(elements.loginError, "Introduce email y contraseña.");
     return;
   }
 
@@ -158,7 +147,7 @@ elements.loginForm.addEventListener("submit", async (event) => {
     showView("analyze");
     updateAnalyzeButtonState();
   } catch (error) {
-    setBanner(elements.loginError, error.message || "Error al iniciar sesiÃ³n.");
+    setBanner(elements.loginError, error.message || "Error al iniciar sesión.");
   } finally {
     setButtonLoading(elements.loginSubmit, false);
   }
@@ -183,10 +172,9 @@ elements.logoutButton.addEventListener("click", async () => {
 
 const updateAnalyzeButtonState = () => {
   const length = elements.analyzeTextarea.value.trim().length;
-  elements.charCounter.textContent = `${length} caracter${length === 1 ? "" : "es"}`;
-  const disabled = length < MIN_TEXT_LENGTH;
-  elements.analyzeButton.disabled = disabled;
-  if (elements.verifyButton) elements.verifyButton.disabled = disabled;
+  elements.charCounter.textContent = `${length}/${MAX_TEXT_LENGTH.toLocaleString("es-ES")} caracteres`;
+  elements.charCounter.dataset.warning = length > MAX_TEXT_LENGTH * 0.9 ? "true" : "false";
+  elements.analyzeButton.disabled = length < MIN_TEXT_LENGTH || length > MAX_TEXT_LENGTH;
 };
 
 elements.analyzeTextarea.addEventListener("input", updateAnalyzeButtonState);
@@ -199,7 +187,7 @@ elements.useSelectionButton.addEventListener("click", async () => {
       currentWindow: true,
     });
     if (!tab?.id) {
-      setBanner(elements.analyzeError, "No se encontrÃ³ la pestana activa.");
+      setBanner(elements.analyzeError, "No se encontró la pestaña activa.");
       return;
     }
 
@@ -212,19 +200,25 @@ elements.useSelectionButton.addEventListener("click", async () => {
     if (!selection) {
       setBanner(
         elements.analyzeError,
-        "No hay texto seleccionado en la pÃ¡gina actual."
+        "No hay texto seleccionado en la página actual."
       );
       return;
     }
 
-    elements.analyzeTextarea.value = selection;
+    elements.analyzeTextarea.value = selection.slice(0, MAX_TEXT_LENGTH);
+    if (selection.length > MAX_TEXT_LENGTH) {
+      setBanner(
+        elements.analyzeError,
+        `La selección superaba ${MAX_TEXT_LENGTH.toLocaleString("es-ES")} caracteres y se ha recortado.`
+      );
+    }
     updateAnalyzeButtonState();
   } catch (error) {
     setBanner(
       elements.analyzeError,
-      "No se pudo leer la selecciÃ³n (la pÃ¡gina puede bloquear el acceso)."
+      "No se pudo leer la selección (la página puede bloquear el acceso)."
     );
-    console.error("[FakeNews] executeScript fallo:", error);
+    console.error("[FEVER] executeScript fallo:", error);
   }
 });
 
@@ -239,12 +233,20 @@ elements.analyzeButton.addEventListener("click", async () => {
     return;
   }
 
+  if (text.length > MAX_TEXT_LENGTH) {
+    setBanner(
+      elements.analyzeError,
+      `El texto no puede superar ${MAX_TEXT_LENGTH.toLocaleString("es-ES")} caracteres.`
+    );
+    return;
+  }
+
   setButtonLoading(elements.analyzeButton, true);
   try {
-    const result = await analyzeText(text);
-    state.lastAnalysis = result;
-    renderResult(result);
-    showView("result");
+    const report = await verifyText(text);
+    state.lastAnalysis = report;
+    renderVerifyReport(report);
+    showView("verify");
   } catch (error) {
     if (error instanceof SessionExpiredError) {
       await handleSessionExpired();
@@ -252,103 +254,14 @@ elements.analyzeButton.addEventListener("click", async () => {
     }
     setBanner(
       elements.analyzeError,
-      error.message || "No se pudo analizar el texto."
+      error.message || "No se pudo verificar el texto."
     );
   } finally {
     setButtonLoading(elements.analyzeButton, false);
   }
 });
 
-// ----- Result ----------------------------------------------------------------
-
-const renderResult = (result) => {
-  setBanner(elements.resultError, "", false);
-  setBanner(elements.resultSuccess, "", false);
-
-  const verdict = (result?.veredicto || "").toUpperCase();
-  let tone = "unknown";
-  let label = verdict || "—";
-  if (verdict === "REAL") {
-    tone = "real";
-    label = "REAL";
-  } else if (verdict === "FAKE") {
-    tone = "fake";
-    label = "FALSO";
-  }
-
-  elements.verdictLabel.dataset.tone = tone;
-  elements.verdictLabel.textContent = label;
-
-  const strength = Number(result?.certeza_svm);
-  if (Number.isFinite(strength)) {
-    const formatted = strength.toFixed(3);
-    elements.verdictStrengthValue.textContent = formatted;
-    // certeza_svm puede ser cualquier real (signo => clase). Mostramos magnitud.
-    const magnitude = Math.min(1, Math.abs(strength));
-    elements.strengthBarFill.style.width = `${(magnitude * 100).toFixed(1)}%`;
-  } else {
-    elements.verdictStrengthValue.textContent = "—";
-    elements.strengthBarFill.style.width = "0%";
-  }
-
-  const plan = result?.plan_usuario || "free";
-  const remaining = result?.analisis_restantes_hoy;
-  const limit = result?.limite_diario;
-  if (limit && remaining !== undefined && remaining !== null) {
-    elements.quotaInfo.textContent =
-      `Plan ${plan.toUpperCase()} · Quedan ${remaining}/${limit} anÃ¡lisis hoy.`;
-  } else {
-    elements.quotaInfo.textContent = `Plan ${plan.toUpperCase()} · Sin lÃ­mite diario.`;
-  }
-
-  // Estado del boton de guardar segÃºn el backend
-  const alreadySaved = Boolean(result?.guardado_en_historial);
-  elements.saveButton.disabled = alreadySaved || !result?.analysis_run_id;
-  elements.saveButton.querySelector(".button-label").textContent = alreadySaved
-    ? "Guardado"
-    : "Guardar en historial";
-};
-
-elements.saveButton.addEventListener("click", async () => {
-  const runId = state.lastAnalysis?.analysis_run_id;
-  if (!runId) return;
-
-  setBanner(elements.resultError, "", false);
-  setBanner(elements.resultSuccess, "", false);
-  setButtonLoading(elements.saveButton, true);
-
-  try {
-    const response = await saveAnalysis(runId);
-    if (response?.already_saved) {
-      setBanner(elements.resultSuccess, "Este anÃ¡lisis ya estaba en tu historial.");
-    } else {
-      setBanner(elements.resultSuccess, "AnÃ¡lisis guardado en tu historial.");
-    }
-    elements.saveButton.querySelector(".button-label").textContent = "Guardado";
-    elements.saveButton.disabled = true;
-  } catch (error) {
-    if (error instanceof SessionExpiredError) {
-      await handleSessionExpired();
-      return;
-    }
-    setBanner(
-      elements.resultError,
-      error.message || "No se pudo guardar el anÃ¡lisis."
-    );
-  } finally {
-    setButtonLoading(elements.saveButton, false);
-  }
-});
-
-elements.newAnalysisButton.addEventListener("click", () => {
-  state.lastAnalysis = null;
-  elements.analyzeTextarea.value = "";
-  setBanner(elements.analyzeError, "", false);
-  updateAnalyzeButtonState();
-  showView("analyze");
-});
-
-// ----- Verify (agente FEVER, plan Super Pro) --------------------------------
+// ----- Verify (contraste con evidencias por plan) ---------------------------
 
 const VERIFY_LABEL_TEXT = {
   SUPPORTED: "VERIFICADO",
@@ -432,38 +345,6 @@ const renderVerifyReport = (report) => {
     elements.verifyClaimsList.appendChild(li);
   });
 };
-
-if (elements.verifyButton) {
-  elements.verifyButton.addEventListener("click", async () => {
-    setBanner(elements.analyzeError, "", false);
-    const text = elements.analyzeTextarea.value.trim();
-    if (text.length < MIN_TEXT_LENGTH) {
-      setBanner(
-        elements.analyzeError,
-        `El texto debe tener al menos ${MIN_TEXT_LENGTH} caracteres.`
-      );
-      return;
-    }
-
-    setButtonLoading(elements.verifyButton, true);
-    try {
-      const report = await verifyText(text);
-      renderVerifyReport(report);
-      showView("verify");
-    } catch (error) {
-      if (error instanceof SessionExpiredError) {
-        await handleSessionExpired();
-        return;
-      }
-      setBanner(
-        elements.analyzeError,
-        error.message || "No se pudo verificar el texto."
-      );
-    } finally {
-      setButtonLoading(elements.verifyButton, false);
-    }
-  });
-}
 
 if (elements.verifyBackButton) {
   elements.verifyBackButton.addEventListener("click", () => {

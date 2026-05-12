@@ -28,7 +28,7 @@ function HistoryItem({ analysis, index = 0 }) {
 
         <div className="dash-list-row-meta">
           <span>
-            SVM{" "}
+            Señal{" "}
             {typeof analysis.confidence === "number"
               ? analysis.confidence.toFixed(2)
               : "--"}

@@ -39,6 +39,19 @@ class FakeLLM:
         return self.payload
 
 
+class QueueLLM:
+    def __init__(self, payloads: List[dict | str]):
+        self.payloads = list(payloads)
+        self.calls: List[str] = []
+
+    def complete(self, prompt: str, *, response_format: str = "json") -> str:
+        self.calls.append(prompt)
+        payload = self.payloads.pop(0) if self.payloads else {}
+        if isinstance(payload, dict):
+            return json.dumps(payload)
+        return payload
+
+
 def _ev(snippet: str, url: str = "https://example.org/a") -> Evidence:
     return Evidence(url=url, title="t", snippet=snippet)
 
@@ -173,3 +186,26 @@ def test_agent_filters_short_evidences():
     report = agent.verify("foo bar baz")
     # solo la evidencia larga debe puntuar
     assert len(report.claims[0].evidences) == 1
+
+
+def test_agent_llm_adjudication_refutes_false_supported_overlap():
+    fixtures = {
+        "Pau Gasol": [
+            _ev("Pau Gasol jugo profesionalmente al baloncesto durante 20 años en la NBA y la ACB."),
+        ],
+    }
+    llm = QueueLLM([
+        {"claims": [{"text": "Pau Gasol es un jugador profesional de fútbol."}]},
+        {"evidences": [{"index": 1, "label": "REFUTES", "confidence": 0.88}]},
+    ])
+    agent = VerificationAgent(
+        llm=llm,
+        searcher=StubSearcher(fixtures=fixtures),
+        nli=StubNLIClassifier(),
+    )
+
+    report = agent.verify("Pau Gasol es un jugador profesional de fútbol.")
+
+    assert report.claims[0].evidences[0].nli.label == "REFUTES"
+    assert report.claims[0].label == VerdictLabel.REFUTED
+    assert report.overall_label == VerdictLabel.REFUTED

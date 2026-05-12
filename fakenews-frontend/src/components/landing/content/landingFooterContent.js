@@ -7,7 +7,7 @@ export const landingFooterContent = {
   es: {
     brand: "FakeNews Insight",
     description:
-      "Utilizamos inteligencia artificial para crear una red de seguridad digital global contra la desinformación.",
+      "Utilizamos IA, evidencias web e inferencia NLI para verificar afirmaciones de forma trazable.",
     columns: [
       {
         title: "Producto",
@@ -30,12 +30,12 @@ export const landingFooterContent = {
       { label: "Twitter", href: "#" },
       { label: "LinkedIn", href: "#" },
     ],
-    copyright: "© 2026 FakeNews Insight. Protegiendo la verdad digital.",
+    copyright: "© 2026 FakeNews Insight. Verificación trazable con evidencias.",
   },
   en: {
     brand: "FakeNews Insight",
     description:
-      "We use artificial intelligence to build a global digital safety net against misinformation.",
+      "We use AI, web evidence and NLI inference to verify claims in a traceable way.",
     columns: [
       {
         title: "Product",
@@ -58,6 +58,6 @@ export const landingFooterContent = {
       { label: "Twitter", href: "#" },
       { label: "LinkedIn", href: "#" },
     ],
-    copyright: "© 2026 FakeNews Insight. Protecting digital truth.",
+    copyright: "© 2026 FakeNews Insight. Traceable evidence-backed verification.",
   },
 };

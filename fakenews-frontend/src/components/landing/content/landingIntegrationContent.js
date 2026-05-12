@@ -7,7 +7,7 @@ export const landingIntegrationContent = {
   es: {
     title: "Una plataforma que va más allá.",
     description:
-      "Integra nuestro modelo en tu aplicación o analiza noticias de forma masiva con Ultra. Ofrecemos SDKs para los lenguajes más populares y una documentación pensada para desarrolladores.",
+      "Integra el análisis en tu aplicación o lanza verificaciones FEVER con evidencias desde Ultra. Ofrecemos API, flujos para lotes y documentación pensada para desarrolladores.",
     items: [
       { icon: "api", label: "REST API" },
       { icon: "sdk", label: "SDK Python" },
@@ -17,7 +17,7 @@ export const landingIntegrationContent = {
   en: {
     title: "A platform that goes further.",
     description:
-      "Integrate our model into your app or analyze news in bulk with Ultra. We provide SDKs for the most popular languages and developer-focused documentation.",
+      "Integrate analysis into your app or launch FEVER evidence checks with Ultra. We provide APIs, batch flows and developer-focused documentation.",
     items: [
       { icon: "api", label: "REST API" },
       { icon: "sdk", label: "Python SDK" },

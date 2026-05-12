@@ -1,10 +1,10 @@
 {
   "result": {
     "empty": {
-      "title": "Esperando tu primer análisis",
-      "subtitle": "Cuando analices una noticia, aqui veras el veredicto, la fuerza SVM y las acciones disponibles.",
+      "title": "Esperando tu primer contraste",
+      "subtitle": "Cuando revises un texto, aquí verás el veredicto por afirmaciones, evidencias y acciones disponibles.",
       "verdictLabel": "Veredicto",
-      "svmStrengthLabel": "Fuerza SVM"
+      "svmStrengthLabel": "Evidencias"
     },
     "actions": {
       "saveHistory": "Guardar en historial",
@@ -16,23 +16,23 @@
     },
     "analysing": {
       "title": "Motor IA en proceso",
-      "subtitle": "Ejecutando análisis multicapa",
+      "subtitle": "Ejecutando contraste con claims y evidencias",
       "phaseLabel": "Fase {{index}}",
-      "phases": ["Recopilando fuente", "Extrayendo patrones", "Calculando veredicto"]
+      "phases": ["Recopilando contexto", "Extrayendo señales", "Calculando veredicto"]
     },
     "single": {
-      "intro": "Tenemos los resultados para tu noticia",
-      "headingSuffix": "FUERZA SVM",
-      "sourceLabel": "Fuente analizada",
-      "svmAbsolute": "Fuerza SVM (valor absoluto): {{value}}",
-      "detailsSummary": "Que significa la fuerza SVM",
-      "detailsLine1": "Es el nivel de conviccion del algoritmo.",
-      "detailsLine2": "Un valor cercano a 0 significa que la noticia tiene patrones contradictorios y la IA no esta 100% segura.",
-      "detailsLine3": "Valores altos indican una deteccion clara y contundente."
+      "intro": "Tenemos los resultados para tu texto",
+      "headingSuffix": "SEÑAL INICIAL",
+      "sourceLabel": "Entrada analizada",
+      "svmAbsolute": "Señal del clasificador (valor absoluto): {{value}}",
+      "detailsSummary": "Que significa esta señal",
+      "detailsLine1": "Es una salida legacy conservada como baseline académico, no el flujo principal de contraste.",
+      "detailsLine2": "Un valor cercano a 0 indica patrones menos definidos; para una explicación con evidencias usa la verificación FEVER.",
+      "detailsLine3": "Valores altos indican que el clasificador encuentra una tendencia clara en el texto."
     },
     "batch": {
       "intro": "Lote procesado correctamente",
-      "headingSuffix": "noticias analizadas",
+      "headingSuffix": "textos analizados",
       "fileLabel": "Archivo",
       "totalsLabel": "Totales",
       "suspiciousLabel": "Sospechosas"
@@ -63,10 +63,10 @@
     "admin": "Admin"
   },
   "hero": {
-    "eyebrow": "Centro de análisis",
+    "eyebrow": "Centro de verificación",
     "titlePrefix": "Selecciona una opción y ",
-    "titleSoft": "empieza a analizar.",
-    "subtitle": "Cambia de modo en un clic y procesa noticias por texto, URL o lotes CSV. Cada análisis se ejecuta contra el mismo modelo entrenado en español."
+    "titleSoft": "empieza a contrastar.",
+    "subtitle": "Cambia de modo en un clic y procesa textos, URLs o lotes CSV. Todos los planes contrastan afirmaciones; Ultra añade el agente FEVER completo."
   },
   "modes": {
     "text": "Texto",
@@ -76,64 +76,66 @@
     "modeTitleText": "Modo texto",
     "modeTitleUrl": "Modo URL",
     "modeTitleCsv": "Modo lote CSV",
-    "taglineText": "Motor semántico para texto libre",
-    "taglineUrl": "Extraccion y verificacion desde fuente web",
-    "taglineCsv": "Procesamiento masivo de titulares en lote"
+    "taglineText": "Contraste de afirmaciones en texto libre",
+    "taglineUrl": "Extraccion y contraste desde fuente web",
+    "taglineCsv": "Procesamiento masivo de claims en lote"
   },
   "analysisPanel": {
-    "title": "Configura el análisis",
+    "title": "Configura la revisión",
     "tabsLabel": "Modo de análisis",
-    "textPlaceholder": "Pega o escribe la noticia que quieres verificar...",
-    "urlLabel": "URL de la noticia",
+    "textPlaceholder": "Pega una afirmación verificable o un fragmento informativo...",
+    "textLimits": "Mínimo {{min}} caracteres · máximo {{max}} según tu plan",
+    "textCounter": "{{count}}/{{max}} caracteres",
+    "urlLabel": "URL del contenido",
     "urlPlaceholder": "https://ejemplo.com/noticia",
-    "urlHint": "Extraemos titular, contexto y metadatos para un dictamen trazable.",
+    "urlHint": "Extraemos titular, contexto y metadatos para preparar un dictamen trazable.",
     "csvSelect": "Seleccionar archivo CSV",
-    "csvHint": "Sube un lote de titulares para procesarlos en bloque.",
+    "csvHint": "Sube un lote de titulares o claims para procesarlos en bloque.",
     "csvLockedUltra": "El análisis por lotes CSV se desbloquea en el plan Ultra.",
-    "ready": "Listo para analizar",
+    "ready": "Listo para contrastar",
     "processing": "Procesando...",
-    "analyze": "Analizar",
-    "analyzing": "Analizando...",
-    "progress": "Procesando señales · {{progress}}%"
+    "analyze": "Revisar",
+    "analyzing": "Revisando...",
+    "progress": "Procesando contexto · {{progress}}%"
   },
   "home": {
     "eyebrow": "Resumen de tu cuenta",
     "titlePrefix": "Tu actividad,",
     "titleSoft": "de un vistazo.",
     "subtitle": "Consumo, evolución reciente y tus últimos análisis. Todo conectado en tiempo real con tu cuenta.",
-    "ctaAnalyze": "Analizar un texto",
-    "remainingToday": "Análisis restantes hoy",
+    "ctaAnalyze": "Revisar un texto",
+    "remainingToday": "Revisiones restantes hoy",
     "remainingTodayOf": "de {{limit}}",
     "remainingTodayFoot": "Cupo diario disponible para tu plan.",
     "currentPlan": "Plan actual",
     "currentPlanFoot": "Suscripción activa.",
     "thisMonth": "Este mes",
-    "thisMonthFoot": "Análisis acumulados.",
+    "thisMonthFoot": "Revisiones acumuladas.",
     "recentActivity": "Actividad reciente",
-    "recentActivityMeta": "Últimos 10 días · {{total}} análisis",
+    "recentActivityMeta": "Últimos 10 días · {{total}} revisiones",
     "peak": "Pico: {{peak}}",
-    "chartAria": "Análisis por día en los últimos 10 días",
+    "chartAria": "Revisiones por día en los últimos 10 días",
     "loadingActivity": "Cargando actividad...",
-    "recentAnalyses": "Análisis recientes",
-    "recentAnalysesSub": "Tus últimos 3 análisis registrados.",
-    "emptyRecent": "Aún no hay análisis recientes en tu cuenta.",
+    "recentAnalyses": "Revisiones recientes",
+    "recentAnalysesSub": "Tus últimas 3 revisiones registradas.",
+    "emptyRecent": "Aún no hay revisiones recientes en tu cuenta.",
     "today": "Hoy",
     "unlimited": "Ilimitado",
     "unlimitedRemaining": "Ilimitados"
   },
   "history": {
     "eyebrow": "Tu archivo personal",
-    "titlePrefix": "Historial de análisis",
+    "titlePrefix": "Historial de revisiones",
     "titleSoft": "guardados.",
-    "subtitle": "Vista rápida de tus 5 análisis más recientes o vista completa con buscador y paginación para navegar todo tu archivo.",
+    "subtitle": "Vista rápida de tus 5 revisiones más recientes o vista completa con buscador y paginación para navegar todo tu archivo.",
     "savedRecords": "Registros guardados",
-    "matchesFound": "{{count}} análisis coinciden con la búsqueda",
-    "previewMeta": "Mostrando vista previa de {{count}} análisis",
+    "matchesFound": "{{count}} revisiones coinciden con la búsqueda",
+    "previewMeta": "Mostrando vista previa de {{count}} revisiones",
     "manualSave": "Guardado manual",
     "loadingHistory": "Cargando historial guardado...",
-    "emptyHistory": "Aún no has guardado análisis en tu historial.",
+    "emptyHistory": "Aún no has guardado revisiones en tu historial.",
     "emptySearch": "No hay resultados para esa búsqueda. Prueba con otra palabra clave.",
-    "showAll": "Mostrar todos los análisis",
+    "showAll": "Mostrar todas las revisiones",
     "backToPreview": "Volver a vista previa",
     "filterPlaceholder": "Buscar por título, fragmento, fuente o veredicto...",
     "pageOf": "Página {{current}} de {{total}}",
@@ -146,7 +148,7 @@
     "eyebrow": "Extensión de navegador",
     "titlePrefix": "Verifica desde tu navegador,",
     "titleSoft": "sin abrir el dashboard.",
-    "subtitle": "La extensión reutiliza tu cuenta de FakeNews Insight, respeta tu cuota diaria y permite guardar resultados en tu historial con un clic.",
+    "subtitle": "La extensión reutiliza tu cuenta de FakeNews Insight, respeta tu cuota diaria y permite analizar texto seleccionado o lanzar verificación de claims con un clic.",
     "downloadCta": "Descargar extensión",
     "compatibility": "Compatible con Google Chrome y Microsoft Edge (Manifest V3).",
     "howToInstall": "Cómo instalarla",
@@ -170,7 +172,7 @@
       },
       {
         "title": "Inicia sesión",
-        "description": "Abre el popup, usa el mismo email y contraseña de FakeNews Insight y empieza a analizar textos sin salir de la página que estés leyendo."
+        "description": "Abre el popup, usa el mismo email y contraseña de FakeNews Insight y empieza a revisar textos sin salir de la página que estés leyendo."
       }
     ]
   },
@@ -259,7 +261,7 @@
   },
   "verify": {
     "title": "Verificación de afirmaciones",
-    "subtitle": "Extrae afirmaciones del texto y las contrasta contra evidencias web.",
+    "subtitle": "Extrae afirmaciones del texto, recupera evidencias web y calcula etiquetas FEVER/NLI.",
     "action": "Verificar",
     "submitting": "Verificando...",
     "claimsLabel": "Afirmaciones extraídas",
@@ -275,6 +277,18 @@
       "supports": "Apoya",
       "refutes": "Refuta",
       "nei": "Inconcluyente"
+    },
+    "guide": {
+      "title": "Cómo leer el resultado",
+      "intro": "El sistema no decide si un texto es verdadero en abstracto: extrae afirmaciones, busca evidencias y compara cada evidencia con cada afirmación mediante NLI.",
+      "method": "FEVER/NLI",
+      "verdicts": {
+        "SUPPORTED": "Las evidencias encontradas apoyan la afirmación.",
+        "REFUTED": "Las evidencias encontradas contradicen la afirmación.",
+        "NOT_ENOUGH_INFO": "No hay evidencia suficiente para confirmar ni refutar. No significa que sea falso.",
+        "CONFLICTING": "Hay evidencias mezcladas: algunas apoyan y otras refutan. Conviene revisar las fuentes."
+      },
+      "nliNote": "Las etiquetas de cada fuente indican si esa evidencia concreta apoya, refuta o no permite concluir. La confianza es una señal del modelo, no una probabilidad absoluta de verdad."
     },
     "meta": {
       "modelVersion": "Modelo",

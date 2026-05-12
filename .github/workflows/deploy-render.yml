@@ -1,17 +1,17 @@
-name: Deploy to Render
+name: Deploy backend to Render
 
-# Triggerea los Deploy Hooks de Render después de un push a main exitoso.
-# Render bajará la nueva imagen :latest desde GHCR.
+# Triggerea el Deploy Hook de Render después de publicar la imagen Docker del
+# backend. Render bajará la nueva imagen :latest desde GHCR.
 on:
   workflow_run:
-    workflows: ["Build & Publish Docker images"]
+    workflows: ["Build & Publish backend Docker image"]
     types: [completed]
     branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: Trigger Render deploy hooks
+    name: Trigger Render backend deploy hook
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
@@ -21,16 +21,6 @@ jobs:
         run: |
           if [ -z "$HOOK" ]; then
             echo "::error::Falta el secret RENDER_DEPLOY_HOOK_BACKEND"
-            exit 1
-          fi
-          curl -fsSL -X POST "$HOOK"
-
-      - name: Trigger frontend deploy
-        env:
-          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
-        run: |
-          if [ -z "$HOOK" ]; then
-            echo "::error::Falta el secret RENDER_DEPLOY_HOOK_FRONTEND"
             exit 1
           fi
           curl -fsSL -X POST "$HOOK"
