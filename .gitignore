@@ -54,3 +54,9 @@ docs/
 browser-extension/lib/config.local.js
 browser-extension/dist/
 browser-extension/*.zip
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
