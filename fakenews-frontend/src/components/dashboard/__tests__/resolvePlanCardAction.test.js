@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { resolvePlanCardAction } from "../DashboardPlanSelectorModal";
+import { resolvePlanCardAction } from "../resolvePlanCardAction";
 
 describe("resolvePlanCardAction", () => {
   it("usuario FREE sin suscripción: PRO/ULTRA = subscribe; FREE = current", () => {

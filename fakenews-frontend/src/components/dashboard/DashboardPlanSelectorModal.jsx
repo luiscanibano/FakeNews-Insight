@@ -3,45 +3,14 @@
  * @description Popup de seleccion de plan: orquesta checkout, upgrade prorrateado, downgrade/cancel programados y portal de Stripe.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, Crown, ExternalLink, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLandingContent } from "@/components/landing/landingContent";
 import { USER_PLAN } from "@/lib/accessControl";
 import { useBillingStore } from "@/store/billingStore";
 import { useBillingActions } from "@/hooks/useBillingActions";
-
-/** Orden numerico de planes para decidir upgrade vs downgrade. */
-const PLAN_ORDER = { [USER_PLAN.FREE]: 0, [USER_PLAN.PRO]: 1, [USER_PLAN.ULTRA]: 2 };
-
-/** Devuelve la accion logica para una tarjeta de plan dada el estado actual. */
-const resolvePlanCardAction = ({ planKey, currentPlan, snapshot }) => {
-  const targetOrder = PLAN_ORDER[planKey] ?? 0;
-  const currentOrder = PLAN_ORDER[currentPlan] ?? 0;
-  const hasActiveSubscription = Boolean(snapshot?.stripe_subscription_id);
-  const cancelScheduled = Boolean(snapshot?.cancel_at_period_end);
-  const downgradeScheduled = Boolean(snapshot?.scheduled_plan && !cancelScheduled);
-
-  if (planKey === currentPlan) {
-    if (cancelScheduled || downgradeScheduled) {
-      return { kind: "resume" };
-    }
-    return { kind: "current" };
-  }
-
-  if (planKey === USER_PLAN.FREE) {
-    if (!hasActiveSubscription) {
-      return { kind: "current" };
-    }
-    return { kind: "cancel" };
-  }
-
-  if (targetOrder > currentOrder) {
-    return hasActiveSubscription ? { kind: "upgrade" } : { kind: "subscribe" };
-  }
-
-  return { kind: "downgrade" };
-};
+import { resolvePlanCardAction } from "./resolvePlanCardAction";
 
 /** Formatea fecha ISO al locale de i18n; cae a string vacio si es invalida. */
 const formatDate = (iso, locale) => {
@@ -130,11 +99,15 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
   const [feedback, setFeedback] = useState("");
   const [pendingConfirm, setPendingConfirm] = useState(null);
 
+  const closeModal = useCallback(() => {
+    setFeedback("");
+    setPendingConfirm(null);
+    onClose();
+  }, [onClose]);
+
   /** Bloquea el body, captura ESC y carga snapshot al abrir. */
   useEffect(() => {
     if (!isOpen) {
-      setFeedback("");
-      setPendingConfirm(null);
       return undefined;
     }
 
@@ -147,7 +120,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
 
     const handleEscape = (event) => {
       if (event.key === "Escape" && !actionInFlight) {
-        onClose();
+        closeModal();
       }
     };
 
@@ -156,7 +129,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleEscape);
     };
-  }, [isOpen, onClose, loadSnapshot, actionInFlight]);
+  }, [isOpen, loadSnapshot, actionInFlight, closeModal]);
 
   const isProcessing = Boolean(actionInFlight);
   const locale = i18n.language || "en";
@@ -248,7 +221,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
       className="dash-modal-overlay"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !isProcessing) {
-          onClose();
+          closeModal();
         }
       }}
     >
@@ -270,7 +243,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
           <button
             type="button"
             className="dash-modal-close"
-            onClick={onClose}
+            onClick={closeModal}
             disabled={isProcessing}
             aria-label={t("planSelector.closeAria")}
           >
@@ -437,4 +410,3 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
 }
 
 export default DashboardPlanSelectorModal;
-export { resolvePlanCardAction };

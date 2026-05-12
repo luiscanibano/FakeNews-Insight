@@ -57,7 +57,7 @@ function ResetPassword() {
     };
 
     initializeRecoverySession();
-  }, []);
+  }, [setRecoverySession, t]);
 
   /** Válida el formulario y actualiza la contraseña.
  */

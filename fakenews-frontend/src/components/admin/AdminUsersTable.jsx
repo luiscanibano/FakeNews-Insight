@@ -3,7 +3,7 @@
  * @description Componente del panel administrativo para KPIs, gestion de usuarios y control de planes.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
@@ -22,20 +22,11 @@ function AdminUsersTable({
 }) {
   const { t } = useTranslation("admin");
   const resolvedTitle = title || t("usersTable.defaultTitle");
-  const [draftPlansByUserId, setDraftPlansByUserId] = useState({});
-
-  /** Sincroniza plan editable por fila con los datos actuales recibidos por props. */
-  useEffect(() => {
-    const nextDrafts = {};
-    users.forEach((managedUser) => {
-      nextDrafts[managedUser.id] = managedUser.plan || "free";
-    });
-    setDraftPlansByUserId(nextDrafts);
-  }, [users]);
+  const [draftPlanOverridesByUserId, setDraftPlanOverridesByUserId] = useState({});
 
   /** Actualiza el borrador de plan local sin persistir en backend hasta confirmar. */
   const handleDraftPlanChange = (userId, value) => {
-    setDraftPlansByUserId((previous) => ({
+    setDraftPlanOverridesByUserId((previous) => ({
       ...previous,
       [userId]: value,
     }));
@@ -64,6 +55,7 @@ function AdminUsersTable({
           {users.map((managedUser) => {
             const isPending = actionLoadingUserId === managedUser.id;
             const userLabel = managedUser.display_name || managedUser.id.slice(0, 8);
+            const selectedPlan = draftPlanOverridesByUserId[managedUser.id] || managedUser.plan || "free";
 
             return (
               <div
@@ -79,7 +71,7 @@ function AdminUsersTable({
 
                 <select
                   className="h-10 w-full rounded-lg border border-outline-variant/30 bg-surface-container-high px-3 text-xs font-bold uppercase tracking-wider text-primary md:w-auto"
-                  value={draftPlansByUserId[managedUser.id] || "free"}
+                  value={selectedPlan}
                   onChange={(event) => handleDraftPlanChange(managedUser.id, event.target.value)}
                   disabled={isPending}
                 >
@@ -94,12 +86,12 @@ function AdminUsersTable({
                   onClick={() =>
                     onChangePlan(
                       managedUser,
-                      draftPlansByUserId[managedUser.id] || managedUser.plan || "free"
+                      selectedPlan
                     )
                   }
                   disabled={
                     isPending ||
-                    (draftPlansByUserId[managedUser.id] || "free") === (managedUser.plan || "free")
+                    selectedPlan === (managedUser.plan || "free")
                   }
                 >
                   {t("usersTable.savePlan")}
