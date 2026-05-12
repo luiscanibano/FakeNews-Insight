@@ -1,10 +1,9 @@
 /**
  * @file content.js
- * @description Content script: cuando el usuario selecciona >=10 caracteres
+ * @description Content script: cuando el usuario selecciona >=80 caracteres
  * en cualquier página HTTP/HTTPS, dibujamos un marco alrededor de la
- * selección (con la estetica de la extension) y un panel adjunto con el
- * boton "Analizar". El resultado del backend se renderiza en el propio
- * panel, sustituyendo el boton.
+ * seleccion (con la estetica de la extension) y un panel adjunto con el
+ * boton "Verificar". El informe FEVER/NLI se renderiza en el propio panel.
  *
  * Toda la UI vive dentro de un Shadow DOM para no contaminar ni ser
  * contaminada por los estilos de la página anfitriona.
@@ -14,8 +13,8 @@
   if (window.__fakenewsInsightContentLoaded) return;
   window.__fakenewsInsightContentLoaded = true;
 
-  const MIN_TEXT_LENGTH = 10;
-  const MAX_TEXT_LENGTH = 4000;
+  const MIN_TEXT_LENGTH = 80;
+  const MAX_TEXT_LENGTH = 12000;
   const QUOTA_CACHE_KEY = "fakenews-insight-quota";
 
   // ---------------------------------------------------------------------------
@@ -163,14 +162,15 @@
       <header class="fn-panel-header">
         <span class="fn-mark" aria-hidden="true"></span>
         <strong class="fn-panel-title">FakeNews Insight</strong>
-        <span class="fn-quota-chip fn-hidden" title="An\u00e1lisis restantes hoy"></span>
+        <span class="fn-quota-chip fn-hidden" title="Verificaciones restantes hoy"></span>
         <button type="button" class="fn-close" title="Cerrar" aria-label="Cerrar">&times;</button>
       </header>
       <div class="fn-panel-body" data-state="idle">
         <p class="fn-snippet" id="fn-snippet"></p>
-        <button type="button" class="fn-button-primary" id="fn-analyze-btn">
+        <p class="fn-summary">${text.length.toLocaleString("es-ES")}/${MAX_TEXT_LENGTH.toLocaleString("es-ES")} caracteres</p>
+        <button type="button" class="fn-button-primary" id="fn-verify-btn">
           <span class="fn-mark fn-mark-sm" aria-hidden="true"></span>
-          <span>Analizar con FakeNews Insight</span>
+          <span>Verificar afirmaciones</span>
         </button>
       </div>
     `;
@@ -194,10 +194,10 @@
     });
 
     panel
-      .querySelector("#fn-analyze-btn")
+      .querySelector("#fn-verify-btn")
       .addEventListener("click", (event) => {
         event.stopPropagation();
-        runAnalysis(text);
+        runVerification(text);
       });
 
     const reposition = () => {
@@ -277,12 +277,12 @@
       `
       <div class="fn-loading">
         <span class="fn-spinner" aria-hidden="true"></span>
-        <span>Analizando con el modelo SVM...</span>
+        <span>Buscando evidencias y contrastando claims...</span>
       </div>
-      <div class="fn-progress" role="progressbar" aria-label="Analizando">
+      <div class="fn-progress" role="progressbar" aria-label="Verificando">
         <div class="fn-progress-bar"></div>
       </div>
-      <p class="fn-loading-hint">El primer an&aacute;lisis tras un rato puede tardar 10-30s mientras arranca el servidor.</p>
+      <p class="fn-loading-hint">El primer contraste tras un rato puede tardar 10-30s mientras arranca el servidor.</p>
     `,
       "loading"
     );
@@ -292,7 +292,7 @@
     setPanelBody(
       `
       <p class="fn-text">
-        Necesitas iniciar sesi&oacute;n en FakeNews Insight para analizar.
+        Necesitas iniciar sesi&oacute;n en FakeNews Insight para revisar.
       </p>
       <div class="fn-actions">
         <button type="button" class="fn-button-primary" id="fn-open-popup">
@@ -329,37 +329,35 @@
       .addEventListener("click", destroyWidget);
   };
 
-  const renderResult = (result, libs) => {
-    const verdict = String(result?.veredicto || "").toUpperCase();
-    let tone = "unknown";
-    let label = verdict || "â€”";
-    if (verdict === "REAL") {
-      tone = "real";
-      label = "REAL";
-    } else if (verdict === "FAKE") {
-      tone = "fake";
-      label = "FALSO";
-    }
+  const VERIFY_LABEL_TEXT = {
+    SUPPORTED: "VERIFICADO",
+    REFUTED: "DESMENTIDO",
+    CONFLICTING: "CONTRADICTORIO",
+    NOT_ENOUGH_INFO: "EVIDENCIA INSUFICIENTE",
+  };
 
-    const strength = Number(result?.certeza_svm);
-    const strengthText = Number.isFinite(strength)
-      ? strength.toFixed(3)
-      : "â€”";
-    const magnitude = Number.isFinite(strength)
-      ? Math.min(1, Math.abs(strength))
-      : 0;
+  const VERIFY_LABEL_TONE = {
+    SUPPORTED: "real",
+    REFUTED: "fake",
+    CONFLICTING: "unknown",
+    NOT_ENOUGH_INFO: "unknown",
+  };
 
-    const plan = String(result?.plan_usuario || "free").toUpperCase();
-    const remaining = result?.analisis_restantes_hoy;
-    const limit = result?.limite_diario;
+  const renderVerifyReport = (report) => {
+    const overall = String(report?.overall_label || "").toUpperCase();
+    const tone = VERIFY_LABEL_TONE[overall] || "unknown";
+    const label = VERIFY_LABEL_TEXT[overall] || overall || "—";
+
+    const plan = String(report?.plan || "free").toUpperCase();
+    const remaining = report?.remaining_today;
+    const limit = report?.daily_limit;
     const quotaText =
       limit && remaining !== undefined && remaining !== null
-        ? `Plan ${plan} &middot; Quedan ${remaining}/${limit} an&aacute;lisis hoy.`
+        ? `Plan ${plan} &middot; Quedan ${remaining}/${limit} verificaciones hoy.`
         : `Plan ${plan} &middot; Sin l&iacute;mite diario.`;
 
-    // Refresca chip + cache.
     const quotaPayload = {
-      plan: result?.plan_usuario || "free",
+      plan: report?.plan || "free",
       remaining: remaining ?? null,
       limit: limit ?? null,
       updatedAt: Date.now(),
@@ -367,75 +365,70 @@
     saveQuotaCache(quotaPayload);
     renderQuotaChip(quotaPayload);
 
-    const alreadySaved = Boolean(result?.guardado_en_historial);
-    const runId = result?.analysis_run_id || "";
-
-    // Tinta el marco según veredicto (verde/rojo/morado).
     if (activeWidget?.frame) {
       activeWidget.frame.dataset.tone = tone;
     }
 
+    const claims = Array.isArray(report?.claims) ? report.claims : [];
+    const claimsHtml = claims.length
+      ? claims.map((claim, index) => renderClaim(claim, index)).join("")
+      : `<p class="fn-text">No se pudieron extraer afirmaciones verificables.</p>`;
+
     setPanelBody(
       `
-      <div class="fn-verdict" data-tone="${tone}">${label}</div>
-      <p class="fn-strength">Fuerza SVM: <strong>${strengthText}</strong></p>
-      <div class="fn-bar"><div class="fn-bar-fill" style="width:${(magnitude * 100).toFixed(1)}%"></div></div>
+      <div class="fn-verdict" data-tone="${tone}">${escapeHtml(label)}</div>
+      ${report?.summary ? `<p class="fn-summary">${escapeHtml(report.summary)}</p>` : ""}
       <p class="fn-quota">${quotaText}</p>
-      <p class="fn-banner fn-banner-success fn-hidden" id="fn-save-msg"></p>
+      <ol class="fn-claims">${claimsHtml}</ol>
       <div class="fn-actions">
-        <button
-          type="button"
-          class="fn-button-primary"
-          id="fn-save-btn"
-          ${alreadySaved || !runId ? "disabled" : ""}
-        >
-          ${alreadySaved ? "Guardado" : "Guardar en historial"}
-        </button>
         <button type="button" class="fn-button-secondary" id="fn-close-btn">Cerrar</button>
       </div>
     `,
-      "result"
+      "verify"
     );
 
     activeWidget.panel
       .querySelector("#fn-close-btn")
       .addEventListener("click", destroyWidget);
+  };
 
-    const saveBtn = activeWidget.panel.querySelector("#fn-save-btn");
-    if (saveBtn && !saveBtn.disabled) {
-      saveBtn.addEventListener("click", async () => {
-        saveBtn.disabled = true;
-        saveBtn.textContent = "Guardando...";
-        try {
-          const response = await sendToBackground("fn:save", { runId });
-          const msg = activeWidget.panel.querySelector("#fn-save-msg");
-          msg.textContent = response?.already_saved
-            ? "Este análisis ya estaba en tu historial."
-            : "Análisis guardado en tu historial.";
-          msg.classList.remove("fn-hidden");
-          saveBtn.textContent = "Guardado";
-          activeWidget.onScroll?.();
-        } catch (error) {
-          if (error?.sessionExpired) {
-            renderNeedsLogin(libs.CONFIG);
-            return;
-          }
-          saveBtn.disabled = false;
-          saveBtn.textContent = "Guardar en historial";
-          const msg = activeWidget.panel.querySelector("#fn-save-msg");
-          msg.textContent =
-            error?.message || "No se pudo guardar el análisis.";
-          msg.classList.remove("fn-hidden", "fn-banner-success");
-          msg.classList.add("fn-banner-error");
-        }
-      });
-    }
+  const renderClaim = (claim, index) => {
+    const label = String(claim?.label || "").toUpperCase();
+    const tone = VERIFY_LABEL_TONE[label] || "unknown";
+    const confidence = Number.isFinite(claim?.confidence)
+      ? ` · ${Math.round(claim.confidence * 100)}%`
+      : "";
+    const evidences = Array.isArray(claim?.evidences) ? claim.evidences : [];
+    const evidencesHtml = evidences.length
+      ? `<ul class="fn-evidences">${evidences.map(renderEvidence).join("")}</ul>`
+      : `<p class="fn-no-evidence">Sin evidencias web suficientes.</p>`;
+
+    return `
+      <li class="fn-claim">
+        <p class="fn-claim-text"><strong>#${index + 1}</strong> ${escapeHtml(claim?.text || "")}</p>
+        <p class="fn-claim-meta" data-tone="${tone}">${escapeHtml(VERIFY_LABEL_TEXT[label] || label)}${confidence}</p>
+        ${claim?.rationale ? `<p class="fn-rationale">${escapeHtml(claim.rationale)}</p>` : ""}
+        ${evidencesHtml}
+      </li>
+    `;
+  };
+
+  const renderEvidence = (evidence) => {
+    const url = String(evidence?.url || "#");
+    const label = evidence?.title || evidence?.url || "Fuente";
+    const nli = evidence?.nli_label ? ` · ${evidence.nli_label}` : "";
+    return `
+      <li>
+        <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>
+        ${nli ? `<span>${escapeHtml(nli)}</span>` : ""}
+      </li>
+    `;
   };
 
   // ---------------------------------------------------------------------------
-  // 6. Orquestador del análisis.
+  // 6. Orquestador de la verificacion.
   // ---------------------------------------------------------------------------
-  const runAnalysis = async (text) => {
+  const runVerification = async (text) => {
     if (!activeWidget) return;
     if (!text || text.length < MIN_TEXT_LENGTH) return;
 
@@ -446,7 +439,7 @@
       libs = await loadLibs();
     } catch (error) {
       renderError("No se pudieron cargar los modulos de la extension.");
-      console.error("[FakeNews] loadLibs fallo:", error);
+      console.error("[FEVER] loadLibs fallo:", error);
       return;
     }
 
@@ -457,14 +450,14 @@
     }
 
     try {
-      const result = await sendToBackground("fn:analyze", { text });
-      renderResult(result, libs);
+      const report = await sendToBackground("fn:verify", { text });
+      renderVerifyReport(report);
     } catch (error) {
       if (error?.sessionExpired) {
         renderNeedsLogin(libs.CONFIG);
         return;
       }
-      renderError(error?.message || "No se pudo analizar el texto.");
+      renderError(error?.message || "No se pudo verificar el texto.");
     }
   };
 
@@ -485,7 +478,7 @@
         return;
       }
 
-      // Excluir inputs/contenteditable: ahÃ­ un overlay serÃ­a una molestia.
+      // Excluir inputs/contenteditable: ahi un overlay seria una molestia.
       const anchorNode = selection.anchorNode;
       const anchorElement =
         anchorNode && anchorNode.nodeType === 1

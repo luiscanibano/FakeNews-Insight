@@ -22,5 +22,5 @@ export const CONFIG = {
 
   /** URL del registro web (se abre en pestana nueva desde la vista de login). */
   WEB_REGISTER_URL:
-    "https://tfg-informatica-luis-canibano-frontend.onrender.com/register",
+    "https://fakenews-insight.pages.dev/register",
 };

@@ -1,15 +1,14 @@
 /**
  * @file api.js
- * @description Cliente del backend FastAPI (anÃ¡lisis y guardado en historial).
- * Captura 401 y delega en el flujo de auth para forzar reinicio de sesiÃ³n.
+ * @description Cliente del backend FastAPI para verificacion FEVER/NLI.
+ * Captura 401 y delega en el flujo de auth para forzar reinicio de sesion.
  */
 
 import { CONFIG } from "./config.js";
 import { SessionExpiredError, getValidAccessToken } from "./supabase.js";
 import { clearSession } from "./storage.js";
 
-const ANALYSIS_TEXT_PATH = "/predecir/";
-const ANALYSIS_SAVE_PATH = "/analyses/save";
+const ANALYSIS_VERIFY_PATH = "/verify";
 
 const buildEndpoint = (path) => `${CONFIG.ANALYSIS_API_BASE_URL}${path}`;
 
@@ -56,12 +55,9 @@ const authorizedFetch = async (endpoint, body) => {
 };
 
 /**
- * Envia el texto al endpoint /predecir/. Devuelve el payload completo de backend
- * (veredicto, certeza_svm, plan_usuario, analisis_restantes_hoy, analysis_run_id).
+ * Lanza la verificacion de afirmaciones con limites por plan.
+ * Devuelve { run_id, overall_label, summary, claims, plan, remaining_today }.
+ * Lanza Error con mensaje legible si se agota la cuota del usuario (403).
  */
-export const analyzeText = (text) =>
-  authorizedFetch(buildEndpoint(ANALYSIS_TEXT_PATH), { texto: text });
-
-/** Guarda el run_id devuelto por /predecir/ en el historial del usuario. */
-export const saveAnalysis = (runId) =>
-  authorizedFetch(buildEndpoint(ANALYSIS_SAVE_PATH), { run_id: runId });
+export const verifyText = (text) =>
+  authorizedFetch(buildEndpoint(ANALYSIS_VERIFY_PATH), { texto: text });

@@ -6,11 +6,10 @@
  * de la página anfitriona. El popup sigue llamando a la API directamente.
  */
 
-import { analyzeText, saveAnalysis } from "../lib/api.js";
+import { verifyText } from "../lib/api.js";
 
 const handlers = {
-  "fn:analyze": (msg) => analyzeText(msg.text),
-  "fn:save": (msg) => saveAnalysis(msg.runId),
+  "fn:verify": (msg) => verifyText(msg.text),
 };
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

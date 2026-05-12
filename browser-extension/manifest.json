@@ -3,7 +3,7 @@
   "name": "FakeNews Insight",
   "short_name": "FakeNews",
   "version": "0.1.0",
-  "description": "Analiza la veracidad de cualquier texto o noticia con IA sin salir del navegador.",
+  "description": "Revisa textos y verifica afirmaciones con evidencias FEVER sin salir del navegador.",
   "action": {
     "default_title": "FakeNews Insight",
     "default_popup": "popup/popup.html",

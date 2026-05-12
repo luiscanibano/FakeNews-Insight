@@ -1,7 +1,8 @@
-name: Build & Publish Docker images
+name: Build & Publish backend Docker image
 
-# Construye y publica imágenes a GitHub Container Registry (GHCR)
-# en cada push a main. Triggerea el workflow de deploy al terminar.
+# Construye y publica la imagen Docker del backend a GitHub Container Registry
+# (GHCR) en cada push a main. El frontend se despliega como sitio estático en
+# Cloudflare Pages desde su propio workflow.
 on:
   push:
     branches: [main]
@@ -10,7 +11,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_BACKEND: ${{ github.repository }}-backend
-  IMAGE_FRONTEND: ${{ github.repository }}-frontend
 
 jobs:
   build-backend:
@@ -48,48 +48,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  build-frontend:
-    name: Build & push frontend
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}
-          tags: |
-            type=raw,value=latest
-            type=sha,prefix=sha-,format=short
-
-      - name: Build & push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./fakenews-frontend
-          file: ./fakenews-frontend/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          # VITE_* secrets se inyectan en build args del bundle del cliente
-          build-args: |
-            VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
-            VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
-            VITE_ANALYSIS_API_BASE_URL=${{ secrets.VITE_ANALYSIS_API_BASE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

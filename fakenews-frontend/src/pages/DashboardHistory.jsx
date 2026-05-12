@@ -42,15 +42,11 @@ function DashboardHistory() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setSearchTerm(searchInput.trim().toLowerCase());
+      setCurrentPage(1);
     }, SEARCH_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
-
-  /** Reinicia la página cuando cambian vista completa o filtro de busqueda. */
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [showAllAnalyses, searchTerm]);
 
   /** Filtra análisis por campos visibles para un buscador util al usuario final. */
   const filteredItems = useMemo(() => {
@@ -76,13 +72,6 @@ function DashboardHistory() {
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  /** Evita páginas fuera de rango cuando cambia el total de resultados. */
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
-
   const previewItems = historyItems.slice(0, PREVIEW_ITEMS_COUNT);
   const paginatedItems = filteredItems.slice(
     (safeCurrentPage - 1) * PAGE_SIZE,
@@ -95,6 +84,12 @@ function DashboardHistory() {
   const handleBackToPreview = () => {
     setShowAllAnalyses(false);
     setSearchInput("");
+    setCurrentPage(1);
+  };
+
+  const handleShowAllChange = (nextValue) => {
+    setShowAllAnalyses(nextValue);
+    setCurrentPage(1);
   };
 
   return (
@@ -176,7 +171,7 @@ function DashboardHistory() {
                 <button
                   type="button"
                   className="dash-cta"
-                  onClick={() => setShowAllAnalyses(true)}
+                  onClick={() => handleShowAllChange(true)}
                 >
                   <Search className="size-4" />
                   {t("history.showAll")}

@@ -5,8 +5,8 @@
 
 export const landingValueContent = {
   es: {
-    title: "Planes para todos los buscadores de verdad.",
-    description: "Analiza en tiempo real con PRO, ve más allá con ULTRA.",
+    title: "Planes para verificar con más contexto.",
+    description: "Empieza contrastando afirmaciones y escala a más evidencias FEVER con ULTRA.",
     recommendedLabel: "Recomendado",
     plans: [
       {
@@ -17,9 +17,9 @@ export const landingValueContent = {
         recommended: false,
         cta: "Empezar gratis",
         features: [
-          "Hasta 20 noticias/día",
-          "Último modelo IA",
-          "Historial personal",
+          "5 contrastes básicos/día",
+          "1 claim y 1 evidencia por revisión",
+          "Historial personal de verificaciones",
           "Extensión navegador",
         ],
       },
@@ -31,8 +31,8 @@ export const landingValueContent = {
         recommended: true,
         cta: "Suscribirse",
         features: [
-          "Análisis ilimitados",
-          "Último modelo IA (Plus)",
+          "50 contrastes avanzados/día",
+          "Hasta 3 claims y 3 evidencias por claim",
           "Historial completo",
           "Extensión navegador",
         ],
@@ -46,16 +46,17 @@ export const landingValueContent = {
         cta: "Suscribirse",
         features: [
           "Todo lo de Pro",
+          "Agente FEVER completo",
+          "Hasta 8 claims y 5 evidencias por claim",
           "Análisis masivo por CSV",
-          "Acceso a API Key personal",
           "Soporte prioritario",
         ],
       },
     ],
   },
   en: {
-    title: "Plans for every truth seeker.",
-    description: "Analyze in real time with PRO, go further with ULTRA.",
+    title: "Plans for deeper verification.",
+    description: "Start by checking claims and scale to deeper FEVER evidence on ULTRA.",
     recommendedLabel: "Recommended",
     plans: [
       {
@@ -66,9 +67,9 @@ export const landingValueContent = {
         recommended: false,
         cta: "Start free",
         features: [
-          "Up to 20 news/day",
-          "Latest AI model",
-          "Personal history",
+          "5 basic checks/day",
+          "1 claim and 1 evidence per review",
+          "Personal verification history",
           "Browser extension",
         ],
       },
@@ -80,8 +81,8 @@ export const landingValueContent = {
         recommended: true,
         cta: "Subscribe",
         features: [
-          "Unlimited analyses",
-          "Latest AI model (Plus)",
+          "50 advanced checks/day",
+          "Up to 3 claims and 3 evidence items per claim",
           "Full history",
           "Browser extension",
         ],
@@ -95,8 +96,9 @@ export const landingValueContent = {
         cta: "Subscribe",
         features: [
           "Everything in Pro",
+          "Full FEVER agent",
+          "Up to 8 claims and 5 evidence items per claim",
           "Bulk CSV analysis",
-          "Personal API key access",
           "Priority support",
         ],
       },

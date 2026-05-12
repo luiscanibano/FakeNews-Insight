@@ -5,3 +5,8 @@ joblib==1.4.2
 nltk==3.9.1
 scikit-learn==1.5.2
 stripe==11.4.0
+openai>=1.59,<2.0
+tavily-python>=0.5,<1.0
+onnxruntime>=1.20,<2.0
+transformers>=4.47,<5.0
+sentencepiece>=0.2,<0.3

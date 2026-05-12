@@ -9,7 +9,7 @@ import { Download, MousePointerClick, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-/** Seccion "Lleva FakeNews a tu navegador" con captura real del widget. */
+/** Seccion de extension con captura real del widget. */
 function LandingExtension({ content }) {
   return (
     <section className="bg-surface px-6 py-24" id="extension">
@@ -67,7 +67,7 @@ function LandingExtension({ content }) {
               <div className="extension-preview relative mx-auto w-full max-w-[520px] overflow-hidden rounded-2xl border border-outline-variant/15 bg-[#0a0b10] shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
                 <img
                   src="/landing/extension-preview.png"
-                  alt="Captura real de FakeNews Insight analizando un titular en una página web"
+                  alt="Captura real de FakeNews Insight revisando un texto en una página web"
                   loading="lazy"
                   className="block h-auto w-full"
                 />

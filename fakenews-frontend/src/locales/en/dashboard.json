@@ -1,10 +1,10 @@
 {
   "result": {
     "empty": {
-      "title": "Waiting for your first analysis",
-      "subtitle": "Once you analyze a news article, you'll see the verdict, SVM strength and available actions here.",
+      "title": "Waiting for your first check",
+      "subtitle": "Once you review text, you'll see claim-level verdicts, evidence and available actions here.",
       "verdictLabel": "Verdict",
-      "svmStrengthLabel": "SVM strength"
+      "svmStrengthLabel": "Evidence"
     },
     "actions": {
       "saveHistory": "Save to history",
@@ -16,23 +16,23 @@
     },
     "analysing": {
       "title": "AI engine running",
-      "subtitle": "Running multi-layer analysis",
+      "subtitle": "Running claim and evidence checking",
       "phaseLabel": "Phase {{index}}",
-      "phases": ["Collecting source", "Extracting patterns", "Computing verdict"]
+      "phases": ["Collecting context", "Extracting signals", "Computing verdict"]
     },
     "single": {
-      "intro": "We have the results for your news",
-      "headingSuffix": "SVM STRENGTH",
-      "sourceLabel": "Analyzed source",
-      "svmAbsolute": "SVM strength (absolute value): {{value}}",
-      "detailsSummary": "What SVM strength means",
-      "detailsLine1": "It's the algorithm's confidence level.",
-      "detailsLine2": "A value close to 0 means the news has contradictory patterns and the AI isn't 100% sure.",
-      "detailsLine3": "High values indicate a clear and confident detection."
+      "intro": "We have the results for your text",
+      "headingSuffix": "INITIAL SIGNAL",
+      "sourceLabel": "Analyzed input",
+      "svmAbsolute": "Classifier signal (absolute value): {{value}}",
+      "detailsSummary": "What this signal means",
+      "detailsLine1": "It is a legacy output kept as an academic baseline, not the main checking flow.",
+      "detailsLine2": "A value close to 0 means less defined patterns; use FEVER verification for evidence-backed explanation.",
+      "detailsLine3": "High values indicate that the classifier finds a clear tendency in the text."
     },
     "batch": {
       "intro": "Batch processed successfully",
-      "headingSuffix": "news items analyzed",
+      "headingSuffix": "texts analyzed",
       "fileLabel": "File",
       "totalsLabel": "Totals",
       "suspiciousLabel": "Suspicious"
@@ -63,10 +63,10 @@
     "admin": "Admin"
   },
   "hero": {
-    "eyebrow": "Analysis center",
+    "eyebrow": "Verification center",
     "titlePrefix": "Pick an option and ",
-    "titleSoft": "start analyzing.",
-    "subtitle": "Switch modes in one click and process news by text, URL or CSV batches. Every analysis runs against the same model trained in Spanish."
+    "titleSoft": "start checking.",
+    "subtitle": "Switch modes in one click and process texts, URLs or CSV batches. Every plan checks claims; Ultra adds the full FEVER agent."
   },
   "modes": {
     "text": "Text",
@@ -76,64 +76,66 @@
     "modeTitleText": "Text mode",
     "modeTitleUrl": "URL mode",
     "modeTitleCsv": "CSV batch mode",
-    "taglineText": "Semantic engine for free text",
-    "taglineUrl": "Extraction and verification from a web source",
-    "taglineCsv": "Bulk processing of headlines in batch"
+    "taglineText": "Claim checking for free text",
+    "taglineUrl": "Extraction and checking from a web source",
+    "taglineCsv": "Bulk processing of claims in batch"
   },
   "analysisPanel": {
-    "title": "Configure the analysis",
+    "title": "Configure the review",
     "tabsLabel": "Analysis mode",
-    "textPlaceholder": "Paste or type the news you want to verify...",
-    "urlLabel": "News URL",
+    "textPlaceholder": "Paste a verifiable claim or an informative excerpt...",
+    "textLimits": "Minimum {{min}} characters · maximum {{max}} for your plan",
+    "textCounter": "{{count}}/{{max}} characters",
+    "urlLabel": "Content URL",
     "urlPlaceholder": "https://example.com/news",
-    "urlHint": "We extract headline, context and metadata for a traceable verdict.",
+    "urlHint": "We extract headline, context and metadata to prepare a traceable verdict.",
     "csvSelect": "Select CSV file",
-    "csvHint": "Upload a batch of headlines to process them in bulk.",
+    "csvHint": "Upload a batch of headlines or claims to process in bulk.",
     "csvLockedUltra": "CSV batch analysis unlocks on the Ultra plan.",
-    "ready": "Ready to analyze",
+    "ready": "Ready to check",
     "processing": "Processing...",
-    "analyze": "Analyze",
-    "analyzing": "Analyzing...",
-    "progress": "Processing signals · {{progress}}%"
+    "analyze": "Review",
+    "analyzing": "Reviewing...",
+    "progress": "Processing context · {{progress}}%"
   },
   "home": {
     "eyebrow": "Account summary",
     "titlePrefix": "Your activity,",
     "titleSoft": "at a glance.",
     "subtitle": "Usage, recent evolution and your latest analyses. All connected in real time with your account.",
-    "ctaAnalyze": "Analyze a text",
-    "remainingToday": "Analyses left today",
+    "ctaAnalyze": "Review a text",
+    "remainingToday": "Reviews left today",
     "remainingTodayOf": "of {{limit}}",
     "remainingTodayFoot": "Daily quota available for your plan.",
     "currentPlan": "Current plan",
     "currentPlanFoot": "Active subscription.",
     "thisMonth": "This month",
-    "thisMonthFoot": "Total analyses.",
+    "thisMonthFoot": "Total reviews.",
     "recentActivity": "Recent activity",
-    "recentActivityMeta": "Last 10 days · {{total}} analyses",
+    "recentActivityMeta": "Last 10 days · {{total}} reviews",
     "peak": "Peak: {{peak}}",
-    "chartAria": "Analyses per day in the last 10 days",
+    "chartAria": "Reviews per day in the last 10 days",
     "loadingActivity": "Loading activity...",
-    "recentAnalyses": "Recent analyses",
-    "recentAnalysesSub": "Your last 3 logged analyses.",
-    "emptyRecent": "No recent analyses on your account yet.",
+    "recentAnalyses": "Recent reviews",
+    "recentAnalysesSub": "Your last 3 logged reviews.",
+    "emptyRecent": "No recent reviews on your account yet.",
     "today": "Today",
     "unlimited": "Unlimited",
     "unlimitedRemaining": "Unlimited"
   },
   "history": {
     "eyebrow": "Your personal archive",
-    "titlePrefix": "Saved analyses",
+    "titlePrefix": "Saved reviews",
     "titleSoft": "history.",
-    "subtitle": "Quick view of your 5 most recent analyses or full view with search and pagination to browse your whole archive.",
+    "subtitle": "Quick view of your 5 most recent reviews or full view with search and pagination to browse your whole archive.",
     "savedRecords": "Saved records",
-    "matchesFound": "{{count}} analyses match the search",
-    "previewMeta": "Showing preview of {{count}} analyses",
+    "matchesFound": "{{count}} reviews match the search",
+    "previewMeta": "Showing preview of {{count}} reviews",
     "manualSave": "Manual save",
     "loadingHistory": "Loading saved history...",
-    "emptyHistory": "You haven't saved any analyses to your history yet.",
+    "emptyHistory": "You haven't saved any reviews to your history yet.",
     "emptySearch": "No results for that search. Try another keyword.",
-    "showAll": "Show all analyses",
+    "showAll": "Show all reviews",
     "backToPreview": "Back to preview",
     "filterPlaceholder": "Search by title, snippet, source or verdict...",
     "pageOf": "Page {{current}} of {{total}}",
@@ -146,7 +148,7 @@
     "eyebrow": "Browser extension",
     "titlePrefix": "Verify from your browser,",
     "titleSoft": "without opening the dashboard.",
-    "subtitle": "The extension reuses your FakeNews Insight account, respects your daily quota and lets you save results to your history with one click.",
+    "subtitle": "The extension reuses your FakeNews Insight account, respects your daily quota and lets you analyze selected text or launch claim verification with one click.",
     "downloadCta": "Download extension",
     "compatibility": "Compatible with Google Chrome and Microsoft Edge (Manifest V3).",
     "howToInstall": "How to install it",
@@ -170,7 +172,7 @@
       },
       {
         "title": "Sign in",
-        "description": "Open the popup, use the same email and password as FakeNews Insight and start analyzing texts without leaving the page you're reading."
+        "description": "Open the popup, use the same email and password as FakeNews Insight and start reviewing texts without leaving the page you're reading."
       }
     ]
   },
@@ -256,5 +258,43 @@
     "submitting": "Deleting...",
     "errorPattern": "Type ELIMINAR in the field to confirm the deletion.",
     "fallbackError": "Couldn't delete the account."
+  },
+  "verify": {
+    "title": "Claim verification",
+    "subtitle": "Extracts claims from text, retrieves web evidence and computes FEVER/NLI labels.",
+    "action": "Verify",
+    "submitting": "Verifying...",
+    "claimsLabel": "Extracted claims",
+    "evidencesLabel": "Evidence",
+    "noEvidence": "Not enough web evidence for this claim.",
+    "verdict": {
+      "SUPPORTED": "Supported",
+      "REFUTED": "Refuted",
+      "NOT_ENOUGH_INFO": "Not enough info",
+      "CONFLICTING": "Conflicting evidence"
+    },
+    "nli": {
+      "supports": "Supports",
+      "refutes": "Refutes",
+      "nei": "Inconclusive"
+    },
+    "guide": {
+      "title": "How to read the result",
+      "intro": "The system does not decide whether a whole text is true in the abstract: it extracts claims, retrieves evidence and compares each evidence item with each claim using NLI.",
+      "method": "FEVER/NLI",
+      "verdicts": {
+        "SUPPORTED": "The retrieved evidence supports the claim.",
+        "REFUTED": "The retrieved evidence contradicts the claim.",
+        "NOT_ENOUGH_INFO": "There is not enough evidence to confirm or refute it. This does not mean the claim is false.",
+        "CONFLICTING": "The evidence is mixed: some items support the claim while others refute it. Review the sources."
+      },
+      "nliNote": "Per-source labels show whether that specific evidence item supports, refutes or cannot decide the claim. Confidence is a model signal, not an absolute probability of truth."
+    },
+    "meta": {
+      "modelVersion": "Model",
+      "duration": "Duration",
+      "confidence": "Aggregated confidence",
+      "remaining": "Remaining verifications today"
+    }
   }
 }

@@ -6,6 +6,9 @@
 const DEFAULT_ANALYSIS_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_ANALYSIS_TEXT_PATH = "/predecir/";
 const DEFAULT_ANALYSIS_SAVE_PATH = "/analyses/save";
+const DEFAULT_ANALYSIS_VERIFY_PATH = "/verify";
+const VERIFY_TEXT_MIN_LENGTH = 80;
+const VERIFY_TEXT_MAX_LENGTH = 12000;
 
 /** Normaliza la URL base eliminando barras finales para evitar dobles separadores. */
 const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
@@ -31,8 +34,13 @@ const ANALYSIS_SAVE_PATH = normalizePath(
   import.meta.env.VITE_ANALYSIS_SAVE_PATH?.trim() || DEFAULT_ANALYSIS_SAVE_PATH
 );
 
+const ANALYSIS_VERIFY_PATH = normalizePath(
+  import.meta.env.VITE_ANALYSIS_VERIFY_PATH?.trim() || DEFAULT_ANALYSIS_VERIFY_PATH
+);
+
 const ANALYSIS_TEXT_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_TEXT_PATH}`;
 const ANALYSIS_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_SAVE_PATH}`;
+const ANALYSIS_VERIFY_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_VERIFY_PATH}`;
 
 /** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semántico. */
 const getErrorMessage = async (response, fallbackMessage) => {
@@ -53,7 +61,7 @@ const getErrorMessage = async (response, fallbackMessage) => {
 
 /**
  * Ejecuta el análisis de texto en backend con autenticación JWT.
- * Devuelve el veredicto del modelo, metadatos de fuerza SVM y el identificador de ejecucion.
+ * Devuelve el veredicto del modelo, metadatos de señal del clasificador y el identificador de ejecucion.
  */
 export const analyzeTextNews = async ({ text, jwtToken }) => {
   const payload = {
@@ -111,6 +119,45 @@ export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
       response,
       "No se pudo guardar el análisis en historial."
     );
+    throw new Error(message);
+  }
+
+  return response.json();
+};
+
+/**
+ * Ejecuta la verificacion de afirmaciones con limites por plan.
+ * Devuelve el veredicto global, claims con evidencias, citas y cupo restante.
+ */
+export const verifyClaims = async ({ text, jwtToken }) => {
+  if (!jwtToken) {
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
+  }
+
+  const trimmedText = text?.trim() || "";
+  if (trimmedText.length < VERIFY_TEXT_MIN_LENGTH) {
+    throw new Error("El texto a verificar es demasiado corto.");
+  }
+
+  if (trimmedText.length > VERIFY_TEXT_MAX_LENGTH) {
+    throw new Error(`El texto no puede superar ${VERIFY_TEXT_MAX_LENGTH.toLocaleString("es-ES")} caracteres.`);
+  }
+
+  const response = await fetch(ANALYSIS_VERIFY_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+    body: JSON.stringify({ texto: trimmedText }),
+  });
+
+  if (!response.ok) {
+    const fallback =
+      response.status === 403
+        ? "No quedan verificaciones disponibles para tu plan."
+        : "No se pudo verificar el texto en este momento.";
+    const message = await getErrorMessage(response, fallback);
     throw new Error(message);
   }
 

@@ -16,6 +16,9 @@ import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedb
  */
 const COOLDOWN_STORAGE_KEY = "forgot-password-cooldown-until";
 
+const getRemainingCooldownSeconds = (until) =>
+  Math.max(0, Math.ceil((until - Date.now()) / 1000));
+
 /** Pantalla para solicitar el enlace de recuperación de contraseña.
  */
 function ForgotPassword() {
@@ -33,7 +36,9 @@ function ForgotPassword() {
     const savedCooldown = Number(window.localStorage.getItem(COOLDOWN_STORAGE_KEY));
     return Number.isFinite(savedCooldown) ? savedCooldown : 0;
   });
-  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [cooldownSeconds, setCooldownSeconds] = useState(() =>
+    cooldownUntil ? getRemainingCooldownSeconds(cooldownUntil) : 0
+  );
 
   const requestPasswordReset = useAuthStore(
     (state) => state.requestPasswordReset
@@ -47,6 +52,7 @@ function ForgotPassword() {
   const startCooldown = (seconds) => {
     const until = Date.now() + seconds * 1000;
     setCooldownUntil(until);
+    setCooldownSeconds(seconds);
     window.localStorage.setItem(COOLDOWN_STORAGE_KEY, String(until));
   };
 
@@ -64,12 +70,11 @@ function ForgotPassword() {
  */
   useEffect(() => {
     if (!cooldownUntil) {
-      setCooldownSeconds(0);
-      return;
+      return undefined;
     }
 
     const updateCooldown = () => {
-      const remaining = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+      const remaining = getRemainingCooldownSeconds(cooldownUntil);
       setCooldownSeconds(remaining);
 
       if (remaining === 0) {
@@ -78,11 +83,14 @@ function ForgotPassword() {
       }
     };
 
-    updateCooldown();
+    const firstUpdate = window.setTimeout(updateCooldown, 0);
 
     const timer = setInterval(updateCooldown, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      window.clearTimeout(firstUpdate);
+      clearInterval(timer);
+    };
   }, [cooldownUntil]);
 
   /** Al escribir, limpia errores previos para no mostrar mensajes obsoletos.

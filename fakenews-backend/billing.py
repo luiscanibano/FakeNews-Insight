@@ -58,6 +58,9 @@ PLAN_ULTRA = "ultra"
 PLAN_ORDER = {PLAN_FREE: 0, PLAN_PRO: 1, PLAN_ULTRA: 2}
 PAID_PLANS = {PLAN_PRO, PLAN_ULTRA}
 
+# Planes con verificacion FEVER/NLI completa o limitada segun cuota.
+PLANS_WITH_VERIFY = {PLAN_FREE, PLAN_PRO, PLAN_ULTRA}
+
 
 def _price_for_plan(plan: str) -> str:
     """Devuelve el price_id de Stripe configurado para el plan dado."""

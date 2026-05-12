@@ -74,19 +74,23 @@ app = FastAPI(
 """ConfiguraciÃ³n CORS para permitir comunicacion frontend-backend y extension de navegador.
 
 El regex acepta:
-- Frontend en produccion (Render).
+- Frontend en produccion (Cloudflare Pages o dominio configurado).
 - Frontend en desarrollo local (Vite).
 - Cualquier extension Chrome/Edge (los IDs MV3 usan caracteres a-p, 32 chars).
 """
+default_cors_origin_regex = (
+    r"^("
+    r"https://[a-z0-9-]+\.pages\.dev"
+    r"|https://tfg-informatica-luis-canibano-frontend\.onrender\.com"
+    r"|http://localhost:5173"
+    r"|http://127\.0\.0\.1:5173"
+    r"|chrome-extension://[a-pA-P0-9]{32}"
+    r")$"
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=(
-        r"^("
-        r"https://tfg-informatica-luis-canibano-frontend\.onrender\.com"
-        r"|http://localhost:5173"
-        r"|chrome-extension://[a-pA-P0-9]{32}"
-        r")$"
-    ),
+    allow_origin_regex=os.getenv("CORS_ALLOW_ORIGIN_REGEX") or default_cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -750,3 +754,330 @@ def borrar_cuenta_usuario(
 from billing import router as _billing_router  # noqa: E402
 
 app.include_router(_billing_router)
+
+
+# =====================================================================
+# Agente FEVER de verificacion de afirmaciones (contraste por planes)
+# =====================================================================
+
+class VerifyRequest(BaseModel):
+    texto: str
+
+
+VERIFY_TEXT_MIN_LENGTH = 80
+
+VERIFY_PLAN_LIMITS: Dict[str, Dict[str, int]] = {
+    "free": {"daily_limit": 5, "max_claims": 1, "max_evidences": 1, "max_chars": 2000},
+    "pro": {"daily_limit": 50, "max_claims": 3, "max_evidences": 3, "max_chars": 6000},
+    "ultra": {"daily_limit": 200, "max_claims": 8, "max_evidences": 5, "max_chars": 12000},
+}
+
+
+def _normalize_verify_plan(plan: str) -> str:
+    normalized = plan.strip().lower()
+    if normalized in {"pro", "pro_user"}:
+        return "pro"
+    if normalized in {"ultra", "ultra_user"}:
+        return "ultra"
+    return "free"
+
+
+def _verify_limits_for_plan(plan: str) -> Dict[str, int]:
+    return VERIFY_PLAN_LIMITS[_normalize_verify_plan(plan)]
+
+
+def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
+                                 jwt_token: str) -> Dict[str, Any]:
+    """Consume una unidad de cuota diaria del contraste FEVER por plan."""
+    raw_plan = str(profile.get("plan") or "free")
+    plan = _normalize_verify_plan(raw_plan)
+    limits = _verify_limits_for_plan(plan)
+
+    daily_limit = _to_int(
+        profile.get("daily_verification_limit"),
+        default=limits["daily_limit"],
+    )
+    if daily_limit <= 0:
+        raise HTTPException(
+            status_code=403,
+            detail="Tu plan no tiene verificaciones disponibles hoy.",
+        )
+
+    today_key = date.today().isoformat()
+    stored_date = _normalize_date_key(profile.get("daily_verification_date"))
+    raw_used = profile.get("daily_verification_used")
+    stored_used = _to_int(raw_used, default=0)
+    used_today = stored_used if stored_date == today_key else 0
+
+    if used_today >= daily_limit:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Has alcanzado tu limite diario de verificaciones para el plan {plan.title()}.",
+        )
+
+    next_used = used_today + 1
+    update_filters: Dict[str, str] = {"id": f"eq.{user_id}"}
+    if stored_date is None:
+        update_filters["daily_verification_date"] = "is.null"
+    else:
+        update_filters["daily_verification_date"] = f"eq.{stored_date}"
+    if raw_used is None:
+        update_filters["daily_verification_used"] = "is.null"
+    else:
+        update_filters["daily_verification_used"] = f"eq.{stored_used}"
+
+    status, payload = _supabase_json_request(
+        "/rest/v1/profiles",
+        method="PATCH",
+        jwt_token=jwt_token,
+        query=update_filters,
+        body={
+            "daily_verification_date": today_key,
+            "daily_verification_used": next_used,
+        },
+        prefer="return=representation",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo actualizar el cupo de verificaciones."),
+        )
+    if status == 200 and isinstance(payload, list) and len(payload) == 0:
+        raise HTTPException(
+            status_code=409,
+            detail="Concurrencia al reservar verificacion. Reintenta.",
+        )
+
+    return {
+        "plan": plan,
+        "remaining_today": max(0, daily_limit - next_used),
+        "daily_limit": daily_limit,
+        "used_today": next_used,
+        "max_claims": limits["max_claims"],
+        "max_evidences": limits["max_evidences"],
+        "max_chars": limits["max_chars"],
+    }
+
+
+def _persist_verification_report(report, user_id: str, jwt_token: str) -> Optional[str]:
+    """Persiste un VerificationReport en Supabase. Devuelve run_id o None.
+
+    Falla en silencio (sin levantar) si la migracion 002_fever no se ha
+    aplicado todavia, para no romper el endpoint en entornos parciales.
+    """
+    try:
+        status, payload = _supabase_json_request(
+            "/rest/v1/verification_runs",
+            method="POST",
+            jwt_token=jwt_token,
+            body={
+                "user_id": user_id,
+                "input_text": report.input_text,
+                "overall_label": report.overall_label.value,
+                "summary": report.summary,
+                "model_version": report.model_version,
+                "duration_ms": report.duration_ms,
+            },
+            prefer="return=representation",
+        )
+    except HTTPException:
+        return None
+    if status not in (200, 201) or not isinstance(payload, list) or not payload:
+        return None
+    run_id = str(payload[0].get("id") or "") or None
+
+    if run_id is None:
+        return None
+
+    for position, claim_verdict in enumerate(report.claims):
+        try:
+            cstatus, cpayload = _supabase_json_request(
+                "/rest/v1/verification_claims",
+                method="POST",
+                jwt_token=jwt_token,
+                body={
+                    "run_id": run_id,
+                    "user_id": user_id,
+                    "claim_text": claim_verdict.claim.text,
+                    "label": claim_verdict.label.value,
+                    "confidence": claim_verdict.confidence,
+                    "rationale": claim_verdict.rationale,
+                    "position": position,
+                },
+                prefer="return=representation",
+            )
+        except HTTPException:
+            continue
+        if cstatus not in (200, 201) or not isinstance(cpayload, list) or not cpayload:
+            continue
+        claim_id = cpayload[0].get("id")
+        if not claim_id:
+            continue
+        for ev_pos, scored in enumerate(claim_verdict.evidences):
+            try:
+                _supabase_json_request(
+                    "/rest/v1/verification_evidences",
+                    method="POST",
+                    jwt_token=jwt_token,
+                    body={
+                        "claim_id": claim_id,
+                        "user_id": user_id,
+                        "url": scored.evidence.url,
+                        "title": scored.evidence.title,
+                        "snippet": scored.evidence.snippet,
+                        "nli_label": scored.nli.label,
+                        "nli_score": scored.nli.score,
+                        "position": ev_pos,
+                    },
+                )
+            except HTTPException:
+                continue
+    return run_id
+
+
+def _serialize_report(report, *, run_id: Optional[str], quota: Dict[str, Any]) -> Dict[str, Any]:
+    """Serializa el VerificationReport a JSON estable para la API publica."""
+    claims = [
+        {
+            "id": cv.claim.id,
+            "texto": cv.claim.text,
+            "text": cv.claim.text,
+            "veredicto": cv.label.value,
+            "label": cv.label.value,
+            "confianza": round(cv.confidence, 4),
+            "confidence": round(cv.confidence, 4),
+            "razonamiento": cv.rationale,
+            "rationale": cv.rationale,
+            "evidencias": [
+                {
+                    "url": s.evidence.url,
+                    "titulo": s.evidence.title,
+                    "title": s.evidence.title,
+                    "snippet": s.evidence.snippet,
+                    "nli_label": s.nli.label,
+                    "nli_score": round(s.nli.score, 4),
+                }
+                for s in cv.evidences
+            ],
+            "evidences": [
+                {
+                    "url": s.evidence.url,
+                    "titulo": s.evidence.title,
+                    "title": s.evidence.title,
+                    "snippet": s.evidence.snippet,
+                    "nli_label": s.nli.label,
+                    "nli_score": round(s.nli.score, 4),
+                }
+                for s in cv.evidences
+            ],
+        }
+        for cv in report.claims
+    ]
+    return {
+        "run_id": run_id,
+        "plan": quota.get("plan"),
+        "veredicto_global": report.overall_label.value,
+        "overall_label": report.overall_label.value,
+        "resumen": report.summary,
+        "summary": report.summary,
+        "model_version": report.model_version,
+        "duracion_ms": report.duration_ms,
+        "duration_ms": report.duration_ms,
+        "verificaciones_restantes_hoy": quota.get("remaining_today"),
+        "remaining_today": quota.get("remaining_today"),
+        "limite_diario": quota.get("daily_limit"),
+        "daily_limit": quota.get("daily_limit"),
+        "max_claims": quota.get("max_claims"),
+        "max_evidences": quota.get("max_evidences"),
+        "max_chars": quota.get("max_chars"),
+        "claims": claims,
+    }
+
+
+@app.post("/verify")
+def verificar_afirmaciones(
+    payload: VerifyRequest,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Ejecuta el agente FEVER sobre el texto y devuelve veredicto+evidencias.
+
+    La capacidad se degrada por plan: Free contrasta una afirmacion,
+    Pro varias, y Ultra ejecuta el agente completo. Persiste la ejecucion
+    si la migracion 002_fever esta aplicada.
+    """
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    text = (payload.texto or "").strip()
+    if len(text) < VERIFY_TEXT_MIN_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"El texto debe tener al menos {VERIFY_TEXT_MIN_LENGTH} caracteres para extraer afirmaciones verificables.",
+        )
+
+    profile = _load_profile_for_verify(user_id, token)
+    plan = _normalize_verify_plan(str(profile.get("plan") or "free"))
+    limits = _verify_limits_for_plan(plan)
+    max_chars = limits["max_chars"]
+    if len(text) > max_chars:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Tu plan {plan.title()} permite hasta {max_chars} caracteres por verificacion.",
+        )
+
+    quota = _consume_verification_quota(profile, user_id, token)
+
+    # Import diferido: evita cargar fever/fever_runtime en arranque para
+    # tests del backend que no necesitan el agente.
+    from fever.agent import AgentConfig
+    from fever.aggregation import AggregationConfig
+    from fever_runtime import get_verification_agent
+
+    agent = get_verification_agent(config=AgentConfig(
+        max_claims=_to_int(quota.get("max_claims"), default=1),
+        max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
+        aggregation=AggregationConfig(),
+    ))
+    try:
+        report = agent.verify(text)
+    except Exception as exc:  # pragma: no cover - bubble up sanitized error
+        raise HTTPException(
+            status_code=503,
+            detail=f"El agente de verificacion no pudo completar la peticion: {exc}",
+        )
+
+    run_id = _persist_verification_report(report, user_id, token)
+    return _serialize_report(report, run_id=run_id, quota=quota)
+
+
+def _load_profile_for_verify(user_id: str, jwt_token: str) -> Dict[str, Any]:
+    """Variante de _load_profile_for_user con campos de cuota de verify."""
+    status, payload = _supabase_json_request(
+        "/rest/v1/profiles",
+        method="GET",
+        jwt_token=jwt_token,
+        query={
+            "id": f"eq.{user_id}",
+            "select": (
+                "id,plan,"
+                "daily_verification_limit,daily_verification_used,daily_verification_date"
+            ),
+            "limit": "1",
+        },
+    )
+    if status != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo leer el perfil del usuario en Supabase."),
+        )
+    if not isinstance(payload, list) or len(payload) == 0:
+        raise HTTPException(status_code=403, detail="No existe un perfil activo para este usuario.")
+    return payload[0]
+

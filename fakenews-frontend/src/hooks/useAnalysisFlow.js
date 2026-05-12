@@ -11,6 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAnalysisStore } from "../store/analysisStore";
 import { ANALYSIS_MODE } from "../lib/dashboardConstants";
+import { VERIFY_TEXT_MIN_LENGTH, getVerifyTextMaxLength } from "../lib/verificationLimits";
 
 /** Construye un resultado simulado para los modos URL/CSV manteniendo el contrato de DashboardResultPanel. */
 const buildMockResult = ({ mode, text, url, file }) => {
@@ -40,14 +41,14 @@ const buildMockResult = ({ mode, text, url, file }) => {
     excerpt:
       mode === ANALYSIS_MODE.TEXT
         ? text.slice(0, 260)
-        : "Análisis semántico generado desde la URL facilitada.",
+        : "Revisión semántica generada desde la URL facilitada.",
   };
 };
 
 /**
  * Devuelve el estado y los handlers necesarios para alimentar `DashboardAnalyze`.
  */
-export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
+export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const [analysisMode, setAnalysisMode] = useState(ANALYSIS_MODE.TEXT);
   const [textPayload, setTextPayload] = useState("");
   const [urlPayload, setUrlPayload] = useState("");
@@ -73,6 +74,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
   );
   const clearTextAnalysisError = useAnalysisStore((state) => state.clearError);
   const resetTextAnalysis = useAnalysisStore((state) => state.reset);
+  const maxTextLength = getVerifyTextMaxLength(plan);
 
   const clearPendingTimers = () => {
     if (progressTimerRef.current) {
@@ -91,7 +93,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
 
   const handleModeChange = (nextMode) => {
     if (nextMode === ANALYSIS_MODE.CSV && !canUseCsvAnalysis) {
-      setLocalError("La opción por lotes en CSV esta disponible solo para plan Ultra.");
+      setLocalError("La revisión por lotes en CSV esta disponible solo para plan Ultra.");
       return;
     }
 
@@ -113,7 +115,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
   };
 
   const handleTextPayloadChange = (value) => {
-    setTextPayload(value);
+    setTextPayload(value.slice(0, maxTextLength));
     setLocalError("");
     clearTextAnalysisError();
   };
@@ -127,8 +129,20 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
     event.preventDefault();
 
     if (analysisMode === ANALYSIS_MODE.TEXT && !textPayload.trim()) {
-      setLocalError("Pega o escribe una noticia antes de analizar.");
+      setLocalError("Pega o escribe un texto o afirmación antes de revisar.");
       return;
+    }
+
+    if (analysisMode === ANALYSIS_MODE.TEXT) {
+      const length = textPayload.trim().length;
+      if (length < VERIFY_TEXT_MIN_LENGTH) {
+        setLocalError(`El texto debe tener al menos ${VERIFY_TEXT_MIN_LENGTH} caracteres para extraer afirmaciones verificables.`);
+        return;
+      }
+      if (length > maxTextLength) {
+        setLocalError(`Tu plan permite hasta ${maxTextLength.toLocaleString("es-ES")} caracteres por verificación.`);
+        return;
+      }
     }
 
     if (analysisMode === ANALYSIS_MODE.URL && !urlPayload.trim()) {
@@ -138,7 +152,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
 
     if (analysisMode === ANALYSIS_MODE.CSV) {
       if (!canUseCsvAnalysis) {
-        setLocalError("Necesitas plan Ultra para el análisis por lotes.");
+        setLocalError("Necesitas plan Ultra para la revisión por lotes.");
         return;
       }
       if (!csvFile) {
@@ -215,6 +229,8 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis }) => {
     resolvedError,
     isSavingTextAnalysis,
     saveTextAnalysisError,
+    maxTextLength,
+    minTextLength: VERIFY_TEXT_MIN_LENGTH,
     handleModeChange,
     handleSubmit,
     handleTextPayloadChange,

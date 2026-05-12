@@ -1,7 +1,7 @@
 /**
  * @file content.css
  * @description Estilos del Shadow DOM. Marco que envuelve la selección +
- * panel adjunto con boton "Analizar" y, despues, el resultado.
+ * panel adjunto con boton "Verificar" y, despues, el informe FEVER/NLI.
  */
 
 :host,
@@ -290,7 +290,7 @@
   gap: 10px;
 }
 
-/* ----- Estado idle: snippet + boton analizar ------------------------------ */
+/* ----- Estado idle: snippet + boton verificar ----------------------------- */
 
 .fn-snippet {
   margin: 0;
@@ -404,6 +404,97 @@
 
 .fn-strength strong {
   color: #ffffff;
+}
+
+.fn-summary {
+  margin: -2px 0 0;
+  color: #c0c3cc;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.fn-claims {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.fn-claim {
+  margin: 0;
+  padding: 9px;
+  border: 1px solid rgba(124, 92, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.fn-claim-text {
+  margin: 0 0 5px;
+  color: #e8e9ee;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.fn-claim-text strong {
+  color: #a8acb8;
+}
+
+.fn-claim-meta {
+  margin: 0 0 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fn-claim-meta[data-tone="real"] {
+  color: #2dd4a4;
+}
+
+.fn-claim-meta[data-tone="fake"] {
+  color: #ff6b6b;
+}
+
+.fn-claim-meta[data-tone="unknown"] {
+  color: #facc15;
+}
+
+.fn-rationale,
+.fn-no-evidence {
+  margin: 0 0 6px;
+  color: #a8acb8;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.fn-evidences {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  color: #a8acb8;
+  font-size: 11px;
+}
+
+.fn-evidences li + li {
+  margin-top: 4px;
+}
+
+.fn-evidences a {
+  color: #b7a8ff;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.fn-evidences a:hover {
+  text-decoration: underline;
+}
+
+.fn-evidences span {
+  color: #7e8392;
 }
 
 .fn-bar {

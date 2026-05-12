@@ -23,8 +23,11 @@ function DashboardAnalysisPanel({
   onCsvPick,
   localError,
   analysisProgress,
+  maxTextLength,
+  minTextLength,
 }) {
   const { t } = useTranslation("dashboard");
+  const trimmedTextLength = textPayload.trim().length;
   const MODE_TITLES = {
     text: t("modes.modeTitleText"),
     url: t("modes.modeTitleUrl"),
@@ -72,8 +75,15 @@ function DashboardAnalysisPanel({
                 onChange={(event) => onTextPayloadChange(event.target.value)}
                 placeholder={t("analysisPanel.textPlaceholder")}
                 disabled={isAnalysing}
+                maxLength={maxTextLength}
                 className="dash-textarea"
               />
+              <div className="dash-text-meta">
+                <span>{t("analysisPanel.textLimits", { min: minTextLength, max: maxTextLength.toLocaleString() })}</span>
+                <span className={trimmedTextLength > maxTextLength * 0.9 ? "dash-text-count is-near-limit" : "dash-text-count"}>
+                  {t("analysisPanel.textCounter", { count: trimmedTextLength, max: maxTextLength.toLocaleString() })}
+                </span>
+              </div>
             </div>
           ) : null}
 

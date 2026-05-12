@@ -7,12 +7,13 @@
 export const landingExtensionContent = {
   es: {
     eyebrow: "Extension de navegador",
-    title: "Analiza cualquier noticia sin salir de la web.",
+    title: "Verifica afirmaciones sin salir de la web.",
     description:
-      "Selecciona un parrafo en tu medio favorito y un marco morado lo envuelve al instante con un panel para verificarlo en un click. Sin copiar, sin pegar, sin abrir pestanas.",
+      "Selecciona un parrafo en tu medio favorito y un marco morado lo envuelve al instante con un panel para analizarlo o contrastar sus claims. Sin copiar, sin pegar, sin abrir pestanas.",
     bullets: [
-      "Funciona en cualquier sitio HTTP/HTTPS, dentro de tu sesión FakeNews.",
-      "Veredicto inline con barra de fuerza SVM y cuota diaria visible.",
+      "Funciona en cualquier sitio HTTP/HTTPS, dentro de tu sesión FakeNews Insight.",
+      "Veredicto inline con cuota diaria visible.",
+      "Verificación FEVER con evidencias web según tu plan.",
       "Compatible con Chrome, Edge y derivados (Manifest V3).",
     ],
     ctaPrimary: "Descargar v0.3.0",
@@ -30,12 +31,13 @@ export const landingExtensionContent = {
   },
   en: {
     eyebrow: "Browser extension",
-    title: "Analyze any news article without leaving the web.",
+    title: "Verify claims without leaving the web.",
     description:
-      "Select a paragraph on your favorite outlet and a purple frame wraps it instantly with a panel to verify it in one click. No copy, no paste, no extra tabs.",
+      "Select a paragraph on your favorite outlet and a purple frame wraps it instantly with a panel to analyze it or check its claims. No copy, no paste, no extra tabs.",
     bullets: [
-      "Works on any HTTP/HTTPS site, inside your FakeNews session.",
-      "Inline verdict with SVM strength bar and visible daily quota.",
+      "Works on any HTTP/HTTPS site, inside your FakeNews Insight session.",
+      "Inline verdict with visible daily quota.",
+      "FEVER verification with web evidence according to your plan.",
       "Compatible with Chrome, Edge and derivatives (Manifest V3).",
     ],
     ctaPrimary: "Download v0.3.0",

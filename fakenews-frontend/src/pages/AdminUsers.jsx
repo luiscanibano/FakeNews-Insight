@@ -37,38 +37,25 @@ function AdminUsers() {
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setSearchTerm(searchInput.trim());
+      setCurrentPage(1);
     }, 300);
 
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
+
+  const totalPages = Math.max(1, Math.ceil(totalUsersCount / PAGE_SIZE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
 
   /** Carga la página actual de usuarios según filtro de busqueda en servidor.
  */
   useEffect(() => {
     loadUsers({
       includeAdmins: false,
-      page: currentPage,
+      page: safeCurrentPage,
       pageSize: PAGE_SIZE,
       searchTerm,
     });
-  }, [currentPage, loadUsers, searchTerm]);
-
-  const totalPages = Math.max(1, Math.ceil(totalUsersCount / PAGE_SIZE));
-  const safeCurrentPage = Math.min(currentPage, totalPages);
-
-  /** Reinicia a primera página cuando cambia el filtro de busqueda aplicado.
- */
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
-
-  /** Evita páginas fuera de rango cuando cambia el total filtrado.
- */
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
+  }, [loadUsers, safeCurrentPage, searchTerm]);
 
   /** Solicita el cambio de plan usando la acción de estado global del modulo admin.
  */

@@ -8,23 +8,23 @@ const FEATURES_IMAGE =
 
 export const landingFeaturesContent = {
   es: {
-    badge: "Análisis profesional instantáneo",
-    titlePrefix: "Análisis sin",
+    badge: "Verificación profesional con evidencias",
+    titlePrefix: "Contraste sin",
     titleEmphasis: "fricciones",
     description:
-      "Nuestra tecnología se funde con tu flujo de trabajo diario para ofrecerte respuestas inmediatas.",
+      "Nuestra tecnología se funde con tu flujo diario para pasar del texto a una verificación explicable con evidencias.",
     primaryFeature: {
-      title: "Análisis inteligente al instante",
+      title: "Verificación inteligente por afirmación",
       description:
-        "Pega un texto o la URL de una noticia y nuestro modelo predictivo te devolverá un porcentaje de fiabilidad en milisegundos. Utilizamos modelos de lenguaje entrenados en cientos de miles de artículos verificados.",
+        "Pega un texto o la URL de una noticia y el sistema separa afirmaciones, recupera evidencias y calcula un veredicto FEVER/NLI interpretable según tu plan.",
       sampleUrl: "https://noticias-tech.com/articulo-sospechoso...",
       analyzeCta: "Analizar",
       points: [
-        "Evaluación semántica y contraste con fuentes verificadas.",
-        "Detección de señales de manipulación y sesgo narrativo.",
+        "Extracción de claims y contraste con evidencias web.",
+        "Inferencia NLI para apoyar, refutar o marcar información insuficiente.",
       ],
       stats: [
-        { value: "87%", label: "Precisión media" },
+        { value: "72.8%", label: "Accuracy FEVER" },
         { value: "< 2s", label: "Tiempo de respuesta" },
         { value: "24/7", label: "Disponibilidad" },
       ],
@@ -34,21 +34,21 @@ export const landingFeaturesContent = {
         icon: "extension",
         title: "Integración en tu navegador",
         description:
-          "No interrumpas tu lectura. Analiza la veracidad de los artículos directamente desde X (Twitter) o tu periódico digital favorito con nuestra extensión ligera.",
+          "No interrumpas tu lectura. Selecciona texto en cualquier web y lanza el análisis o la verificación de afirmaciones con nuestra extensión ligera.",
         points: [
-          "Verifica noticias sin cambiar de pestaña.",
-          "Atajos rápidos para analizar enlaces al instante.",
+          "Contrasta fragmentos sin cambiar de pestaña.",
+          "Contraste básico, avanzado o completo según tu plan.",
         ],
-        metric: "+35% velocidad de verificación",
+        metric: "Claims y evidencias en contexto",
       },
       {
         icon: "stats",
         title: "Historial y Estadísticas",
         description:
-          "Crea tu cuenta para guardar tus análisis, revisar tu historial de consultas y visualizar métricas globales sobre las tendencias de desinformación.",
+          "Crea tu cuenta para guardar análisis, revisar verificaciones anteriores y visualizar cómo evolucionan tus consultas de claims y evidencias.",
         points: [
-          "Dashboard con evolución de tus verificaciones.",
-          "Alertas sobre patrones de desinformación emergentes.",
+          "Dashboard con evolución de análisis y verificaciones.",
+          "Historial trazable de textos, veredictos y fuentes.",
         ],
         metric: "Histórico completo en la nube",
       },
@@ -56,32 +56,32 @@ export const landingFeaturesContent = {
     infrastructure: {
       title: "Tecnología de Vanguardia",
       description:
-        "Nuestra infraestructura corre sobre nodos distribuidos para garantizar una latencia inferior a 200ms en cualquier parte del mundo.",
+        "La plataforma combina gestión de cuotas, extracción de claims y un agente FEVER/NLI que consulta evidencias externas cuando necesitas una explicación más profunda.",
       uptimeValue: "99.9%",
       uptimeLabel: "Uptime",
-      latencyValue: "0.2s",
-      latencyLabel: "Respuesta",
+      latencyValue: "NLI",
+      latencyLabel: "FEVER",
       image: FEATURES_IMAGE,
     },
   },
   en: {
-    badge: "Instant professional analysis",
+    badge: "Professional evidence-backed verification",
     titlePrefix: "Frictionless",
     titleEmphasis: "analysis",
     description:
-      "Our technology blends into your daily workflow to give you instant answers.",
+      "Our technology blends into your daily workflow to move from raw text to explainable verification with evidence.",
     primaryFeature: {
-      title: "Smart analysis in seconds",
+      title: "Claim-level smart verification",
       description:
-        "Paste a text or news URL and our predictive model returns a reliability score in milliseconds. We use language models trained on hundreds of thousands of verified articles.",
+        "Paste a text or news URL and the system splits claims, retrieves evidence and computes an interpretable FEVER/NLI verdict according to your plan.",
       sampleUrl: "https://tech-news.com/suspicious-article...",
       analyzeCta: "Analyze",
       points: [
-        "Semantic evaluation and cross-checking with verified sources.",
-        "Detection of manipulation signals and narrative bias.",
+        "Claim extraction and cross-checking with web evidence.",
+        "NLI inference to support, refute or mark insufficient information.",
       ],
       stats: [
-        { value: "87%", label: "Average accuracy" },
+        { value: "72.8%", label: "FEVER accuracy" },
         { value: "< 2s", label: "Response time" },
         { value: "24/7", label: "Availability" },
       ],
@@ -91,21 +91,21 @@ export const landingFeaturesContent = {
         icon: "extension",
         title: "Browser integration",
         description:
-          "Don't break your reading flow. Check the truthfulness of articles directly from X (Twitter) or your favorite news site with our lightweight extension.",
+          "Don't break your reading flow. Select text on any site and launch fast analysis or claim verification with our lightweight extension.",
         points: [
-          "Verify news without switching tabs.",
-          "Shortcuts to analyze links instantly.",
+          "Check fragments without switching tabs.",
+          "Basic, advanced or full checking depending on your plan.",
         ],
-        metric: "+35% verification speed",
+        metric: "Claims and evidence in context",
       },
       {
         icon: "stats",
         title: "History & analytics",
         description:
-          "Create an account to save your analyses, review your query history and visualize global metrics on misinformation trends.",
+          "Create an account to save analyses, review previous verifications and visualize how your claim and evidence activity evolves.",
         points: [
-          "Dashboard with your verification activity over time.",
-          "Alerts on emerging misinformation patterns.",
+          "Dashboard with analysis and verification activity over time.",
+          "Traceable history of texts, verdicts and sources.",
         ],
         metric: "Full history in the cloud",
       },
@@ -113,11 +113,11 @@ export const landingFeaturesContent = {
     infrastructure: {
       title: "Cutting-edge technology",
       description:
-        "Our infrastructure runs on distributed nodes to guarantee latency below 200ms anywhere in the world.",
+        "The platform combines quota management, claim extraction and a FEVER/NLI agent that consults external evidence when you need deeper explanation.",
       uptimeValue: "99.9%",
       uptimeLabel: "Uptime",
-      latencyValue: "0.2s",
-      latencyLabel: "Response",
+      latencyValue: "NLI",
+      latencyLabel: "FEVER",
       image: FEATURES_IMAGE,
     },
   },
