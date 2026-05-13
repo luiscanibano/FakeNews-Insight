@@ -58,8 +58,15 @@ checkpoints/
 *.pth
 models/fever/**
 !models/fever/
-!models/fever/*/
-!models/fever/*/model_card.md
+!models/fever/deberta-v3-small-fever-v1/
+!models/fever/deberta-v3-small-fever-v1/added_tokens.json
+!models/fever/deberta-v3-small-fever-v1/config.json
+!models/fever/deberta-v3-small-fever-v1/model.onnx
+!models/fever/deberta-v3-small-fever-v1/model_card.md
+!models/fever/deberta-v3-small-fever-v1/special_tokens_map.json
+!models/fever/deberta-v3-small-fever-v1/spm.model
+!models/fever/deberta-v3-small-fever-v1/tokenizer.json
+!models/fever/deberta-v3-small-fever-v1/tokenizer_config.json
 
 # --- Memoria del agente Copilot (no es código del proyecto) ---
 .copilot/

@@ -21,6 +21,17 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify FEVER model artifacts
+        run: |
+          test -f models/fever/deberta-v3-small-fever-v1/model.onnx
+          test -f models/fever/deberta-v3-small-fever-v1/config.json
+          test -f models/fever/deberta-v3-small-fever-v1/tokenizer.json
+          test -f models/fever/deberta-v3-small-fever-v1/tokenizer_config.json
+          test -f models/fever/deberta-v3-small-fever-v1/special_tokens_map.json
+          test -f models/fever/deberta-v3-small-fever-v1/spm.model
 
       - uses: docker/setup-buildx-action@v3
 
