@@ -11,3 +11,6 @@
 *.gif binary
 *.ico binary
 *.pdf binary
+
+# Modelo NLI FEVER exportado a ONNX
+models/fever/deberta-v3-small-fever-v1/model.onnx filter=lfs diff=lfs merge=lfs -text
