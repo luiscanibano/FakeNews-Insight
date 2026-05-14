@@ -1,15 +1,13 @@
+import { resolveApiBaseUrl } from "../lib/apiBaseUrl";
+
 /**
  * @file billing.js
  * @description Servicios para iniciar checkout Stripe y confirmar cambios de plan.
  */
 
-const DEFAULT_BILLING_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_BILLING_CHECKOUT_PATH = "/billing/checkout";
 const DEFAULT_BILLING_CONFIRM_PATH = "/billing/confirm";
 const BILLING_REQUEST_TIMEOUT_MS = 20000;
-
-/** Normaliza URL base para evitar dobles separadores. */
-const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
 
 /** Asegura prefijo '/' en rutas API. */
 const normalizePath = (path, fallbackPath) => {
@@ -20,10 +18,8 @@ const normalizePath = (path, fallbackPath) => {
 	return path.startsWith("/") ? path : `/${path}`;
 };
 
-const BILLING_API_BASE_URL = normalizeBaseUrl(
-	import.meta.env.VITE_BILLING_API_BASE_URL?.trim() ||
-		import.meta.env.VITE_ANALYSIS_API_BASE_URL?.trim() ||
-		DEFAULT_BILLING_API_BASE_URL
+const BILLING_API_BASE_URL = resolveApiBaseUrl(
+	import.meta.env.VITE_BILLING_API_BASE_URL || import.meta.env.VITE_ANALYSIS_API_BASE_URL
 );
 
 const BILLING_CHECKOUT_PATH = normalizePath(

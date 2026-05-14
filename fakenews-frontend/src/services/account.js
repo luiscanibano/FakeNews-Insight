@@ -4,12 +4,11 @@
  */
 
 import { getSupabaseClient } from "./supabase";
+import { resolveApiBaseUrl } from "../lib/apiBaseUrl";
 
-const DEFAULT_ACCOUNT_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_ACCOUNT_DELETE_PATH = "/account/delete";
 const ACCOUNT_REQUEST_TIMEOUT_MS = 20000;
 
-const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
 const normalizePath = (path, fallbackPath) => {
   if (!path) {
     return fallbackPath;
@@ -18,10 +17,7 @@ const normalizePath = (path, fallbackPath) => {
   return path.startsWith("/") ? path : `/${path}`;
 };
 
-const ACCOUNT_API_BASE_URL = normalizeBaseUrl(
-  import.meta.env.VITE_ANALYSIS_API_BASE_URL?.trim() ||
-    DEFAULT_ACCOUNT_API_BASE_URL
-);
+const ACCOUNT_API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_ANALYSIS_API_BASE_URL);
 
 const ACCOUNT_DELETE_ENDPOINT = `${ACCOUNT_API_BASE_URL}${normalizePath(
   import.meta.env.VITE_ACCOUNT_DELETE_PATH?.trim(),

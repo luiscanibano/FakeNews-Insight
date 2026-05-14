@@ -6,8 +6,9 @@ adjudicacion semantica y agregacion de veredictos. El backend esta construido
 con FastAPI y el frontend con React + Vite; Supabase gestiona autenticacion,
 persistencia y RLS.
 
-> Estado: **alpha** — backend dockerizado en un VPS y frontend estatico en
-> Cloudflare Pages, ambos con CI/CD desde GitHub Actions.
+> Estado: **alpha** — frontend estatico en Cloudflare Pages y backend
+> dockerizado en un VPS (OVHcloud u otro proveedor similar), con CI/CD desde
+> GitHub Actions.
 
 ---
 
@@ -18,8 +19,8 @@ persistencia y RLS.
 ├── fakenews-backend/      # FastAPI + agente FEVER/NLI (Dockerfile)
 ├── fakenews-frontend/     # React 19 + Vite + Tailwind
 ├── models/                # Modelo FEVER/NLI exportado para inferencia
-├── deploy/vps/            # Despliegue VPS: compose, Caddy y script remoto
-├── .github/workflows/     # CI y despliegues frontend/backend
+├── deploy/vps/            # Compose, Caddy y scripts para desplegar el backend en VPS
+├── .github/workflows/     # CI y deploy frontend/backend
 ├── docker-compose.yml     # Orquestación local
 └── .env.example           # Variables necesarias para docker compose
 ```
@@ -84,13 +85,17 @@ Cada subproyecto tiene su propio `.env.example`:
 
 - **CI** ([ci.yml](.github/workflows/ci.yml)): lint + smoke tests en cada PR.
 - **Deploy backend** ([deploy-backend-vps.yml](.github/workflows/deploy-backend-vps.yml)):
-  conecta por SSH al VPS y ejecuta `deploy/vps/deploy.sh`.
+  conecta por SSH al VPS, hace `git pull`, `git lfs pull` y recrea el stack Docker.
 - **Deploy frontend** ([deploy-cloudflare-pages.yml](.github/workflows/deploy-cloudflare-pages.yml)):
   compila el frontend Vite y publica `dist/` en Cloudflare Pages.
 
 El Dockerfile del frontend se mantiene para desarrollo local y validacion
 containerizada, pero produccion sirve el artefacto estatico desde Cloudflare
 Pages.
+
+Para mantener el modelo FEVER/NLI grande, el backend se despliega completo en
+un VPS con suficiente RAM y carga localmente el agente de verificacion dentro
+del mismo proceso FastAPI.
 
 Secrets/variables necesarios para despliegue:
 
@@ -100,16 +105,47 @@ Secrets/variables necesarios para despliegue:
 - Build frontend: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
   `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico del VPS.
 
-### VPS backend
+### Arquitectura: Cloudflare Pages + VPS
 
-El despliegue del backend en produccion usa:
+La app queda separada asi:
 
-1. [deploy/vps/docker-compose.yml](deploy/vps/docker-compose.yml)
-2. [deploy/vps/Caddyfile](deploy/vps/Caddyfile)
-3. [deploy/vps/deploy.sh](deploy/vps/deploy.sh)
+1. `Cloudflare Pages`: frontend React/Vite.
+2. `VPS`: `fakenews-backend/` + Caddy como reverse proxy.
+3. `fakenews-backend/` ejecuta `/verify` localmente cargando el modelo FEVER/NLI.
 
-El backend queda expuesto en `https://api.fakenewsinsight.com` y Caddy hace de
-reverse proxy hacia `backend:8000` dentro de la red Docker.
+El VPS se levanta con [deploy/vps/docker-compose.yml](deploy/vps/docker-compose.yml)
+y usa [deploy/vps/Caddyfile](deploy/vps/Caddyfile) para exponer el backend bajo
+tu dominio (por ejemplo `api.fakenewsinsight.com`).
+
+### Preparacion del VPS
+
+1. Instala Docker, Docker Compose plugin, Git y Git LFS.
+2. Clona el repo en `/opt/fakenews-insight`.
+3. Copia [deploy/vps/.env.example](deploy/vps/.env.example) a `deploy/vps/.env`
+  y rellena secrets/URLs reales.
+4. Ejecuta:
+
+```bash
+cd /opt/fakenews-insight
+git lfs pull
+docker compose -f deploy/vps/docker-compose.yml --env-file deploy/vps/.env up -d --build
+```
+
+### CI/CD del backend en VPS
+
+El workflow [deploy-backend-vps.yml](.github/workflows/deploy-backend-vps.yml)
+hace esto en cada push a `main` que toque backend/modelo:
+
+1. Se conecta por SSH al VPS.
+2. Ejecuta `deploy/vps/deploy.sh`.
+3. Ese script hace `git pull`, `git lfs pull` y recrea el stack Docker.
+
+Necesitas configurar en GitHub Actions estos secrets:
+
+- `VPS_HOST`
+- `VPS_USER`
+- `VPS_SSH_PRIVATE_KEY`
+- `VPS_APP_DIR` (por ejemplo `/opt/fakenews-insight`)
 
 ---
 
