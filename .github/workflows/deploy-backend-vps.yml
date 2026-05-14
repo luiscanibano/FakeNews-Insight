@@ -1,0 +1,29 @@
+name: Deploy backend to VPS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fakenews-backend/**"
+      - "models/fever/deberta-v3-small-fever-v1/**"
+      - "deploy/vps/**"
+      - ".github/workflows/deploy-backend-vps.yml"
+      - ".gitattributes"
+      - ".gitignore"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: SSH deploy backend on VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            export APP_DIR="${{ secrets.VPS_APP_DIR }}"
+            export BRANCH="main"
+            sh "$APP_DIR/deploy/vps/deploy.sh"
