@@ -1,0 +1,7 @@
+api.fakenewsinsight.com {
+  reverse_proxy backend:8000
+}{$BACKEND_DOMAIN} {
+  encode gzip zstd
+
+  reverse_proxy backend:8000
+}

@@ -6,7 +6,7 @@ adjudicacion semantica y agregacion de veredictos. El backend esta construido
 con FastAPI y el frontend con React + Vite; Supabase gestiona autenticacion,
 persistencia y RLS.
 
-> Estado: **alpha** — backend dockerizado en Render y frontend estatico en
+> Estado: **alpha** — backend dockerizado en un VPS y frontend estatico en
 > Cloudflare Pages, ambos con CI/CD desde GitHub Actions.
 
 ---
@@ -18,7 +18,8 @@ persistencia y RLS.
 ├── fakenews-backend/      # FastAPI + agente FEVER/NLI (Dockerfile)
 ├── fakenews-frontend/     # React 19 + Vite + Tailwind
 ├── models/                # Modelo FEVER/NLI exportado para inferencia
-├── .github/workflows/     # CI, build backend, deploy backend/frontend
+├── deploy/vps/            # Despliegue VPS: compose, Caddy y script remoto
+├── .github/workflows/     # CI y despliegues frontend/backend
 ├── docker-compose.yml     # Orquestación local
 └── .env.example           # Variables necesarias para docker compose
 ```
@@ -82,10 +83,8 @@ Cada subproyecto tiene su propio `.env.example`:
 ## CI/CD
 
 - **CI** ([ci.yml](.github/workflows/ci.yml)): lint + smoke tests en cada PR.
-- **Build & Publish backend** ([build-and-publish.yml](.github/workflows/build-and-publish.yml)):
-  publica la imagen Docker del backend en GHCR en cada push a `main`.
-- **Deploy backend** ([deploy-render.yml](.github/workflows/deploy-render.yml)):
-  dispara el Deploy Hook de Render para que el backend baje la imagen `latest`.
+- **Deploy backend** ([deploy-backend-vps.yml](.github/workflows/deploy-backend-vps.yml)):
+  conecta por SSH al VPS y ejecuta `deploy/vps/deploy.sh`.
 - **Deploy frontend** ([deploy-cloudflare-pages.yml](.github/workflows/deploy-cloudflare-pages.yml)):
   compila el frontend Vite y publica `dist/` en Cloudflare Pages.
 
@@ -95,11 +94,22 @@ Pages.
 
 Secrets/variables necesarios para despliegue:
 
-- Backend Render: `RENDER_DEPLOY_HOOK_BACKEND`.
+- Backend VPS: `VPS_HOST`, `VPS_USER`, `VPS_SSH_PRIVATE_KEY`, `VPS_APP_DIR`.
 - Frontend Cloudflare: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
   `CLOUDFLARE_PAGES_PROJECT_NAME`.
 - Build frontend: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
-  `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico de Render.
+  `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico del VPS.
+
+### VPS backend
+
+El despliegue del backend en produccion usa:
+
+1. [deploy/vps/docker-compose.yml](deploy/vps/docker-compose.yml)
+2. [deploy/vps/Caddyfile](deploy/vps/Caddyfile)
+3. [deploy/vps/deploy.sh](deploy/vps/deploy.sh)
+
+El backend queda expuesto en `https://api.fakenewsinsight.com` y Caddy hace de
+reverse proxy hacia `backend:8000` dentro de la red Docker.
 
 ---
 
@@ -108,4 +118,4 @@ Secrets/variables necesarios para despliegue:
 > _Pendientes de cumplimentar tras el primer despliegue:_
 >
 > - Frontend: `https://<proyecto>.pages.dev`
-> - Backend:  `https://<TBD>.onrender.com`
+> - Backend:  `https://api.fakenewsinsight.com`
