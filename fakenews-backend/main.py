@@ -31,6 +31,10 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer 
 from nltk.tokenize import word_tokenize 
 
+from fever.agent import AgentConfig
+from fever.aggregation import AggregationConfig
+from fever_runtime import get_verification_agent
+
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
@@ -1034,18 +1038,14 @@ def verificar_afirmaciones(
 
     quota = _consume_verification_quota(profile, user_id, token)
 
-    # Import diferido: evita cargar fever/fever_runtime en arranque para
-    # tests del backend que no necesitan el agente.
-    from fever.agent import AgentConfig
-    from fever.aggregation import AggregationConfig
-    from fever_runtime import get_verification_agent
-
-    agent = get_verification_agent(config=AgentConfig(
-        max_claims=_to_int(quota.get("max_claims"), default=1),
-        max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
-        aggregation=AggregationConfig(),
-    ))
     try:
+        agent = get_verification_agent(
+            config=AgentConfig(
+                max_claims=_to_int(quota.get("max_claims"), default=1),
+                max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
+                aggregation=AggregationConfig(),
+            )
+        )
         report = agent.verify(text)
     except Exception as exc:  # pragma: no cover - bubble up sanitized error
         raise HTTPException(

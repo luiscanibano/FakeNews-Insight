@@ -3,15 +3,13 @@
  * @description Capa de servicios para acceso a API/Supabase, transformacion de datos y manejo uniforme de errores.
  */
 
-const DEFAULT_ANALYSIS_API_BASE_URL = "http://127.0.0.1:8000";
 const DEFAULT_ANALYSIS_TEXT_PATH = "/predecir/";
 const DEFAULT_ANALYSIS_SAVE_PATH = "/analyses/save";
 const DEFAULT_ANALYSIS_VERIFY_PATH = "/verify";
 const VERIFY_TEXT_MIN_LENGTH = 80;
 const VERIFY_TEXT_MAX_LENGTH = 12000;
 
-/** Normaliza la URL base eliminando barras finales para evitar dobles separadores. */
-const normalizeBaseUrl = (baseUrl) => baseUrl.replace(/\/+$/, "");
+import { resolveApiBaseUrl } from "../lib/apiBaseUrl";
 
 /** Asegura que una ruta empiece por '/' y aplica ruta por defecto cuando no existe valor. */
 const normalizePath = (path) => {
@@ -22,9 +20,7 @@ const normalizePath = (path) => {
   return path.startsWith("/") ? path : `/${path}`;
 };
 
-const ANALYSIS_API_BASE_URL = normalizeBaseUrl(
-  import.meta.env.VITE_ANALYSIS_API_BASE_URL?.trim() || DEFAULT_ANALYSIS_API_BASE_URL
-);
+const ANALYSIS_API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_ANALYSIS_API_BASE_URL);
 
 const ANALYSIS_TEXT_PATH = normalizePath(
   import.meta.env.VITE_ANALYSIS_TEXT_PATH?.trim() || DEFAULT_ANALYSIS_TEXT_PATH
