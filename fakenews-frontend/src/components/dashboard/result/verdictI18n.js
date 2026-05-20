@@ -10,6 +10,13 @@ import i18next from "i18next";
 /** Devuelve la etiqueta de veredicto traducida o la original si no hay clave. */
 export const translateVerdictLabel = (verdictLabel) => {
   if (!verdictLabel) return verdictLabel;
-  const key = `result.verdicts.${verdictLabel}`;
-  return i18next.t(key, { ns: "dashboard", defaultValue: verdictLabel });
+  const resultKey = `result.verdicts.${verdictLabel}`;
+  const resultTranslation = i18next.t(resultKey, { ns: "dashboard", defaultValue: "" });
+
+  if (resultTranslation) {
+    return resultTranslation;
+  }
+
+  const verifyKey = `verify.verdict.${verdictLabel}`;
+  return i18next.t(verifyKey, { ns: "dashboard", defaultValue: verdictLabel });
 };

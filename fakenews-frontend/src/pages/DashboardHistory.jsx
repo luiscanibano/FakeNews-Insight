@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { useHistoryStore } from "../store/historyStore";
 import HistoryItem from "../components/dashboard/history/HistoryItem";
+import HistoryDetailModal from "../components/dashboard/history/HistoryDetailModal";
 import HistoryFilters from "../components/dashboard/history/HistoryFilters";
 import HistoryPagination from "../components/dashboard/history/HistoryPagination";
 
@@ -24,11 +25,14 @@ function DashboardHistory() {
   const historyError = useHistoryStore((state) => state.error);
   const historyItems = useHistoryStore((state) => state.items);
   const fetchHistory = useHistoryStore((state) => state.fetchHistory);
+  const deleteHistoryItem = useHistoryStore((state) => state.deleteHistoryItem);
+  const deleteLoadingId = useHistoryStore((state) => state.deleteLoadingId);
 
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showAllAnalyses, setShowAllAnalyses] = useState(false);
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   useEffect(() => {
     if (!user?.id) {
@@ -65,9 +69,27 @@ function DashboardHistory() {
         .join(" ")
         .toLowerCase();
 
-      return haystack.includes(searchTerm);
+      const reportHaystack = [
+        analysis.summary,
+        analysis.report?.resumen,
+        ...(analysis.report?.claims || []).map((claim) => claim.texto),
+        ...(analysis.report?.claims || []).flatMap((claim) =>
+          (claim.evidencias || []).map((evidence) => evidence.titulo || evidence.url)
+        ),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(searchTerm) || reportHaystack.includes(searchTerm);
     });
   }, [historyItems, searchTerm]);
+
+  const handleDeleteHistoryItem = async (analysis) => {
+    if (selectedAnalysis?.id === analysis.id) {
+      setSelectedAnalysis(null);
+    }
+    await deleteHistoryItem({ runId: analysis.runId || analysis.id });
+  };
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -125,7 +147,7 @@ function DashboardHistory() {
 
           <span className="dash-pill">
             <BookOpenText className="size-3.5" />
-            {t("history.manualSave")}
+            {t("history.historyModel")}
           </span>
         </header>
 
@@ -160,7 +182,14 @@ function DashboardHistory() {
           ) : null}
 
           {visibleItems.map((analysis, index) => (
-            <HistoryItem key={analysis.id} analysis={analysis} index={index} />
+            <HistoryItem
+              key={analysis.id}
+              analysis={analysis}
+              index={index}
+              onDelete={handleDeleteHistoryItem}
+              onOpenDetails={setSelectedAnalysis}
+              isDeleting={deleteLoadingId === (analysis.runId || analysis.id)}
+            />
           ))}
         </div>
 
@@ -196,6 +225,12 @@ function DashboardHistory() {
           </div>
         ) : null}
       </div>
+
+      <HistoryDetailModal
+        analysis={selectedAnalysis}
+        isOpen={Boolean(selectedAnalysis)}
+        onClose={() => setSelectedAnalysis(null)}
+      />
     </section>
   );
 }

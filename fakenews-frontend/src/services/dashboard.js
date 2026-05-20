@@ -19,6 +19,10 @@ const ANALYSIS_QUERY_ATTEMPTS = [
   { table: "analyses", userColumn: "profile_id", createdAtColumn: "created_at" },
 ];
 
+const VERIFICATION_QUERY_ATTEMPTS = [
+  { table: "verification_runs", userColumn: "user_id", createdAtColumn: "created_at" },
+];
+
 /** Resuelve el límite por defecto cuando el perfil no expone límite diario explicito. */
 const getFallbackLimitFromPlan = (plan) => {
   if (plan === "free") {
@@ -73,15 +77,31 @@ const toNumericOrNull = (value) => {
   return Number.isFinite(numericValue) ? numericValue : null;
 };
 
-/** Homologa etiquetas de veredicto de distintas fuentes a FIABLE/FALSA/DUDOSA. */
+/** Homologa etiquetas de veredicto a un canon comun sin perder las de FEVER. */
 const normalizeVerdictLabel = (rawVerdict) => {
   const normalized = String(rawVerdict || "").trim().toLowerCase();
 
-  if (["real", "fiable", "trusted", "credible"].includes(normalized)) {
+  if (normalized === "supported") {
+    return "SUPPORTED";
+  }
+
+  if (normalized === "refuted") {
+    return "REFUTED";
+  }
+
+  if (normalized === "not_enough_info") {
+    return "NOT_ENOUGH_INFO";
+  }
+
+  if (normalized === "conflicting") {
+    return "CONFLICTING";
+  }
+
+  if (["real", "fiable", "trusted", "credible", "supported"].includes(normalized)) {
     return "FIABLE";
   }
 
-  if (["fake", "falsa", "false", "misleading"].includes(normalized)) {
+  if (["fake", "falsa", "false", "misleading", "refuted"].includes(normalized)) {
     return "FALSA";
   }
 
@@ -109,6 +129,7 @@ const normalizeRecentAnalysis = (row, index) => {
   const inputText = String(row?.input_text || "").trim();
   const title =
     row?.title ||
+    row?.summary ||
     row?.headline ||
     row?.titular ||
     row?.news_title ||
@@ -129,7 +150,7 @@ const normalizeRecentAnalysis = (row, index) => {
     id: row?.id || `analysis-${index + 1}`,
     title,
     verdictLabel: normalizeVerdictLabel(
-      row?.verdict ?? row?.veredicto ?? row?.classification ?? row?.label
+      row?.overall_label ?? row?.verdict ?? row?.veredicto ?? row?.classification ?? row?.label
     ),
     svmStrength: numericStrength !== null ? Math.abs(numericStrength) : 0,
     timestampLabel: formatTimestampLabel(
@@ -185,8 +206,8 @@ const isRecoverableSchemaError = (error) => {
 };
 
 /** Lee actividad del usuario probando tablas compatibles hasta encontrar una disponible. */
-const fetchAnalysisRows = async ({ supabase, userId }) => {
-  for (const attempt of ANALYSIS_QUERY_ATTEMPTS) {
+const fetchRowsByAttempts = async ({ supabase, userId, attempts, emptyOnMissing = false }) => {
+  for (const attempt of attempts) {
     const { data, error } = await supabase
       .from(attempt.table)
       .select("*")
@@ -203,7 +224,26 @@ const fetchAnalysisRows = async ({ supabase, userId }) => {
     }
   }
 
-  return [];
+  return emptyOnMissing ? [] : [];
+};
+
+/** Lee runs de análisis y contraste para construir la actividad consolidada del dashboard. */
+const fetchDashboardActivityRows = async ({ supabase, userId }) => {
+  const [analysisRows, verificationRows] = await Promise.all([
+    fetchRowsByAttempts({ supabase, userId, attempts: ANALYSIS_QUERY_ATTEMPTS }),
+    fetchRowsByAttempts({ supabase, userId, attempts: VERIFICATION_QUERY_ATTEMPTS, emptyOnMissing: true }),
+  ]);
+
+  return [...analysisRows, ...verificationRows].sort((leftRow, rightRow) => {
+    const leftDate = new Date(
+      leftRow?.created_at ?? leftRow?.createdAt ?? leftRow?.fecha ?? leftRow?.analysis_date ?? 0
+    ).getTime();
+    const rightDate = new Date(
+      rightRow?.created_at ?? rightRow?.createdAt ?? rightRow?.fecha ?? rightRow?.analysis_date ?? 0
+    ).getTime();
+
+    return rightDate - leftDate;
+  });
 };
 
 /** Construye la serie diaria de los ultimos 10 dias para el grafico de Home. */
@@ -283,15 +323,15 @@ export const getDashboardHomeData = async ({ userId, fallbackPlan }) => {
     throw new Error(profileError.message || "No se pudo cargar el estado del perfil");
   }
 
-  const analysisRows = await fetchAnalysisRows({ supabase, userId });
+  const dashboardActivityRows = await fetchDashboardActivityRows({ supabase, userId });
   const usageMetrics = {
     ...getUsageMetricsFromProfile({ profile, fallbackPlan }),
-    usedThisMonth: getCurrentMonthAnalysisCount(analysisRows),
+    usedThisMonth: getCurrentMonthAnalysisCount(dashboardActivityRows),
   };
 
   return {
     usageMetrics,
-    last30DaysSeries: buildLast30DaysSeries(analysisRows),
-    recentAnalyses: analysisRows.slice(0, 3).map(normalizeRecentAnalysis),
+    last30DaysSeries: buildLast30DaysSeries(dashboardActivityRows),
+    recentAnalyses: dashboardActivityRows.slice(0, 3).map(normalizeRecentAnalysis),
   };
 };

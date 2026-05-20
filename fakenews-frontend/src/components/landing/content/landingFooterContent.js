@@ -12,23 +12,21 @@ export const landingFooterContent = {
       {
         title: "Producto",
         links: [
-          { label: "Características", href: "#features" },
-          { label: "Precios", href: "#pricing" },
-          { label: "API", href: "#" },
+          { label: "Características", href: "/#features" },
+          { label: "Precios", href: "/#pricing" },
         ],
       },
       {
         title: "Compañía",
         links: [
-          { label: "Privacidad", href: "#" },
-          { label: "Términos", href: "#" },
-          { label: "Contacto", href: "#" },
+          { label: "Política de privacidad", href: "/privacy" },
+          { label: "Términos y condiciones", href: "/terms" },
+          { label: "fakenewsinsight@gmail.com", href: "mailto:fakenewsinsight@gmail.com" },
         ],
       },
     ],
     socials: [
-      { label: "Twitter", href: "#" },
-      { label: "LinkedIn", href: "#" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/luis-ca%C3%B1ibano-mateos-7a403139a?originalSubdomain=es" },
     ],
     copyright: "© 2026 FakeNews Insight. Verificación trazable con evidencias.",
   },
@@ -40,23 +38,21 @@ export const landingFooterContent = {
       {
         title: "Product",
         links: [
-          { label: "Features", href: "#features" },
-          { label: "Pricing", href: "#pricing" },
-          { label: "API", href: "#" },
+          { label: "Features", href: "/#features" },
+          { label: "Pricing", href: "/#pricing" },
         ],
       },
       {
         title: "Company",
         links: [
-          { label: "Privacy", href: "#" },
-          { label: "Terms", href: "#" },
-          { label: "Contact", href: "#" },
+          { label: "Privacy Policy", href: "/privacy" },
+          { label: "Terms & Conditions", href: "/terms" },
+          { label: "fakenewsinsight@gmail.com", href: "mailto:fakenewsinsight@gmail.com" },
         ],
       },
     ],
     socials: [
-      { label: "Twitter", href: "#" },
-      { label: "LinkedIn", href: "#" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/luis-ca%C3%B1ibano-mateos-7a403139a?originalSubdomain=es" },
     ],
     copyright: "© 2026 FakeNews Insight. Traceable evidence-backed verification.",
   },

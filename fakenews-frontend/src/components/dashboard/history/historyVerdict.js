@@ -5,6 +5,9 @@
 
 /** Asigna clase del verdict-dot según veredicto del análisis. */
 export const getVerdictClass = (verdict) => {
+  if (verdict === "SUPPORTED") return "dash-verdict-real";
+  if (verdict === "REFUTED") return "dash-verdict-fake";
+  if (verdict === "NOT_ENOUGH_INFO" || verdict === "CONFLICTING") return "dash-verdict-other";
   if (verdict === "FIABLE") return "dash-verdict-real";
   if (verdict === "FALSA") return "dash-verdict-fake";
   return "dash-verdict-other";
@@ -12,6 +15,15 @@ export const getVerdictClass = (verdict) => {
 
 /** Compatibilidad con código legado. */
 export const getVerdictStyles = (verdict) => {
+  if (verdict === "SUPPORTED") {
+    return "border-emerald-400/30 bg-emerald-500/15 text-emerald-200";
+  }
+  if (verdict === "REFUTED") {
+    return "border-red-400/30 bg-red-500/15 text-red-200";
+  }
+  if (verdict === "NOT_ENOUGH_INFO" || verdict === "CONFLICTING") {
+    return "border-white/15 bg-white/5 text-white";
+  }
   if (verdict === "FIABLE") {
     return "border-emerald-400/30 bg-emerald-500/15 text-emerald-200";
   }

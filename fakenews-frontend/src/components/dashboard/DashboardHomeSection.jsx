@@ -9,6 +9,9 @@ import { translateVerdictLabel } from "./result/verdictI18n";
 
 /** Asigna clases del verdict-dot según veredicto normalizado del análisis. */
 const getVerdictClass = (verdict) => {
+  if (verdict === "SUPPORTED") return "dash-verdict-real";
+  if (verdict === "REFUTED") return "dash-verdict-fake";
+  if (verdict === "NOT_ENOUGH_INFO" || verdict === "CONFLICTING") return "dash-verdict-other";
   if (verdict === "FIABLE") return "dash-verdict-real";
   if (verdict === "FALSA") return "dash-verdict-fake";
   return "dash-verdict-other";

@@ -18,7 +18,13 @@ export const CONFIG = {
 
   /** URL base del backend FastAPI (sin barra final). */
   ANALYSIS_API_BASE_URL:
-    "https://tfg-informatica-luis-canibano-backend.onrender.com",
+    "https://api.fakenewsinsight.com",
+
+  /** Backends alternativos para desarrollo local si el endpoint principal falla. */
+  ANALYSIS_API_FALLBACK_BASE_URLS: [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+  ],
 
   /** URL del registro web (se abre en pestana nueva desde la vista de login). */
   WEB_REGISTER_URL:

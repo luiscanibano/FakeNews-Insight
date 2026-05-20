@@ -64,7 +64,7 @@ function Landing() {
     elements.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, []);
+  }, [landingContent]);
 
   return (
     <div className="stitch-landing dark relative isolate overflow-x-hidden bg-surface text-on-surface font-body selection:bg-primary/30 selection:text-primary [scroll-behavior:smooth]">

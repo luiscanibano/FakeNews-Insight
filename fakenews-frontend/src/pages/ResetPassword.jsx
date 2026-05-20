@@ -63,6 +63,11 @@ function ResetPassword() {
  */
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const submittedPassword = String(formData.get("password") || password);
+    const submittedConfirmPassword = String(
+      formData.get("confirmPassword") || confirmPassword
+    );
 
     setSuccessMessage("");
     setLocalError("");
@@ -71,21 +76,26 @@ function ResetPassword() {
       clearError();
     }
 
-    if (password.length < 6) {
+    if (submittedPassword.length < 6) {
       setLocalError(t("reset.errorMinLength"));
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (submittedPassword !== submittedConfirmPassword) {
       setLocalError(t("reset.errorMismatch"));
       return;
     }
 
     try {
-      await updatePassword({ password });
+      await updatePassword({ password: submittedPassword });
       setSuccessMessage(t("reset.successMessage"));
       setTimeout(() => {
-        navigate("/login", { replace: true });
+        navigate("/login", {
+          replace: true,
+          state: {
+            successMessage: t("reset.successMessage"),
+          },
+        });
       }, 1000);
     } catch {
       /** Error is already handled in the store state.
@@ -107,6 +117,7 @@ function ResetPassword() {
           <Label htmlFor="password" className="text-on-surface">{t("fields.newPassword")}</Label>
           <Input
             id="password"
+            name="password"
             type="password"
             placeholder={t("fields.passwordPlaceholder")}
             value={password}
@@ -122,6 +133,7 @@ function ResetPassword() {
           <Label htmlFor="confirm-password" className="text-on-surface">{t("fields.confirmPassword")}</Label>
           <Input
             id="confirm-password"
+            name="confirmPassword"
             type="password"
             placeholder={t("fields.passwordPlaceholder")}
             value={confirmPassword}

@@ -7,11 +7,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, ChevronDown, Globe } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 
 const LANGUAGES = [
-  { code: "es", flag: "🇪🇸", labelKey: "language.es" },
-  { code: "en", flag: "🇬🇧", labelKey: "language.en" },
+  { code: "es", flag: "🇪🇸", shortLabel: "ES", labelKey: "language.es" },
+  { code: "en", flag: "🇬🇧", shortLabel: "EN", labelKey: "language.en" },
 ];
 
 /** Devuelve el idioma activo normalizado contra la lista soportada. */
@@ -20,7 +20,7 @@ const resolveActiveLanguage = (rawLanguage) => {
   return LANGUAGES.find((entry) => entry.code === normalized) || LANGUAGES[0];
 };
 
-/** Toggle de idioma flotante con dropdown bandera + texto. */
+/** Toggle de idioma flotante con dropdown y trigger compacto. */
 function LanguageSwitcher() {
   const { t, i18n } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +63,7 @@ function LanguageSwitcher() {
   return (
     <div
       ref={containerRef}
-      className="fixed right-4 top-4 z-[60] md:right-6 md:top-6"
+      className="fixed right-3 top-3 z-[60] sm:right-4 sm:top-4 md:right-6 md:top-6"
     >
       <button
         type="button"
@@ -71,17 +71,12 @@ function LanguageSwitcher() {
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={t("language.label")}
-        className="flex items-center gap-2 rounded-full border border-outline-variant/30 bg-surface-container/85 px-3 py-1.5 font-label text-[0.7rem] uppercase tracking-[0.11em] text-on-surface backdrop-blur-md shadow-md shadow-black/20 transition-colors hover:bg-surface-container-high/90"
+        className="flex items-center gap-1.5 rounded-full border border-outline-variant/30 bg-surface-container/85 px-2.5 py-1.5 font-label text-[0.7rem] uppercase tracking-[0.11em] text-on-surface backdrop-blur-md shadow-md shadow-black/20 transition-colors hover:bg-surface-container-high/90"
       >
         <Globe className="size-3.5 text-primary" aria-hidden="true" />
-        <span aria-hidden="true" className="text-base leading-none">
-          {active.flag}
+        <span className="min-w-[1.65rem] text-center text-[0.7rem] font-semibold leading-none">
+          {active.shortLabel}
         </span>
-        <span className="hidden sm:inline">{t(active.labelKey)}</span>
-        <ChevronDown
-          className={`size-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          aria-hidden="true"
-        />
       </button>
 
       {isOpen ? (

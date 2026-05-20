@@ -4,6 +4,7 @@
  */
 
 import { getSupabaseClient } from "./supabase";
+import { buildAuthRedirectUrl } from "../lib/authRedirect";
 
 /** Traduce errores tecnicos a mensajes de producto consistentes para UI. */
 const getErrorMessage = (error, fallbackMessage) => {
@@ -38,7 +39,7 @@ export const login = async ({ email, password }) => {
 /** Inicia autenticación OAuth con Google y redirige de vuelta al dashboard. */
 export const signInWithGoogle = async () => {
   const supabase = getSupabaseClient();
-  const redirectTo = `${window.location.origin}/dashboard`;
+  const redirectTo = buildAuthRedirectUrl("dashboard");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo },

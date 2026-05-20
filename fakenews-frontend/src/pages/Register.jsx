@@ -31,13 +31,19 @@ function Register() {
   /** Lanza el alta del usuario usando el servicio de auth. */
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const submittedEmail = String(formData.get("email") || email).trim();
+    const submittedPassword = String(formData.get("password") || password);
 
     try {
-      await register({ email, password });
+      await register({ email: submittedEmail, password: submittedPassword });
 
-      window.alert(t("register.alertSuccess"));
-
-      navigate("/login", { replace: true });
+      navigate("/login", {
+        replace: true,
+        state: {
+          successMessage: t("register.successMessage"),
+        },
+      });
     } catch {
       /** Error gestionado por el store. */
     }
@@ -77,6 +83,7 @@ function Register() {
           </Label>
           <Input
             id="email"
+            name="email"
             type="email"
             placeholder={t("fields.emailPlaceholder")}
             value={email}
@@ -93,6 +100,7 @@ function Register() {
           </Label>
           <Input
             id="password"
+            name="password"
             type="password"
             placeholder={t("fields.passwordPlaceholder")}
             value={password}

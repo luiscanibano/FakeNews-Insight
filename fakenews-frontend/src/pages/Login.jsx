@@ -3,7 +3,8 @@
  * @description Pantalla de inicio de sesión con email/contraseña y opción de OAuth Google.
  */
 
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
@@ -11,27 +12,52 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
 import GoogleSignInButton from "../components/auth/GoogleSignInButton";
-import { AuthErrorBanner } from "../components/auth/AuthFeedback";
+import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
 import { useAuthFormField } from "../hooks/useAuthFormField";
 
 /** Pantalla de inicio de sesión. */
 function Login() {
+  const location = useLocation();
   const { t } = useTranslation("auth");
   const login = useAuthStore((state) => state.login);
   const loading = useAuthStore((state) => state.loading);
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
   const signInWithGoogle = useAuthStore((state) => state.signInWithGoogle);
+  const [successMessage, setSuccessMessage] = useState(
+    location.state?.successMessage || ""
+  );
 
-  const [email, handleEmailChange] = useAuthFormField({ error, clearError });
-  const [password, handlePasswordChange] = useAuthFormField({ error, clearError });
+  const handleBeforeChange = () => {
+    if (successMessage) {
+      setSuccessMessage("");
+    }
+  };
+
+  const [email, handleEmailChange] = useAuthFormField({
+    error,
+    clearError,
+    onBeforeChange: handleBeforeChange,
+  });
+  const [password, handlePasswordChange] = useAuthFormField({
+    error,
+    clearError,
+    onBeforeChange: handleBeforeChange,
+  });
 
   /** Ejecuta el login contra Supabase a traves del store. */
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const submittedEmail = String(formData.get("email") || email).trim();
+    const submittedPassword = String(formData.get("password") || password);
+
+    if (successMessage) {
+      setSuccessMessage("");
+    }
 
     try {
-      await login({ email, password });
+      await login({ email: submittedEmail, password: submittedPassword });
     } catch {
       /** Error gestionado por el store. */
     }
@@ -66,6 +92,7 @@ function Login() {
           </Label>
           <Input
             id="email"
+            name="email"
             type="email"
             placeholder={t("fields.emailPlaceholder")}
             value={email}
@@ -82,6 +109,7 @@ function Login() {
           </Label>
           <Input
             id="password"
+            name="password"
             type="password"
             placeholder={t("fields.passwordPlaceholder")}
             value={password}
@@ -92,6 +120,7 @@ function Login() {
           />
         </div>
 
+  <AuthSuccessBanner message={successMessage} />
         <AuthErrorBanner message={error} />
 
         <div className="space-y-3 pt-1">

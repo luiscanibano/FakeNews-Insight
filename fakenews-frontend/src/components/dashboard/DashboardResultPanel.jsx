@@ -21,7 +21,14 @@ function DashboardResultPanel({
     <section className="dash-in" style={{ "--i": 2 }}>
       <div className="dash-panel">
         {result?.kind === "verification" ? (
-          <VerificationReport report={result.report} />
+          <VerificationReport
+            report={result.report}
+            runId={result?.analysisRunId}
+            onSaveResult={onSaveResult}
+            isSavingResult={isSavingResult}
+            saveResultError={saveResultError}
+            savedInHistory={result?.savedInHistory}
+          />
         ) : result?.kind === "single" ? (
           <SingleResultView
             result={result}

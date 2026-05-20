@@ -1990,6 +1990,18 @@
   .dash-modal-md { max-width: 44rem; }
   .dash-modal-lg { max-width: 72rem; }
 
+  .dash-modal-overlay.dash-modal-overlay-nav-safe {
+    align-items: flex-start;
+    padding-top: clamp(5.5rem, 8vw, 6.75rem);
+    padding-bottom: 1.5rem;
+  }
+
+  .dash-modal.dash-modal-nav-safe {
+    margin: 0;
+    max-height: calc(100dvh - clamp(7rem, 10vw, 8.5rem));
+    overflow-y: auto;
+  }
+
   .dash-modal-head {
     display: flex;
     align-items: flex-start;

@@ -5,8 +5,8 @@
  */
 
 import React from "react";
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import "@/lib/i18n";
 import VerificationReport from "../VerificationReport";
@@ -43,6 +43,7 @@ describe("<VerificationReport />", () => {
   it("renderiza veredicto global, modelo y cupo restante", () => {
     render(<VerificationReport report={sampleReport} />);
     expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
+    expect(screen.getByText(/Veredicto global/i)).toBeInTheDocument();
     expect(screen.getByText("fever-stub-v0")).toBeInTheDocument();
     expect(screen.getByText("9 / 10")).toBeInTheDocument();
   });
@@ -56,11 +57,80 @@ describe("<VerificationReport />", () => {
 
   it("renderiza claims con cita numerica y evidencias", () => {
     render(<VerificationReport report={sampleReport} />);
+    expect(screen.getByRole("heading", { level: 3, name: /Afirmaciones extraídas/i })).toBeInTheDocument();
+    expect(screen.getByText(/Estas son las afirmaciones concretas/i)).toBeInTheDocument();
     expect(screen.getByText("La tierra orbita el sol")).toBeInTheDocument();
     expect(screen.getByText(/Apoyado por \[1\]\./)).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /\[1\] NASA - orbita terrestre/ })
     ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/La Tierra completa una orbita en 365 dias\./i)
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Apoya\s*\(93%\)$/i)).not.toBeInTheDocument();
+  });
+
+  it("muestra guardado manual para verificaciones cuando recibe callback", () => {
+    render(
+      <VerificationReport
+        report={sampleReport}
+        onSaveResult={() => {}}
+        savedInHistory={false}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: /Guardar en historial/i })).toBeInTheDocument();
+  });
+
+  it("permite guardar cuando el run id llega fuera del report", () => {
+    const onSaveResult = vi.fn();
+    const reportWithoutRunId = {
+      ...sampleReport,
+      run_id: undefined,
+    };
+
+    render(
+      <VerificationReport
+        report={reportWithoutRunId}
+        runId="run-123"
+        onSaveResult={onSaveResult}
+        savedInHistory={false}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Guardar en historial/i }));
+
+    expect(onSaveResult).toHaveBeenCalledTimes(1);
+  });
+
+  it("permite guardar aunque el report no traiga run_id", () => {
+    const onSaveResult = vi.fn();
+    const reportWithoutRunId = {
+      ...sampleReport,
+      run_id: undefined,
+    };
+
+    render(
+      <VerificationReport
+        report={reportWithoutRunId}
+        onSaveResult={onSaveResult}
+        savedInHistory={false}
+      />
+    );
+
+    const button = screen.getByRole("button", { name: /Guardar en historial/i });
+    expect(button).not.toBeDisabled();
+
+    fireEvent.click(button);
+
+    expect(onSaveResult).toHaveBeenCalledTimes(1);
+  });
+
+  it("aplica color explicito a las etiquetas FEVER visibles", () => {
+    render(<VerificationReport report={sampleReport} />);
+    expect(screen.getByRole("heading", { level: 2 })).toHaveClass("text-emerald-300");
+    expect(screen.getByText("Refutado", { selector: "dt" })).toHaveClass("text-rose-300");
+    expect(screen.getByText("Información insuficiente", { selector: "dt" })).toHaveClass("text-white");
   });
 
   it("muestra mensaje cuando un claim no tiene evidencias", () => {

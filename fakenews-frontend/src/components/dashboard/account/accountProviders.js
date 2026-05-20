@@ -37,9 +37,11 @@ export const resolveProviderState = ({ identityProviders = [], primaryProvider =
     oauthProviders.unshift(normalizedPrimary);
   }
 
-  const isOauthOnly =
-    (normalizedPrimary && normalizedPrimary !== "email") ||
-    (oauthProviders.length > 0 && !hasEmailIdentity);
+  /**
+   * Solo tratamos la cuenta como OAuth-only cuando no existe identidad email/password.
+   * Si el usuario tiene email y además ha vinculado Google, debe poder cambiar contraseña.
+   */
+  const isOauthOnly = oauthProviders.length > 0 && !hasEmailIdentity;
 
   const primaryOauthProvider =
     (normalizedPrimary && normalizedPrimary !== "email" ? normalizedPrimary : null) ||

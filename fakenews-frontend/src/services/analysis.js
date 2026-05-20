@@ -6,6 +6,7 @@
 const DEFAULT_ANALYSIS_TEXT_PATH = "/predecir/";
 const DEFAULT_ANALYSIS_SAVE_PATH = "/analyses/save";
 const DEFAULT_ANALYSIS_VERIFY_PATH = "/verify";
+const DEFAULT_VERIFICATION_HISTORY_SAVE_PATH = "/verification-history/save";
 const VERIFY_TEXT_MIN_LENGTH = 80;
 const VERIFY_TEXT_MAX_LENGTH = 12000;
 
@@ -34,9 +35,14 @@ const ANALYSIS_VERIFY_PATH = normalizePath(
   import.meta.env.VITE_ANALYSIS_VERIFY_PATH?.trim() || DEFAULT_ANALYSIS_VERIFY_PATH
 );
 
+const VERIFICATION_HISTORY_SAVE_PATH = normalizePath(
+  import.meta.env.VITE_HISTORY_SAVE_PATH?.trim() || DEFAULT_VERIFICATION_HISTORY_SAVE_PATH
+);
+
 const ANALYSIS_TEXT_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_TEXT_PATH}`;
 const ANALYSIS_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_SAVE_PATH}`;
 const ANALYSIS_VERIFY_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_VERIFY_PATH}`;
+const VERIFICATION_HISTORY_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${VERIFICATION_HISTORY_SAVE_PATH}`;
 
 /** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semántico. */
 const getErrorMessage = async (response, fallbackMessage) => {
@@ -114,6 +120,40 @@ export const saveAnalysisToHistory = async ({ runId, jwtToken }) => {
     const message = await getErrorMessage(
       response,
       "No se pudo guardar el análisis en historial."
+    );
+    throw new Error(message);
+  }
+
+  return response.json();
+};
+
+/** Guarda manualmente en historial una verificacion FEVER previamente ejecutada. */
+export const saveVerificationToHistory = async ({ runId, jwtToken, report = null, inputText = "" }) => {
+  if (!jwtToken) {
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
+  }
+
+  if (!runId && !report) {
+    throw new Error("No se encontró la verificación para guardar.");
+  }
+
+  const response = await fetch(VERIFICATION_HISTORY_SAVE_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+    body: JSON.stringify({
+      run_id: runId || null,
+      input_text: inputText || undefined,
+      report: report || undefined,
+    }),
+  });
+
+  if (!response.ok) {
+    const message = await getErrorMessage(
+      response,
+      "No se pudo guardar la verificación en historial."
     );
     throw new Error(message);
   }

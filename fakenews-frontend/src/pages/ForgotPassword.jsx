@@ -11,6 +11,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
 import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
+import { buildAuthRedirectUrl } from "../lib/authRedirect";
 
 /** Clave para persistir el cooldown entre recargas de página.
  */
@@ -109,16 +110,18 @@ function ForgotPassword() {
  */
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const submittedEmail = String(formData.get("email") || email).trim();
 
     if (cooldownSeconds > 0) {
       setLocalError(t("forgot.cooldownError", { seconds: cooldownSeconds }));
       return;
     }
 
-    const redirectTo = `${window.location.origin}/reset-password`;
+    const redirectTo = buildAuthRedirectUrl("reset-password");
 
     try {
-      await requestPasswordReset({ email, redirectTo });
+      await requestPasswordReset({ email: submittedEmail, redirectTo });
       setSuccessMessage(t("forgot.successMessage"));
       startCooldown(30);
     } catch (requestError) {
@@ -142,6 +145,7 @@ function ForgotPassword() {
           <Label htmlFor="email" className="text-on-surface">{t("fields.email")}</Label>
           <Input
             id="email"
+            name="email"
             type="email"
             placeholder={t("fields.emailPlaceholder")}
             value={email}

@@ -4,7 +4,7 @@
  */
 
 import { create } from "zustand";
-import { saveAnalysisToHistory, verifyClaims } from "../services/analysis";
+import { saveAnalysisToHistory, saveVerificationToHistory, verifyClaims } from "../services/analysis";
 import { getAccessToken } from "../services/auth";
 
 let progressTimerRef = null;
@@ -28,9 +28,10 @@ const toVerificationResult = ({ text, backendResult }) => ({
   mode: "text",
   source: "Texto pegado manualmente",
   excerpt: text.slice(0, 260),
+  inputText: text,
   report: backendResult,
   analysisRunId: backendResult?.run_id || null,
-  savedInHistory: true,
+  savedInHistory: Boolean(backendResult?.saved_in_history ?? backendResult?.guardado_en_historial),
 });
 
 export const useAnalysisStore = create((set) => ({
@@ -120,8 +121,9 @@ export const useAnalysisStore = create((set) => ({
   saveCurrentResultToHistory: async () => {
     const state = useAnalysisStore.getState();
     const runId = state.result?.analysisRunId;
+    const isVerification = state.result?.kind === "verification";
 
-    if (!runId) {
+    if (!runId && !isVerification) {
       throw new Error("No hay un análisis válido para guardar en historial.");
     }
 
@@ -133,13 +135,34 @@ export const useAnalysisStore = create((set) => ({
 
     try {
       const jwtToken = await getAccessToken();
-      await saveAnalysisToHistory({ runId, jwtToken });
-
       let updatedResult = null;
+
+      if (isVerification) {
+        const saveResponse = await saveVerificationToHistory({
+          runId,
+          jwtToken,
+          inputText:
+            state.result?.inputText ||
+            state.result?.report?.input_text ||
+            state.result?.excerpt ||
+            "",
+          report: state.result?.report || null,
+        });
+
+        if (saveResponse?.run_id && !runId) {
+          updatedResult = {
+            ...(state.result || {}),
+            analysisRunId: saveResponse.run_id,
+          };
+        }
+      } else {
+        await saveAnalysisToHistory({ runId, jwtToken });
+      }
+
       set((currentState) => {
         updatedResult = currentState.result
           ? {
-              ...currentState.result,
+              ...(updatedResult || currentState.result),
               savedInHistory: true,
             }
           : currentState.result;

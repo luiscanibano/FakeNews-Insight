@@ -635,10 +635,9 @@ def _load_verification_run(run_id: str, user_id: str, jwt_token: str) -> Dict[st
 
 def _mark_verification_run_as_saved(run_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
     """Marca verification_run como guardada manualmente en historial."""
-    status, payload = _supabase_json_request(
+    status, payload = _supabase_service_json_request(
         "/rest/v1/verification_runs",
         method="PATCH",
-        jwt_token=jwt_token,
         query={
             "id": f"eq.{run_id}",
             "user_id": f"eq.{user_id}",
@@ -659,11 +658,7 @@ def _mark_verification_run_as_saved(run_id: str, user_id: str, jwt_token: str) -
     if isinstance(payload, list) and len(payload) > 0:
         return payload[0]
 
-    return {
-        "id": run_id,
-        "user_id": user_id,
-        "saved_to_history": True,
-    }
+    raise HTTPException(status_code=502, detail="No se pudo confirmar que la verificación quedase guardada en historial.")
 
 
 def _insert_saved_verification_from_payload(
@@ -893,6 +888,46 @@ class AccountDeleteRequest(BaseModel):
     confirmation: Optional[str] = None
 
 
+def _cancel_active_subscription_before_account_delete(user_id: str) -> None:
+    """Cancela en Stripe la suscripcion activa antes de eliminar la cuenta."""
+    from billing import (
+        _clear_subscription_for_profile,
+        _ensure_stripe_config,
+        _load_profile_with_service,
+        stripe,
+    )
+
+    _ensure_supabase_service_config()
+
+    try:
+        profile = _load_profile_with_service(user_id)
+    except HTTPException as exc:
+        if exc.status_code == 404:
+            return
+        raise
+
+    subscription_id = str(profile.get("stripe_subscription_id") or "").strip()
+    if not subscription_id:
+        return
+
+    _ensure_stripe_config()
+
+    try:
+        subscription = stripe.Subscription.retrieve(subscription_id)
+        schedule_id = subscription.get("schedule")
+        if schedule_id:
+            stripe.SubscriptionSchedule.release(schedule_id)
+
+        stripe.Subscription.cancel(subscription_id)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="No se pudo cancelar la suscripcion activa antes de eliminar la cuenta.",
+        ) from exc
+
+    _clear_subscription_for_profile(user_id)
+
+
 def _delete_supabase_user_with_admin(user_id: str) -> None:
     """Elimina el usuario en Supabase Auth via Admin API con service role."""
     status, payload = _supabase_service_json_request(
@@ -925,12 +960,13 @@ def borrar_cuenta_usuario(
         raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
 
     confirmation = str(payload.confirmation or "").strip().upper()
-    if confirmation != "ELIMINAR":
+    if confirmation != "DELETE":
         raise HTTPException(
             status_code=400,
-            detail="Confirma la eliminacion escribiendo ELIMINAR en el campo de confirmacion.",
+            detail="Confirma la eliminacion escribiendo DELETE en el campo de confirmacion.",
         )
 
+    _cancel_active_subscription_before_account_delete(user_id)
     _delete_supabase_user_with_admin(user_id)
 
     return {

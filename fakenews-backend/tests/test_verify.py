@@ -315,11 +315,16 @@ def test_save_verification_history_entry(monkeypatch):
                 "saved_to_history": False,
                 "saved_at": None,
             }]
+        return 404, {}
+
+    def _supabase_service_json_request(path, *, method="GET", query=None,
+                                       body=None, prefer=None):
         if path == "/rest/v1/verification_runs" and method == "PATCH":
-            return 200, [{"id": "run-1", **(body or {})}]
+            return 200, [{"id": "run-1", "user_id": "user-1", **(body or {})}]
         return 404, {}
 
     monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+    monkeypatch.setattr(main, "_supabase_service_json_request", _supabase_service_json_request)
 
     response = client.post(
         "/verification-history/save",
@@ -329,6 +334,45 @@ def test_save_verification_history_entry(monkeypatch):
 
     assert response.status_code == 200, response.text
     assert response.json() == {"saved": True, "already_saved": False, "run_id": "run-1"}
+
+
+def test_save_verification_history_entry_fails_when_patch_updates_no_rows(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 200, [{
+                "id": "run-1",
+                "user_id": "user-1",
+                "input_text": "texto",
+                "overall_label": "SUPPORTED",
+                "summary": "ok",
+                "model_version": "fever-stub-v0",
+                "duration_ms": 10,
+                "created_at": "2026-01-01T10:00:00Z",
+                "saved_to_history": False,
+                "saved_at": None,
+            }]
+        return 404, {}
+
+    def _supabase_service_json_request(path, *, method="GET", query=None,
+                                       body=None, prefer=None):
+        if path == "/rest/v1/verification_runs" and method == "PATCH":
+            return 200, []
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+    monkeypatch.setattr(main, "_supabase_service_json_request", _supabase_service_json_request)
+
+    response = client.post(
+        "/verification-history/save",
+        json={"run_id": "run-1"},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 502, response.text
+    assert "confirmar" in response.json()["detail"].lower()
 
 
 def test_save_verification_history_entry_without_run_id(monkeypatch):

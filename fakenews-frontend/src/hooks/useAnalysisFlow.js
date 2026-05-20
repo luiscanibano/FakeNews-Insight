@@ -10,6 +10,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAnalysisStore } from "../store/analysisStore";
+import { useAuthStore } from "../store/authStore";
+import { useDashboardStore } from "../store/dashboardStore";
 import { ANALYSIS_MODE } from "../lib/dashboardConstants";
 import { VERIFY_TEXT_MIN_LENGTH, getVerifyTextMaxLength } from "../lib/verificationLimits";
 
@@ -49,6 +51,7 @@ const buildMockResult = ({ mode, text, url, file }) => {
  * Devuelve el estado y los handlers necesarios para alimentar `DashboardAnalyze`.
  */
 export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
+  const user = useAuthStore((state) => state.user);
   const [analysisMode, setAnalysisMode] = useState(ANALYSIS_MODE.TEXT);
   const [textPayload, setTextPayload] = useState("");
   const [urlPayload, setUrlPayload] = useState("");
@@ -69,6 +72,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const saveTextAnalysisError = useAnalysisStore((state) => state.saveError);
   const isSavingTextAnalysis = useAnalysisStore((state) => state.saveLoading);
   const analyzeText = useAnalysisStore((state) => state.analyzeText);
+  const fetchHomeData = useDashboardStore((state) => state.fetchHomeData);
   const saveCurrentTextResultToHistory = useAnalysisStore(
     (state) => state.saveCurrentResultToHistory
   );
@@ -170,6 +174,9 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
       clearTextAnalysisError();
       try {
         await analyzeText(textSnapshot);
+        if (user?.id) {
+          void fetchHomeData({ userId: user.id, fallbackPlan: plan });
+        }
       } catch {
         /** Error gestionado por el store. */
       }

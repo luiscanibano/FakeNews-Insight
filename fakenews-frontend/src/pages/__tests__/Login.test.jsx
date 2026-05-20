@@ -58,6 +58,27 @@ describe("<Login />", () => {
     });
   });
 
+  it("usa los valores reales del formulario aunque el navegador autocomplemente sin disparar onChange", () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
+
+    const emailInput = screen.getByLabelText(/correo/i);
+    const passwordInput = screen.getByLabelText(/contraseña/i);
+
+    emailInput.value = "autofill@test.com";
+    passwordInput.value = "filled-by-browser";
+
+    fireEvent.submit(screen.getByRole("button", { name: /entrar/i }).closest("form"));
+
+    expect(loginMock).toHaveBeenCalledWith({
+      email: "autofill@test.com",
+      password: "filled-by-browser",
+    });
+  });
+
   it("muestra el banner de error cuando el store reporta uno", () => {
     mockState.error = "Credenciales invalidas";
 

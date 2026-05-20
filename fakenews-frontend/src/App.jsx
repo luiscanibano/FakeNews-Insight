@@ -14,6 +14,7 @@ import AdminUsers from "./pages/AdminUsers";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Landing from "./pages/Landing";
+import LegalDocumentPage from "./pages/LegalDocumentPage";
 import { USER_ROLE } from "./lib/accessControl";
 import { useInactivityLogout } from "./hooks/useInactivityLogout";
 import LanguageSwitcher from "./components/common/LanguageSwitcher";
@@ -75,6 +76,8 @@ function App() {
           path="/"
           element={!user ? <Landing /> : <Navigate to={defaultPrivatePath} replace />}
         />
+        <Route path="/privacy" element={<LegalDocumentPage documentKey="privacy" />} />
+        <Route path="/terms" element={<LegalDocumentPage documentKey="terms" />} />
 
         {/* Rutas Publicas */}
         <Route

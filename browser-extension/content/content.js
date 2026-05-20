@@ -15,6 +15,8 @@
 
   const MIN_TEXT_LENGTH = 80;
   const MAX_TEXT_LENGTH = 12000;
+  const LOADING_PROGRESS_INITIAL = 9;
+  const LOADING_PROGRESS_MAX = 92;
   const QUOTA_CACHE_KEY = "fakenews-insight-quota";
 
   // ---------------------------------------------------------------------------
@@ -50,10 +52,23 @@
       quota.remaining !== null &&
       quota.remaining !== undefined
     ) {
-      chip.innerHTML = `${plan} &middot; <strong>${quota.remaining}/${quota.limit}</strong> hoy`;
+      chip.innerHTML = `${escapeHtml(
+        translate(
+          "quota.chipRemaining",
+          { plan, remaining: quota.remaining, limit: quota.limit },
+          `${plan} · ${quota.remaining}/${quota.limit} today`
+        )
+      )}`.replace(
+        `${quota.remaining}/${quota.limit}`,
+        `<strong>${quota.remaining}/${quota.limit}</strong>`
+      );
       chip.dataset.low = quota.remaining <= 1 ? "true" : "false";
     } else {
-      chip.innerHTML = `${plan} &middot; sin l&iacute;mite`;
+      chip.textContent = translate(
+        "quota.chipUnlimited",
+        { plan },
+        `${plan} · unlimited`
+      );
       chip.dataset.low = "false";
     }
     chip.classList.remove("fn-hidden");
@@ -66,13 +81,16 @@
   const loadLibs = () => {
     if (libsPromise) return libsPromise;
     libsPromise = (async () => {
-      const [config, storage] = await Promise.all([
+      const [config, storage, i18n] = await Promise.all([
         import(chrome.runtime.getURL("lib/config.js")),
         import(chrome.runtime.getURL("lib/storage.js")),
+        import(chrome.runtime.getURL("lib/i18n.js")),
       ]);
       return {
         CONFIG: config.CONFIG,
         loadSession: storage.loadSession,
+        getStoredLanguage: i18n.getStoredLanguage,
+        translate: i18n.t,
       };
     })();
     return libsPromise;
@@ -98,6 +116,49 @@
         resolve(response.data);
       });
     });
+
+  const serializeVerificationReport = (report) => {
+    if (!report || typeof report !== "object") {
+      return null;
+    }
+
+    const claims = Array.isArray(report.claims)
+      ? report.claims.map((claim) => ({
+          text: claim?.text || claim?.texto || "",
+          label: claim?.label || claim?.veredicto || null,
+          confidence:
+            claim?.confidence !== undefined && claim?.confidence !== null
+              ? claim.confidence
+              : claim?.confianza ?? null,
+          rationale: claim?.rationale || claim?.razonamiento || "",
+          evidences: Array.isArray(claim?.evidences || claim?.evidencias)
+            ? (claim.evidences || claim.evidencias).map((evidence) => ({
+                title: evidence?.title || evidence?.titulo || "",
+                url: evidence?.url || "",
+                nli_label: evidence?.nli_label || evidence?.etiqueta_nli || null,
+              }))
+            : [],
+        }))
+      : [];
+
+    return {
+      run_id: report?.run_id || null,
+      overall_label: report?.overall_label || report?.veredicto_global || null,
+      summary: report?.summary || report?.resumen || "",
+      model_version: report?.model_version || report?.modelo_version || null,
+      duration_ms:
+        report?.duration_ms !== undefined && report?.duration_ms !== null
+          ? report.duration_ms
+          : report?.duracion_ms ?? null,
+      claims,
+    };
+  };
+
+  const buildVerificationHistorySavePayload = ({ runId = null, report = null, inputText = "" } = {}) => ({
+    run_id: runId || null,
+    input_text: inputText || undefined,
+    report: serializeVerificationReport(report) || undefined,
+  });
 
   // ---------------------------------------------------------------------------
   // 2. Shadow DOM contenedor unico.
@@ -132,8 +193,39 @@
   //    activeWidget = { frame, panel, anchorRange, text, onScroll }
   // ---------------------------------------------------------------------------
   let activeWidget = null;
+  let loadingProgressTimer = null;
+  let currentLanguage = "es";
+  let translateMessage = null;
+
+  const getLocale = () => (currentLanguage === "en" ? "en-US" : "es-ES");
+
+  const formatNumber = (value) => Number(value || 0).toLocaleString(getLocale());
+
+  const translate = (key, values = {}, fallback = key) => {
+    if (typeof translateMessage === "function") {
+      return translateMessage(key, values, currentLanguage);
+    }
+    return fallback;
+  };
+
+  const hydrateRuntimeContext = async () => {
+    const libs = await loadLibs();
+    translateMessage = libs.translate;
+    currentLanguage = await libs.getStoredLanguage();
+    return libs;
+  };
+
+  hydrateRuntimeContext().catch(() => null);
+
+  const clearLoadingProgressTimer = () => {
+    if (loadingProgressTimer) {
+      window.clearInterval(loadingProgressTimer);
+      loadingProgressTimer = null;
+    }
+  };
 
   const destroyWidget = () => {
+    clearLoadingProgressTimer();
     if (!activeWidget) return;
     activeWidget.frame?.remove();
     activeWidget.panel?.remove();
@@ -146,6 +238,79 @@
 
   const getPanelState = () =>
     activeWidget?.panel?.querySelector(".fn-panel-body")?.dataset.state || null;
+
+  const getLoadingStage = (progress) => {
+    if (progress < 35) {
+      return translate(
+        "analyze.loadingStagePreparing",
+        {},
+        "Preparing the selected text for verification..."
+      );
+    }
+    if (progress < 70) {
+      return translate(
+        "analyze.loadingStageSearching",
+        {},
+        "Searching relevant evidence across open sources..."
+      );
+    }
+    return translate(
+      "analyze.loadingStageFinal",
+      {},
+      "Cross-checking claims and preparing the verdict..."
+    );
+  };
+
+  const updateLoadingProgress = (progress) => {
+    if (!activeWidget) return;
+
+    const body = activeWidget.panel.querySelector(".fn-panel-body");
+    if (!body || body.dataset.state !== "loading") return;
+
+    const progressbar = body.querySelector(".fn-progress");
+    const progressFill = body.querySelector(".fn-progress-bar");
+    const progressLabel = body.querySelector(".fn-loading-progress");
+    const stageLabel = body.querySelector(".fn-loading-stage");
+
+    if (progressbar) {
+      progressbar.setAttribute("aria-valuenow", String(progress));
+    }
+
+    if (progressFill) {
+      progressFill.style.width = `${progress}%`;
+    }
+
+    if (progressLabel) {
+      progressLabel.textContent = translate(
+        "analyze.progress",
+        { progress },
+        `Processing context · ${progress}%`
+      );
+    }
+
+    if (stageLabel) {
+      stageLabel.textContent = getLoadingStage(progress);
+    }
+  };
+
+  const startLoadingProgress = () => {
+    clearLoadingProgressTimer();
+
+    let progress = LOADING_PROGRESS_INITIAL;
+    updateLoadingProgress(progress);
+
+    loadingProgressTimer = window.setInterval(() => {
+      progress = Math.min(
+        LOADING_PROGRESS_MAX,
+        progress + Math.max(3, Math.round((100 - progress) / 11))
+      );
+      updateLoadingProgress(progress);
+
+      if (progress >= LOADING_PROGRESS_MAX) {
+        clearLoadingProgressTimer();
+      }
+    }, 140);
+  };
 
   // ---------------------------------------------------------------------------
   // 4. Construccion del marco + panel anclados a la selección.
@@ -160,17 +325,32 @@
     panel.className = "fn-panel";
     panel.innerHTML = `
       <header class="fn-panel-header">
-        <span class="fn-mark" aria-hidden="true"></span>
-        <strong class="fn-panel-title">FakeNews Insight</strong>
+        <span class="fn-brand-mark" aria-hidden="true">
+          <span class="fn-brand-grid"></span>
+          <span class="fn-brand-glyph">
+            <span class="fn-brand-bar fn-brand-bar-a"></span>
+            <span class="fn-brand-bar fn-brand-bar-b"></span>
+            <span class="fn-brand-dot"></span>
+          </span>
+        </span>
+        <span class="fn-brand-text">
+          <strong class="fn-panel-title">${escapeHtml(translate("app.lead", {}, "FakeNews"))}</strong>
+          <span class="fn-panel-subtitle">${escapeHtml(translate("app.tail", {}, "Insight"))}</span>
+        </span>
         <span class="fn-quota-chip fn-hidden" title="Verificaciones restantes hoy"></span>
-        <button type="button" class="fn-close" title="Cerrar" aria-label="Cerrar">&times;</button>
+        <button type="button" class="fn-close" title="${escapeHtml(translate("verify.close", {}, "Close"))}" aria-label="${escapeHtml(translate("verify.close", {}, "Close"))}">&times;</button>
       </header>
       <div class="fn-panel-body" data-state="idle">
         <p class="fn-snippet" id="fn-snippet"></p>
-        <p class="fn-summary">${text.length.toLocaleString("es-ES")}/${MAX_TEXT_LENGTH.toLocaleString("es-ES")} caracteres</p>
+        <p class="fn-summary">${escapeHtml(
+          translate(
+            "analyze.counter",
+            { count: formatNumber(text.length), max: formatNumber(MAX_TEXT_LENGTH) },
+            `${formatNumber(text.length)}/${formatNumber(MAX_TEXT_LENGTH)}`
+          )
+        )}</p>
         <button type="button" class="fn-button-primary" id="fn-verify-btn">
-          <span class="fn-mark fn-mark-sm" aria-hidden="true"></span>
-          <span>Verificar afirmaciones</span>
+          <span>${escapeHtml(translate("analyze.verify", {}, "Verify claims"))}</span>
         </button>
       </div>
     `;
@@ -250,6 +430,12 @@
       anchorRange: range.cloneRange(),
       text,
       onScroll: reposition,
+      report: null,
+      runId: null,
+      savePayload: null,
+      savedInHistory: false,
+      saveLoading: false,
+      saveError: "",
     };
 
     window.addEventListener("scroll", reposition, {
@@ -273,33 +459,44 @@
   };
 
   const renderLoading = () => {
+    clearLoadingProgressTimer();
     setPanelBody(
       `
       <div class="fn-loading">
         <span class="fn-spinner" aria-hidden="true"></span>
-        <span>Buscando evidencias y contrastando claims...</span>
+        <span>${escapeHtml(translate("analyze.loadingTitle", {}, "Verifying selected claims..."))}</span>
       </div>
-      <div class="fn-progress" role="progressbar" aria-label="Verificando">
-        <div class="fn-progress-bar"></div>
+      <div class="fn-progress" role="progressbar" aria-label="Verificando" aria-valuenow="${LOADING_PROGRESS_INITIAL}" aria-valuemin="0" aria-valuemax="100">
+        <div class="fn-progress-bar" style="width: ${LOADING_PROGRESS_INITIAL}%"></div>
       </div>
-      <p class="fn-loading-hint">El primer contraste tras un rato puede tardar 10-30s mientras arranca el servidor.</p>
+      <p class="fn-loading-progress">${escapeHtml(
+        translate(
+          "analyze.progress",
+          { progress: LOADING_PROGRESS_INITIAL },
+          `Processing context · ${LOADING_PROGRESS_INITIAL}%`
+        )
+      )}</p>
+      <p class="fn-loading-stage">${getLoadingStage(LOADING_PROGRESS_INITIAL)}</p>
+      <p class="fn-loading-hint">${escapeHtml(translate("analyze.loadingHint", {}, "The first verification after some idle time may take 10-30s while the server wakes up."))}</p>
     `,
       "loading"
     );
+    startLoadingProgress();
   };
 
   const renderNeedsLogin = (CONFIG) => {
+    clearLoadingProgressTimer();
     setPanelBody(
       `
       <p class="fn-text">
-        Necesitas iniciar sesi&oacute;n en FakeNews Insight para revisar.
+        ${escapeHtml(translate("verify.needsLogin", {}, "You need to sign in to FakeNews Insight to review this text."))}
       </p>
       <div class="fn-actions">
         <button type="button" class="fn-button-primary" id="fn-open-popup">
-          Abrir extensi&oacute;n
+          ${escapeHtml(translate("verify.openExtension", {}, "Open extension"))}
         </button>
         <a href="${CONFIG.WEB_REGISTER_URL}" target="_blank" rel="noopener noreferrer" class="fn-link">
-          Crear cuenta
+          ${escapeHtml(translate("verify.createAccount", {}, "Create account"))}
         </a>
       </div>
     `,
@@ -309,17 +506,22 @@
       .querySelector("#fn-open-popup")
       .addEventListener("click", () => {
         alert(
-          "Pulsa el icono de FakeNews Insight en la barra del navegador para iniciar sesión."
+          translate(
+            "verify.openPopupHint",
+            {},
+            "Click the FakeNews Insight icon in the browser toolbar to sign in."
+          )
         );
       });
   };
 
   const renderError = (message) => {
+    clearLoadingProgressTimer();
     setPanelBody(
       `
       <p class="fn-banner fn-banner-error">${escapeHtml(message)}</p>
       <div class="fn-actions">
-        <button type="button" class="fn-button-secondary" id="fn-close-btn">Cerrar</button>
+        <button type="button" class="fn-button-secondary" id="fn-close-btn">${escapeHtml(translate("verify.close", {}, "Close"))}</button>
       </div>
     `,
       "error"
@@ -329,13 +531,6 @@
       .addEventListener("click", destroyWidget);
   };
 
-  const VERIFY_LABEL_TEXT = {
-    SUPPORTED: "VERIFICADO",
-    REFUTED: "DESMENTIDO",
-    CONFLICTING: "CONTRADICTORIO",
-    NOT_ENOUGH_INFO: "EVIDENCIA INSUFICIENTE",
-  };
-
   const VERIFY_LABEL_TONE = {
     SUPPORTED: "real",
     REFUTED: "fake",
@@ -343,18 +538,104 @@
     NOT_ENOUGH_INFO: "unknown",
   };
 
+  const getVerdictLabel = (label) => {
+    const normalized = String(label || "").toUpperCase();
+    return translate(`verdict.${normalized}`, {}, normalized || "—");
+  };
+
+  const buildQuotaText = (plan, remaining, limit) => {
+    if (remaining !== undefined && remaining !== null && limit !== undefined && limit !== null) {
+      return translate(
+        "quota.remaining",
+        { plan, remaining, limit },
+        `Plan ${plan} · ${remaining}/${limit} verifications left today.`
+      );
+    }
+
+    return translate(
+      "quota.unlimited",
+      { plan },
+      `Plan ${plan} · Unlimited daily usage.`
+    );
+  };
+
+  const renderEvidence = (evidence, evidenceIndex, evidencesLength) => {
+    const url = String(evidence?.url || "#");
+    const label = evidence?.title || evidence?.url || "Fuente";
+
+    return `
+      <li class="fn-evidence-inline-item">
+        <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">[${evidenceIndex + 1}] ${escapeHtml(label)}</a>
+        ${evidenceIndex < evidencesLength - 1 ? '<span class="fn-evidence-comma">,</span>' : ""}
+      </li>
+    `;
+  };
+
+  const renderClaim = (claim, index) => {
+    const label = String(claim?.label || "").toUpperCase();
+    const tone = VERIFY_LABEL_TONE[label] || "unknown";
+    const evidences = Array.isArray(claim?.evidences) ? claim.evidences : [];
+    const confidence = Math.round((claim?.confidence ?? 0) * 100);
+
+    return `
+      <li class="fn-claim">
+        <div class="fn-claim-head">
+          <span class="fn-claim-index">#${index + 1}</span>
+          <p class="fn-claim-text">${escapeHtml(claim?.text || "")}</p>
+          <span class="fn-claim-badge" data-tone="${tone}">${escapeHtml(getVerdictLabel(label))}</span>
+          <span class="fn-claim-confidence" title="${escapeHtml(translate("verify.confidence", {}, "Aggregate confidence"))}">${confidence}%</span>
+        </div>
+        ${claim?.rationale ? `<p class="fn-rationale">${escapeHtml(claim.rationale)}</p>` : ""}
+        ${evidences.length > 0
+          ? `
+            <div class="fn-evidence-card">
+              <p class="fn-evidence-label">${escapeHtml(translate("verify.evidences", {}, "Evidence"))}</p>
+              <ol class="fn-evidences-inline">
+                ${evidences.map((evidence, evidenceIndex) => renderEvidence(evidence, evidenceIndex, evidences.length)).join("")}
+              </ol>
+            </div>
+          `
+          : `<p class="fn-no-evidence">${escapeHtml(translate("verify.noEvidence", {}, "Not enough web evidence."))}</p>`}
+      </li>
+    `;
+  };
+
+  const attachVerifyActions = () => {
+    const closeButton = activeWidget?.panel?.querySelector("#fn-close-btn");
+    if (closeButton) {
+      closeButton.addEventListener("click", destroyWidget);
+    }
+
+    const saveButton = activeWidget?.panel?.querySelector("#fn-save-btn");
+    if (saveButton) {
+      saveButton.addEventListener("click", handleSaveVerification);
+    }
+  };
+
   const renderVerifyReport = (report) => {
+    clearLoadingProgressTimer();
     const overall = String(report?.overall_label || "").toUpperCase();
     const tone = VERIFY_LABEL_TONE[overall] || "unknown";
-    const label = VERIFY_LABEL_TEXT[overall] || overall || "—";
+    const label = getVerdictLabel(overall);
 
     const plan = String(report?.plan || "free").toUpperCase();
     const remaining = report?.remaining_today;
     const limit = report?.daily_limit;
-    const quotaText =
-      limit && remaining !== undefined && remaining !== null
-        ? `Plan ${plan} &middot; Quedan ${remaining}/${limit} verificaciones hoy.`
-        : `Plan ${plan} &middot; Sin l&iacute;mite diario.`;
+    const quotaText = buildQuotaText(plan, remaining, limit);
+
+    if (activeWidget) {
+      activeWidget.report = {
+        ...report,
+        run_id: report?.run_id || activeWidget.runId || null,
+      };
+      activeWidget.runId = report?.run_id || activeWidget.runId || null;
+      activeWidget.savePayload = buildVerificationHistorySavePayload({
+        runId: activeWidget.runId,
+        report: activeWidget.report,
+        inputText: activeWidget.text,
+      });
+      activeWidget.savedInHistory = Boolean(report?.saved_to_history || activeWidget.savedInHistory);
+    }
 
     const quotaPayload = {
       plan: report?.plan || "free",
@@ -372,57 +653,111 @@
     const claims = Array.isArray(report?.claims) ? report.claims : [];
     const claimsHtml = claims.length
       ? claims.map((claim, index) => renderClaim(claim, index)).join("")
-      : `<p class="fn-text">No se pudieron extraer afirmaciones verificables.</p>`;
+      : `<p class="fn-claim-empty">${escapeHtml(translate("verify.noClaims", {}, "No verifiable claims could be extracted."))}</p>`;
+
+    const canSave = Boolean(activeWidget?.report) && !activeWidget?.savedInHistory && !activeWidget?.saveLoading;
+    const saveButtonText = activeWidget?.savedInHistory
+      ? translate("verify.savedHistory", {}, "Saved to history")
+      : activeWidget?.saveLoading
+      ? translate("verify.savingHistory", {}, "Saving...")
+      : translate("verify.saveHistory", {}, "Save to history");
 
     setPanelBody(
       `
-      <div class="fn-verdict" data-tone="${tone}">${escapeHtml(label)}</div>
-      ${report?.summary ? `<p class="fn-summary">${escapeHtml(report.summary)}</p>` : ""}
-      <p class="fn-quota">${quotaText}</p>
+      <section class="fn-report-card fn-overview-card">
+        <div class="fn-report-head">
+          <p class="fn-chip">${escapeHtml(translate("verify.overall", {}, "Overall verdict"))}</p>
+          <button type="button" class="fn-button-secondary fn-button-compact" id="fn-save-btn" ${canSave ? "" : "disabled"}>${escapeHtml(saveButtonText)}</button>
+        </div>
+        <div class="fn-verdict" data-tone="${tone}">${escapeHtml(label)}</div>
+        ${report?.summary ? `<p class="fn-overview-summary">${escapeHtml(report.summary)}</p>` : ""}
+        ${activeWidget?.saveError ? `<p class="fn-banner fn-banner-error">${escapeHtml(activeWidget.saveError)}</p>` : ""}
+        <div class="fn-meta-grid">
+          <div class="fn-meta-item">
+            <span class="fn-meta-label">${escapeHtml(translate("verify.plan", {}, "Plan"))}</span>
+            <strong class="fn-meta-value">${escapeHtml(plan || "—")}</strong>
+          </div>
+          <div class="fn-meta-item">
+            <span class="fn-meta-label">${escapeHtml(translate("verify.remaining", {}, "Remaining verifications today"))}</span>
+            <strong class="fn-meta-value">${remaining !== undefined && remaining !== null ? `${remaining}${limit ? ` / ${limit}` : ""}` : "—"}</strong>
+          </div>
+          <div class="fn-meta-item">
+            <span class="fn-meta-label">${escapeHtml(translate("verify.claimsCount", {}, "Claims"))}</span>
+            <strong class="fn-meta-value">${claims.length}</strong>
+          </div>
+        </div>
+        <p class="fn-quota">${escapeHtml(quotaText)}</p>
+      </section>
+      <section class="fn-report-card fn-section-card">
+        <h3 class="fn-section-title">${escapeHtml(translate("verify.claimsTitle", {}, "Extracted claims"))}</h3>
+        <p class="fn-section-copy">${escapeHtml(translate("verify.claimsIntro", {}, "These are the specific claims the system extracted from the text to cross-check against web evidence."))}</p>
+      </section>
       <ol class="fn-claims">${claimsHtml}</ol>
       <div class="fn-actions">
-        <button type="button" class="fn-button-secondary" id="fn-close-btn">Cerrar</button>
+        <button type="button" class="fn-button-secondary" id="fn-close-btn">${escapeHtml(translate("verify.close", {}, "Close"))}</button>
       </div>
     `,
       "verify"
     );
-
-    activeWidget.panel
-      .querySelector("#fn-close-btn")
-      .addEventListener("click", destroyWidget);
+    attachVerifyActions();
   };
 
-  const renderClaim = (claim, index) => {
-    const label = String(claim?.label || "").toUpperCase();
-    const tone = VERIFY_LABEL_TONE[label] || "unknown";
-    const confidence = Number.isFinite(claim?.confidence)
-      ? ` · ${Math.round(claim.confidence * 100)}%`
-      : "";
-    const evidences = Array.isArray(claim?.evidences) ? claim.evidences : [];
-    const evidencesHtml = evidences.length
-      ? `<ul class="fn-evidences">${evidences.map(renderEvidence).join("")}</ul>`
-      : `<p class="fn-no-evidence">Sin evidencias web suficientes.</p>`;
+  const handleSaveVerification = async () => {
+    if (!activeWidget || !activeWidget.report || activeWidget.saveLoading || activeWidget.savedInHistory) {
+      return;
+    }
 
-    return `
-      <li class="fn-claim">
-        <p class="fn-claim-text"><strong>#${index + 1}</strong> ${escapeHtml(claim?.text || "")}</p>
-        <p class="fn-claim-meta" data-tone="${tone}">${escapeHtml(VERIFY_LABEL_TEXT[label] || label)}${confidence}</p>
-        ${claim?.rationale ? `<p class="fn-rationale">${escapeHtml(claim.rationale)}</p>` : ""}
-        ${evidencesHtml}
-      </li>
-    `;
-  };
+    activeWidget.saveLoading = true;
+    activeWidget.saveError = "";
+    renderVerifyReport(activeWidget.report);
 
-  const renderEvidence = (evidence) => {
-    const url = String(evidence?.url || "#");
-    const label = evidence?.title || evidence?.url || "Fuente";
-    const nli = evidence?.nli_label ? ` · ${evidence.nli_label}` : "";
-    return `
-      <li>
-        <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>
-        ${nli ? `<span>${escapeHtml(nli)}</span>` : ""}
-      </li>
-    `;
+    let libs = null;
+    let showLogin = false;
+    try {
+      libs = await hydrateRuntimeContext();
+      const session = await libs.loadSession().catch(() => null);
+      if (!session) {
+        showLogin = true;
+      } else {
+        const savePayload =
+          activeWidget.savePayload ||
+          buildVerificationHistorySavePayload({
+            runId: activeWidget.runId || null,
+            report: activeWidget.report,
+            inputText: activeWidget.text,
+          });
+
+        const response = await sendToBackground("fn:save-history", {
+          payload: savePayload,
+        });
+
+        activeWidget.runId = response?.run_id || activeWidget.runId;
+        activeWidget.savedInHistory = true;
+        activeWidget.report = {
+          ...activeWidget.report,
+          run_id: activeWidget.runId,
+          saved_to_history: true,
+        };
+        activeWidget.savePayload = buildVerificationHistorySavePayload({
+          runId: activeWidget.runId,
+          report: activeWidget.report,
+          inputText: activeWidget.text,
+        });
+      }
+    } catch (error) {
+      if (error?.sessionExpired) {
+        showLogin = true;
+      } else {
+        activeWidget.saveError = error?.message || translate("verify.saveHistoryError", {}, "The verification could not be saved to history.");
+      }
+    } finally {
+      activeWidget.saveLoading = false;
+      if (showLogin && libs) {
+        renderNeedsLogin(libs.CONFIG);
+        return;
+      }
+      renderVerifyReport(activeWidget.report);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -432,16 +767,16 @@
     if (!activeWidget) return;
     if (!text || text.length < MIN_TEXT_LENGTH) return;
 
-    renderLoading();
-
     let libs;
     try {
-      libs = await loadLibs();
+      libs = await hydrateRuntimeContext();
     } catch (error) {
-      renderError("No se pudieron cargar los modulos de la extension.");
+      renderError(translate("errors.loadModules", {}, "The extension modules could not be loaded."));
       console.error("[FEVER] loadLibs fallo:", error);
       return;
     }
+
+    renderLoading();
 
     const session = await libs.loadSession().catch(() => null);
     if (!session) {
@@ -457,7 +792,7 @@
         renderNeedsLogin(libs.CONFIG);
         return;
       }
-      renderError(error?.message || "No se pudo verificar el texto.");
+      renderError(error?.message || translate("errors.genericVerify", {}, "The text could not be verified."));
     }
   };
 

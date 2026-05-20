@@ -8,7 +8,9 @@ import { AlertTriangle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import FeedbackBanner from "./FeedbackBanner";
 
-/** Formulario de baja de cuenta que exige escribir ELIMINAR para confirmar. */
+const ACCOUNT_DELETE_CONFIRMATION = "DELETE";
+
+/** Formulario de baja de cuenta que exige escribir DELETE para confirmar. */
 function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
   const { t } = useTranslation("dashboard");
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -28,7 +30,7 @@ function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
     setDeleteMessage("");
     setDeleteTone("error");
 
-    if (deleteConfirmation.trim().toUpperCase() !== "ELIMINAR") {
+    if (deleteConfirmation.trim().toUpperCase() !== ACCOUNT_DELETE_CONFIRMATION) {
       setDeleteMessage(t("delete.errorPattern"));
       return;
     }
@@ -51,10 +53,15 @@ function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
           {t("delete.title")}
         </h3>
       </div>
-      <p className="dash-section-text">
-        {t("delete.intro")}{" "}
-        <span style={{ color: "var(--on-surface)", fontWeight: 600 }}>ELIMINAR</span>.
-      </p>
+      <div>
+        <p className="dash-section-text">
+          {t("delete.intro")} {" "}
+          <span style={{ color: "var(--on-surface)", fontWeight: 600 }}>
+            {ACCOUNT_DELETE_CONFIRMATION}
+          </span>.
+        </p>
+        <p className="dash-section-text mt-2">{t("delete.subscriptionNotice")}</p>
+      </div>
 
       <form onSubmit={handleSubmitDelete} className="dash-form-grid mt-4">
         <div className="dash-form-grid">
@@ -69,6 +76,9 @@ function DeleteAccountSection({ onDeleteAccount, onSubmittingChange }) {
             placeholder={t("delete.confirmPlaceholder")}
             disabled={isDeleting}
             required
+            autoCapitalize="characters"
+            autoCorrect="off"
+            spellCheck={false}
             className="dash-input"
           />
         </div>
