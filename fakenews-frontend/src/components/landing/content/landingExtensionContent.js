@@ -1,3 +1,5 @@
+import { GITHUB_RELEASES_URL } from "@/lib/constants";
+
 /**
  * @file landingExtensionContent.js
  * @description Contenido de la seccion de la landing dedicada a la extension
@@ -18,7 +20,7 @@ export const landingExtensionContent = {
     ],
     ctaPrimary: "Descargar v0.3.0",
     ctaSecondary: "Como funciona",
-    releasesUrl: "https://github.com/Luis-CG/TFG-Informatica---Luis-Canibano/releases",
+    releasesUrl: GITHUB_RELEASES_URL,
     preview: {
       snippet:
         "Científicos confirman que el cafe matutino aumenta la productividad un 37% según un nuevo meta-análisis publicado este mes.",
@@ -42,7 +44,7 @@ export const landingExtensionContent = {
     ],
     ctaPrimary: "Download v0.3.0",
     ctaSecondary: "How it works",
-    releasesUrl: "https://github.com/Luis-CG/TFG-Informatica---Luis-Canibano/releases",
+    releasesUrl: GITHUB_RELEASES_URL,
     preview: {
       snippet:
         "Scientists confirm that morning coffee boosts productivity by 37% according to a new meta-analysis published this month.",

@@ -6,9 +6,7 @@
 
 import { Download, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-const RELEASES_URL =
-  "https://github.com/luiscanibano/TFG-Informatica---Luis-Canibano/releases";
+import { GITHUB_RELEASES_URL } from "@/lib/constants";
 
 function DashboardExtension() {
   const { t } = useTranslation("dashboard");
@@ -32,7 +30,7 @@ function DashboardExtension() {
 
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <a
-            href={RELEASES_URL}
+            href={GITHUB_RELEASES_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="dash-cta"

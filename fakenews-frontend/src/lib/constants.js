@@ -20,3 +20,6 @@ export const AUTH_REQUEST_TIMEOUT_MS = 12000;
 
 /** Timeout para operaciones de cuenta server-side (más lentas que auth). */
 export const ACCOUNT_REQUEST_TIMEOUT_MS = 25000;
+
+/** Repositorio público usado para las descargas y releases visibles en la UI. */
+export const GITHUB_RELEASES_URL = "https://github.com/luiscanibano/FakeNews-Insight/releases";

@@ -58,7 +58,12 @@ function ResetPassword() {
         }
 
         const existingSession = await getCurrentSession();
-        if (existingSession?.user && (hasRecoveryCode || existingSession)) {
+        if (existingSession?.user && hasRecoveryCode) {
+          setIsReady(true);
+          return;
+        }
+
+        if (existingSession?.user) {
           setIsReady(true);
           return;
         }
@@ -68,12 +73,6 @@ function ResetPassword() {
       } catch (sessionError) {
         setLocalError(sessionError.message);
         return;
-      }
-
-      try {
-        setIsReady(true);
-      } catch {
-        /** No-op: defensive return path kept explicit. */
       }
     };
 
