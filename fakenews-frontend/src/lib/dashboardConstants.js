@@ -16,7 +16,6 @@ export const DASHBOARD_VIEW = {
   ANALYZE: "analyze",
   HISTORY: "history",
   EXTENSION: "extension",
-  API_KEYS: "apiKeys",
 };
 
 /**
@@ -28,5 +27,4 @@ export const DASHBOARD_NAV_ITEMS = [
   { id: DASHBOARD_VIEW.ANALYZE, label: "Analizar", labelKey: "nav.analyze", path: "analyze" },
   { id: DASHBOARD_VIEW.HISTORY, label: "Mi historial", labelKey: "nav.history", path: "history" },
   { id: DASHBOARD_VIEW.EXTENSION, label: "Extension navegador", labelKey: "nav.extension", path: "extension" },
-  { id: DASHBOARD_VIEW.API_KEYS, label: "Developers", labelKey: "nav.apiKeys", path: "api-keys" },
 ];

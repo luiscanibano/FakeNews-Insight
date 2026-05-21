@@ -48,9 +48,18 @@ describe("<VerificationReport />", () => {
     expect(screen.getByText("9 / 10")).toBeInTheDocument();
   });
 
-  it("explica las etiquetas FEVER/NLI del informe", () => {
+  it("mantiene la guia cerrada por defecto y la despliega al pulsar", () => {
     render(<VerificationReport report={sampleReport} />);
-    expect(screen.getByText(/Cómo leer el resultado/i)).toBeInTheDocument();
+
+    const toggle = screen.getByRole("button", { name: /Cómo leer el resultado/i });
+
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText(/No significa que sea falso/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/no una probabilidad absoluta/i)).not.toBeInTheDocument();
+
+    fireEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByText(/No significa que sea falso/i)).toBeInTheDocument();
     expect(screen.getByText(/no una probabilidad absoluta/i)).toBeInTheDocument();
   });
@@ -128,6 +137,7 @@ describe("<VerificationReport />", () => {
 
   it("aplica color explicito a las etiquetas FEVER visibles", () => {
     render(<VerificationReport report={sampleReport} />);
+    fireEvent.click(screen.getByRole("button", { name: /Cómo leer el resultado/i }));
     expect(screen.getByRole("heading", { level: 2 })).toHaveClass("text-emerald-300");
     expect(screen.getByText("Refutado", { selector: "dt" })).toHaveClass("text-rose-300");
     expect(screen.getByText("Información insuficiente", { selector: "dt" })).toHaveClass("text-white");

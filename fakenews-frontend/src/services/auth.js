@@ -146,6 +146,18 @@ export const getCurrentUser = async () => {
   return data?.session?.user || null;
 };
 
+/** Recupera la sesión actual completa para flujos especiales como recovery. */
+export const getCurrentSession = async () => {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    throw new Error(getErrorMessage(error, "Unable to get current session"));
+  }
+
+  return data?.session || null;
+};
+
 /** Devuelve el JWT actual para autenticar llamadas backend con cabecera Bearer. */
 export const getAccessToken = async () => {
   const supabase = getSupabaseClient();

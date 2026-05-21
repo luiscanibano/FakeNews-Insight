@@ -15,6 +15,20 @@ export const USER_PLAN = {
   ULTRA: "ultra",
 };
 
+export const normalizeUserPlan = (rawPlan) => {
+  const normalizedPlan = String(rawPlan || "").trim().toLowerCase();
+
+  if (normalizedPlan === USER_PLAN.PRO || normalizedPlan === "pro_user") {
+    return USER_PLAN.PRO;
+  }
+
+  if (normalizedPlan === USER_PLAN.ULTRA || normalizedPlan === "ultra_user") {
+    return USER_PLAN.ULTRA;
+  }
+
+  return USER_PLAN.FREE;
+};
+
 /** Jerarquia numerica de planes para comparaciones de capacidad por nivel. */
 const PLAN_ORDER = {
   [USER_PLAN.FREE]: 0,
@@ -32,9 +46,7 @@ export const resolveAccess = (profile) => {
   }
 
   const role = profile.role === USER_ROLE.ADMIN ? USER_ROLE.ADMIN : USER_ROLE.USER;
-  const plan = Object.prototype.hasOwnProperty.call(PLAN_ORDER, profile.plan)
-    ? profile.plan
-    : USER_PLAN.FREE;
+  const plan = normalizeUserPlan(profile.plan);
 
   return { role, plan };
 };
@@ -54,7 +66,7 @@ export const canUseFeature = ({ role, plan }, feature) => {
     case "history.basic":
       return true;
     case "analysis.bulk":
-      return hasMinimumPlan(plan, USER_PLAN.PRO);
+      return hasMinimumPlan(plan, USER_PLAN.ULTRA);
     case "analysis.api":
       return hasMinimumPlan(plan, USER_PLAN.ULTRA);
     default:

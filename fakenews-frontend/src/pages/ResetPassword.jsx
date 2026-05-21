@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
 import { Button } from "../components/ui/button";
@@ -12,6 +13,9 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import AuthLayout from "../components/auth/AuthLayout";
 import { AuthErrorBanner, AuthSuccessBanner } from "../components/auth/AuthFeedback";
+import PasswordRequirementsChecklist from "../components/auth/PasswordRequirementsChecklist";
+import { getPasswordValidationErrorKey } from "../lib/passwordValidation";
+import { getCurrentSession } from "../services/auth";
 
 /** Vista para establecer una nueva contraseña desde el enlace de recuperación.
  */
@@ -25,6 +29,7 @@ function ResetPassword() {
   const [localError, setLocalError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isReady, setIsReady] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   /** Acción del store para persistir la nueva contraseña.
  */
@@ -39,20 +44,36 @@ function ResetPassword() {
   useEffect(() => {
     const initializeRecoverySession = async () => {
       const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const searchParams = new URLSearchParams(window.location.search);
       const type = hashParams.get("type");
       const accessToken = hashParams.get("access_token");
       const refreshToken = hashParams.get("refresh_token");
+      const hasRecoveryCode = Boolean(searchParams.get("code"));
 
-      if (type !== "recovery" || !accessToken || !refreshToken) {
+      try {
+        if (type === "recovery" && accessToken && refreshToken) {
+          await setRecoverySession({ accessToken, refreshToken });
+          setIsReady(true);
+          return;
+        }
+
+        const existingSession = await getCurrentSession();
+        if (existingSession?.user && (hasRecoveryCode || existingSession)) {
+          setIsReady(true);
+          return;
+        }
+
         setLocalError(t("reset.errorInvalidLink"));
+        return;
+      } catch (sessionError) {
+        setLocalError(sessionError.message);
         return;
       }
 
       try {
-        await setRecoverySession({ accessToken, refreshToken });
         setIsReady(true);
-      } catch (sessionError) {
-        setLocalError(sessionError.message);
+      } catch {
+        /** No-op: defensive return path kept explicit. */
       }
     };
 
@@ -76,8 +97,9 @@ function ResetPassword() {
       clearError();
     }
 
-    if (submittedPassword.length < 6) {
-      setLocalError(t("reset.errorMinLength"));
+    const passwordErrorKey = getPasswordValidationErrorKey(submittedPassword, "reset");
+    if (passwordErrorKey) {
+      setLocalError(t(passwordErrorKey));
       return;
     }
 
@@ -114,35 +136,67 @@ function ResetPassword() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-on-surface">{t("fields.newPassword")}</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder={t("fields.passwordPlaceholder")}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete="new-password"
-            required
-            disabled={!isReady}
-            className="h-11 border-outline-variant/30 bg-surface-container-high/60 text-on-surface placeholder:text-on-surface-variant"
-          />
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="password" className="text-on-surface">{t("fields.newPassword")}</Label>
+            <button
+              type="button"
+              onClick={() => setShowPasswords((current) => !current)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label={showPasswords ? t("reset.hidePassword") : t("reset.showPassword")}
+            >
+              {showPasswords ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              <span>{showPasswords ? t("reset.hidePassword") : t("reset.showPassword")}</span>
+            </button>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPasswords ? "text" : "password"}
+              placeholder={t("fields.passwordPlaceholder")}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="new-password"
+              required
+              disabled={!isReady}
+              className="h-11 border-outline-variant/30 bg-surface-container-high/60 pr-11 text-on-surface placeholder:text-on-surface-variant"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPasswords((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label={showPasswords ? t("reset.hidePassword") : t("reset.showPassword")}
+            >
+              {showPasswords ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
+          <PasswordRequirementsChecklist password={password} />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirm-password" className="text-on-surface">{t("fields.confirmPassword")}</Label>
-          <Input
-            id="confirm-password"
-            name="confirmPassword"
-            type="password"
-            placeholder={t("fields.passwordPlaceholder")}
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            autoComplete="new-password"
-            required
-            disabled={!isReady}
-            className="h-11 border-outline-variant/30 bg-surface-container-high/60 text-on-surface placeholder:text-on-surface-variant"
-          />
+          <div className="relative">
+            <Input
+              id="confirm-password"
+              name="confirmPassword"
+              type={showPasswords ? "text" : "password"}
+              placeholder={t("fields.passwordPlaceholder")}
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              autoComplete="new-password"
+              required
+              disabled={!isReady}
+              className="h-11 border-outline-variant/30 bg-surface-container-high/60 pr-11 text-on-surface placeholder:text-on-surface-variant"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPasswords((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label={showPasswords ? t("reset.hidePassword") : t("reset.showPassword")}
+            >
+              {showPasswords ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
         </div>
 
         <AuthErrorBanner message={localError} />

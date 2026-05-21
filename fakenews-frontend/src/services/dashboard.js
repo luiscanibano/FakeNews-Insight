@@ -5,6 +5,7 @@
 
 import { getSupabaseClient } from "./supabase";
 import i18next from "i18next";
+import { getVerifyDailyLimit } from "../lib/verificationLimits";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const DASHBOARD_CHART_DAYS = 10;
@@ -25,11 +26,7 @@ const VERIFICATION_QUERY_ATTEMPTS = [
 
 /** Resuelve el límite por defecto cuando el perfil no expone límite diario explicito. */
 const getFallbackLimitFromPlan = (plan) => {
-  if (plan === "free") {
-    return 20;
-  }
-
-  return null;
+  return getVerifyDailyLimit(plan);
 };
 
 /** Normaliza una fecha a clave UTC YYYY-MM-DD para agregaciones por dia. */
@@ -125,15 +122,15 @@ const formatTimestampLabel = (dateValue) => {
 };
 
 /** Adapta una fila de análisis al contrato usado por Home y tarjetas de recientes. */
-const normalizeRecentAnalysis = (row, index) => {
+export const normalizeRecentAnalysis = (row, index) => {
   const inputText = String(row?.input_text || "").trim();
   const title =
     row?.title ||
-    row?.summary ||
     row?.headline ||
     row?.titular ||
     row?.news_title ||
     (inputText ? `${inputText.slice(0, 72)}${inputText.length > 72 ? "..." : ""}` : null) ||
+    row?.summary ||
     `Análisis #${index + 1}`;
 
   const rawStrength =
@@ -282,26 +279,20 @@ const getUsageMetricsFromProfile = ({ profile, fallbackPlan }) => {
   const plan = profile?.plan || fallbackPlan || "free";
   const fallbackLimit = getFallbackLimitFromPlan(plan);
 
-  const profileLimit = toNumericOrNull(profile?.daily_analysis_limit);
-  const resolvedLimit = profile?.daily_analysis_limit === null ? null : profileLimit ?? fallbackLimit;
+  const profileLimit = toNumericOrNull(profile?.daily_verification_limit);
+  const resolvedLimit = profileLimit ?? fallbackLimit;
 
-  const profileUsed = toNumericOrNull(profile?.daily_analysis_used) ?? 0;
+  const profileUsed = toNumericOrNull(profile?.daily_verification_used) ?? 0;
   const todayUtcDate = getTodayUtcDateKey();
-  const profileDate = String(profile?.daily_analysis_date || "").slice(0, 10);
+  const profileDate = String(profile?.daily_verification_date || "").slice(0, 10);
   const usedToday = profileDate === todayUtcDate ? profileUsed : 0;
 
-  const remainingLabel =
-    resolvedLimit === null
-      ? i18next.t("home.unlimitedRemaining", { ns: "dashboard", defaultValue: "Ilimitados" })
-      : Math.max(0, resolvedLimit - usedToday);
+  const remainingLabel = Math.max(0, resolvedLimit - usedToday);
 
   return {
     remainingLabel,
     usedToday,
-    dailyLimitLabel:
-      resolvedLimit === null
-        ? i18next.t("home.unlimited", { ns: "dashboard", defaultValue: "Ilimitado" })
-        : resolvedLimit,
+    dailyLimitLabel: resolvedLimit,
   };
 };
 
@@ -315,7 +306,7 @@ export const getDashboardHomeData = async ({ userId, fallbackPlan }) => {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id, plan, daily_analysis_limit, daily_analysis_used, daily_analysis_date")
+    .select("id, plan, daily_verification_limit, daily_verification_used, daily_verification_date")
     .eq("id", userId)
     .maybeSingle();
 

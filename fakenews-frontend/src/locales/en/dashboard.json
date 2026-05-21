@@ -63,7 +63,6 @@
     "analyze": "Analyze",
     "history": "My history",
     "extension": "Browser extension",
-    "apiKeys": "Developers",
     "admin": "Admin"
   },
   "hero": {
@@ -189,10 +188,6 @@
         "description": "Open the popup, use the same email and password as FakeNews Insight and start reviewing texts without leaving the page you're reading."
       }
     ]
-  },
-  "apiKeys": {
-    "title": "API Keys",
-    "subtitle": "This page will connect with Supabase to manage keys, rotation and API permissions."
   },
   "account": {
     "myAccount": "My account",

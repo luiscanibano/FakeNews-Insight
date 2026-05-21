@@ -5,6 +5,7 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  normalizeUserPlan,
   USER_PLAN,
   USER_ROLE,
   canUseFeature,
@@ -34,8 +35,21 @@ describe("resolveAccess", () => {
     });
   });
 
+  it("normaliza aliases legacy de plan del backend", () => {
+    expect(resolveAccess({ plan: "pro_user" }).plan).toBe(USER_PLAN.PRO);
+    expect(resolveAccess({ plan: "ultra_user" }).plan).toBe(USER_PLAN.ULTRA);
+  });
+
   it("degrada planes desconocidos a free", () => {
     expect(resolveAccess({ plan: "enterprise" }).plan).toBe(USER_PLAN.FREE);
+  });
+});
+
+describe("normalizeUserPlan", () => {
+  it("mapea aliases de plan a los valores canonicos del frontend", () => {
+    expect(normalizeUserPlan("pro_user")).toBe(USER_PLAN.PRO);
+    expect(normalizeUserPlan("ultra_user")).toBe(USER_PLAN.ULTRA);
+    expect(normalizeUserPlan("free")).toBe(USER_PLAN.FREE);
   });
 });
 
@@ -53,6 +67,12 @@ describe("hasMinimumPlan / canUseFeature", () => {
 
   it("usuario free no puede usar bulk ni api", () => {
     const access = { role: USER_ROLE.USER, plan: USER_PLAN.FREE };
+    expect(canUseFeature(access, "analysis.bulk")).toBe(false);
+    expect(canUseFeature(access, "analysis.api")).toBe(false);
+  });
+
+  it("usuario pro no puede usar bulk ni api", () => {
+    const access = { role: USER_ROLE.USER, plan: USER_PLAN.PRO };
     expect(canUseFeature(access, "analysis.bulk")).toBe(false);
     expect(canUseFeature(access, "analysis.api")).toBe(false);
   });

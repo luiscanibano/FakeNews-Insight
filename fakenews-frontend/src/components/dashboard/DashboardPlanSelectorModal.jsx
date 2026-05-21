@@ -11,6 +11,7 @@ import { USER_PLAN } from "@/lib/accessControl";
 import { useBillingStore } from "@/store/billingStore";
 import { useBillingActions } from "@/hooks/useBillingActions";
 import { resolvePlanCardAction } from "./resolvePlanCardAction";
+import { shouldHighlightRecommendedPlan } from "./planRecommendation";
 
 /** Formatea fecha ISO al locale de i18n; cae a string vacio si es invalida. */
 const formatDate = (iso, locale) => {
@@ -257,6 +258,11 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {planList.map((plan, index) => {
             const isCurrent = plan.key === currentPlan;
+            const isRecommended = shouldHighlightRecommendedPlan({
+              planKey: plan.key,
+              recommended: plan.recommended,
+              currentPlan,
+            });
             const action = resolvePlanCardAction({
               planKey: plan.key,
               currentPlan,
@@ -265,7 +271,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
 
             const cardClasses = [
               "dash-plan-card",
-              plan.recommended ? "is-recommended" : "",
+              isRecommended ? "is-recommended" : "",
               isCurrent ? "is-current" : "",
             ]
               .filter(Boolean)
@@ -273,7 +279,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
 
             return (
               <article key={plan.key} className={cardClasses} style={{ "--i": index }}>
-                {plan.recommended ? (
+                {isRecommended ? (
                   <span className="dash-plan-recommended-tag">{t("planSelector.recommended")}</span>
                 ) : null}
                 {isCurrent ? <span className="dash-plan-current-tag">{t("planSelector.currentTag")}</span> : null}
@@ -308,7 +314,7 @@ function DashboardPlanSelectorModal({ isOpen, currentPlan, onClose }) {
                 <button
                   type="button"
                   className={`dash-plan-action ${
-                    plan.recommended ? "dash-plan-action-primary" : "dash-plan-action-outline"
+                    isRecommended ? "dash-plan-action-primary" : "dash-plan-action-outline"
                   }`}
                   disabled={action.kind === "current" || isProcessing}
                   onClick={() => handleClick(plan.key, plan.name, action)}

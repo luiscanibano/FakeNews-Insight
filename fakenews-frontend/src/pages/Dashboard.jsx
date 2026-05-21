@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FileSpreadsheet, Link2, Text } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
@@ -28,7 +28,6 @@ import DashboardHome from "./DashboardHome";
 import DashboardAnalyze from "./DashboardAnalyze";
 import DashboardHistory from "./DashboardHistory";
 import DashboardExtension from "./DashboardExtension";
-import DashboardApiKeys from "./DashboardApiKeys";
 
 /** Etiqueta legible del plan usada en chips/encabezados del dashboard. */
 const formatPlanLabel = (plan) => {
@@ -210,7 +209,7 @@ function Dashboard() {
           <Route path="analyze" element={<DashboardAnalyze />} />
           <Route path="history" element={<DashboardHistory />} />
           <Route path="extension" element={<DashboardExtension />} />
-          <Route path="api-keys" element={<DashboardApiKeys />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
 

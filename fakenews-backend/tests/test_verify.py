@@ -159,6 +159,31 @@ def test_verify_returns_verdict_for_pro_with_plan_limits(monkeypatch):
     assert data["max_evidences"] == 3
 
 
+def test_verify_returns_verdict_for_ultra_with_plan_limits(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1", "plan": "ultra",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    import fever_runtime
+    fever_runtime.set_verification_agent(_make_agent())
+
+    response = client.post(
+        "/verify",
+        json={"texto": VALID_TEXT},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["plan"] == "ultra"
+    assert data["limite_diario"] == 50
+    assert data["max_claims"] == 8
+    assert data["max_evidences"] == 5
+
+
 def test_verify_returns_run_id_even_when_service_role_handles_persistence(monkeypatch):
     spy = _SupabaseSpy(profile={
         "id": "user-1",

@@ -5,6 +5,8 @@
  *              Soporta i18n y atributos ARIA para accesibilidad.
  */
 
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +44,7 @@ function VerificationReport({
   savedInHistory = false,
 }) {
   const { t } = useTranslation("dashboard");
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   if (!report) {
     return null;
@@ -51,6 +54,7 @@ function VerificationReport({
   const overallPanelTone = VERDICT_TO_PANEL_CLASS[report.veredicto_global] || "border-outline-variant/25";
   const reportTitleId = `${idPrefix}-title`;
   const guideTitleId = `${idPrefix}-guide-title`;
+  const guideContentId = `${idPrefix}-guide-content`;
   const claimsTitleId = `${idPrefix}-claims-title`;
   const resolvedRunId = runId || report?.run_id || null;
   const canSaveVerification = !savedInHistory && !isSavingResult && (Boolean(resolvedRunId) || Boolean(report));
@@ -142,36 +146,52 @@ function VerificationReport({
         className="rounded-2xl border border-outline-variant/25 bg-surface-container-low/35 p-3 sm:p-4"
         aria-labelledby={guideTitleId}
       >
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div>
-            <h3 id={guideTitleId} className="text-sm font-semibold text-on-surface">
-              {t("verify.guide.title")}
-            </h3>
-            <p className="mt-1 text-xs leading-relaxed text-on-surface-variant">
-              {t("verify.guide.intro")}
+        <h3 className="text-sm font-semibold text-on-surface">
+          <button
+            id={guideTitleId}
+            type="button"
+            className="flex w-full items-center justify-between gap-3 text-left"
+            aria-expanded={isGuideOpen}
+            aria-controls={guideContentId}
+            onClick={() => setIsGuideOpen((currentValue) => !currentValue)}
+          >
+            <span className="min-w-0">{t("verify.guide.title")}</span>
+            <ChevronDown
+              className={`size-4 shrink-0 text-on-surface-variant transition-transform duration-200 ${isGuideOpen ? "rotate-180" : "rotate-0"}`}
+              aria-hidden="true"
+            />
+          </button>
+        </h3>
+
+        {isGuideOpen ? (
+          <div id={guideContentId} className="mt-3">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+              <p className="text-xs leading-relaxed text-on-surface-variant">
+                {t("verify.guide.intro")}
+              </p>
+              <p className="shrink-0 rounded-full border border-outline-variant/25 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
+                {t("verify.guide.method")}
+              </p>
+            </div>
+
+            <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+              {VERDICT_ORDER.map((label) => (
+                <div key={label} className={`rounded-xl border bg-surface/45 p-3 ${VERDICT_TO_PANEL_CLASS[label] || "border-outline-variant/20"}`}>
+                  <dt className={`text-[10px] font-bold uppercase tracking-wider ${VERDICT_TO_TEXT_CLASS[label] || "text-white"}`}>
+                    {t(`verify.verdict.${label}`, label)}
+                  </dt>
+                  <dd className="mt-1 text-xs leading-relaxed text-on-surface-variant">
+                    {t(`verify.guide.verdicts.${label}`)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <p className="mt-3 rounded-xl border border-outline-variant/20 bg-surface/40 px-3 py-2 text-xs leading-relaxed text-on-surface-variant">
+              {t("verify.guide.nliNote")}
             </p>
           </div>
-          <p className="shrink-0 rounded-full border border-outline-variant/25 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
-            {t("verify.guide.method")}
-          </p>
-        </div>
-
-        <dl className="mt-3 grid gap-2 sm:grid-cols-2">
-          {VERDICT_ORDER.map((label) => (
-            <div key={label} className={`rounded-xl border bg-surface/45 p-3 ${VERDICT_TO_PANEL_CLASS[label] || "border-outline-variant/20"}`}>
-              <dt className={`text-[10px] font-bold uppercase tracking-wider ${VERDICT_TO_TEXT_CLASS[label] || "text-white"}`}>
-                {t(`verify.verdict.${label}`, label)}
-              </dt>
-              <dd className="mt-1 text-xs leading-relaxed text-on-surface-variant">
-                {t(`verify.guide.verdicts.${label}`)}
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <p className="mt-3 rounded-xl border border-outline-variant/20 bg-surface/40 px-3 py-2 text-xs leading-relaxed text-on-surface-variant">
-          {t("verify.guide.nliNote")}
-        </p>
+        ) : null}
       </section>
 
       <section aria-labelledby={claimsTitleId} className="space-y-3">

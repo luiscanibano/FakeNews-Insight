@@ -45,7 +45,7 @@ export const landingValueContent = {
         recommended: false,
         cta: "Suscribirse",
         features: [
-          "Todo lo de Pro",
+          "200 contrastes premium/día",
           "Agente FEVER completo",
           "Hasta 8 claims y 5 evidencias por claim",
           "Análisis masivo por CSV",
@@ -95,7 +95,7 @@ export const landingValueContent = {
         recommended: false,
         cta: "Subscribe",
         features: [
-          "Everything in Pro",
+          "200 premium checks/day",
           "Full FEVER agent",
           "Up to 8 claims and 5 evidence items per claim",
           "Bulk CSV analysis",

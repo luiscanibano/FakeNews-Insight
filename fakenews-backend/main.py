@@ -994,7 +994,7 @@ VERIFY_TEXT_MIN_LENGTH = 80
 VERIFY_PLAN_LIMITS: Dict[str, Dict[str, int]] = {
     "free": {"daily_limit": 5, "max_claims": 1, "max_evidences": 1, "max_chars": 2000},
     "pro": {"daily_limit": 50, "max_claims": 3, "max_evidences": 3, "max_chars": 6000},
-    "ultra": {"daily_limit": 200, "max_claims": 8, "max_evidences": 5, "max_chars": 12000},
+    "ultra": {"daily_limit": 50, "max_claims": 8, "max_evidences": 5, "max_chars": 12000},
 }
 
 
