@@ -117,6 +117,7 @@
   position: fixed;
   width: 356px;
   max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
   background:
     radial-gradient(circle at 0% 0%, rgba(126, 165, 255, 0.18), transparent 55%),
     radial-gradient(circle at 100% 100%, rgba(173, 199, 255, 0.12), transparent 60%),
@@ -352,6 +353,11 @@
   gap: 10px;
 }
 
+.fn-panel-body[data-state="verify"] {
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+}
+
 /* ----- Estado idle: snippet + boton verificar ----------------------------- */
 
 .fn-snippet {
@@ -504,16 +510,64 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 260px;
-  overflow-y: auto;
 }
 
 .fn-claim {
   margin: 0;
-  padding: 13px;
   border: 1px solid rgba(173, 199, 255, 0.14);
   border-radius: 16px;
   background: rgba(16, 21, 31, 0.88);
+  overflow: hidden;
+}
+
+.fn-claim-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px;
+  cursor: pointer;
+}
+
+.fn-claim-summary::-webkit-details-marker {
+  display: none;
+}
+
+.fn-claim-summary::marker {
+  content: "";
+}
+
+.fn-claim-body {
+  padding: 0 13px 13px;
+}
+
+.fn-claim-chevron {
+  position: relative;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(173, 199, 255, 0.14);
+  background: rgba(173, 199, 255, 0.06);
+}
+
+.fn-claim-chevron::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid #a8b6cf;
+  border-bottom: 2px solid #a8b6cf;
+  transform: rotate(45deg);
+  transition: transform 0.18s ease, top 0.18s ease;
+}
+
+.fn-claim[open] .fn-claim-chevron::before {
+  top: 7px;
+  transform: rotate(225deg);
 }
 
 .fn-claim-head {
@@ -521,6 +575,8 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .fn-claim-text {

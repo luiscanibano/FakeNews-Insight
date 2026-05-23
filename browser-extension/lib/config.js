@@ -20,6 +20,13 @@ export const CONFIG = {
   ANALYSIS_API_BASE_URL:
     "https://api.fakenewsinsight.com",
 
+  /**
+   * Solo activa backends alternativos en entornos de desarrollo controlados.
+   * En builds para usuarios finales debe permanecer en false para no mezclar
+   * errores de produccion con servidores locales o desactualizados.
+   */
+  ANALYSIS_API_ENABLE_FALLBACKS: false,
+
   /** Backends alternativos para desarrollo local si el endpoint principal falla. */
   ANALYSIS_API_FALLBACK_BASE_URLS: [
     "http://127.0.0.1:8000",

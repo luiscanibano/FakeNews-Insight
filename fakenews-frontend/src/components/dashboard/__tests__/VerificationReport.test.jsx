@@ -6,7 +6,8 @@
 
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import i18next from "i18next";
 
 import "@/lib/i18n";
 import VerificationReport from "../VerificationReport";
@@ -43,7 +44,7 @@ describe("<VerificationReport />", () => {
   it("renderiza veredicto global, modelo y cupo restante", () => {
     render(<VerificationReport report={sampleReport} />);
     expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
-    expect(screen.getByText(/Veredicto global/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Veredicto global/i)).toHaveLength(2);
     expect(screen.getByText("fever-stub-v0")).toBeInTheDocument();
     expect(screen.getByText("9 / 10")).toBeInTheDocument();
   });
@@ -69,7 +70,7 @@ describe("<VerificationReport />", () => {
     expect(screen.getByRole("heading", { level: 3, name: /Afirmaciones extraídas/i })).toBeInTheDocument();
     expect(screen.getByText(/Estas son las afirmaciones concretas/i)).toBeInTheDocument();
     expect(screen.getByText("La tierra orbita el sol")).toBeInTheDocument();
-    expect(screen.getByText(/Apoyado por \[1\]\./)).toBeInTheDocument();
+    expect(screen.getByText(/Veredicto Verificado basado en 1 evidencia\(s\) \[1\]\./)).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /\[1\] NASA - orbita terrestre/ })
     ).toBeInTheDocument();
@@ -162,5 +163,24 @@ describe("<VerificationReport />", () => {
   it("devuelve null cuando no hay reporte", () => {
     const { container } = render(<VerificationReport report={null} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  it("localiza el resumen generado según el idioma activo", async () => {
+    await act(async () => {
+      await i18next.changeLanguage("en");
+    });
+
+    render(<VerificationReport report={sampleReport} />);
+
+    expect(
+      screen.getByText("Text analyzed: 1 extracted claim(s). Overall verdict: Supported.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Verdict Supported based on 1 evidence item(s) [1].")
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      await i18next.changeLanguage("es");
+    });
   });
 });

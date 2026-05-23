@@ -179,7 +179,7 @@ def test_verify_returns_verdict_for_ultra_with_plan_limits(monkeypatch):
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["plan"] == "ultra"
-    assert data["limite_diario"] == 50
+    assert data["limite_diario"] == 200
     assert data["max_claims"] == 8
     assert data["max_evidences"] == 5
 

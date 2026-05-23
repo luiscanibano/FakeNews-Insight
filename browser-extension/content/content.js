@@ -17,6 +17,7 @@
   const MAX_TEXT_LENGTH = 12000;
   const LOADING_PROGRESS_INITIAL = 9;
   const LOADING_PROGRESS_MAX = 92;
+  const LOADING_PROGRESS_COMPLETE_DELAY_MS = 180;
   const QUOTA_CACHE_KEY = "fakenews-insight-quota";
 
   // ---------------------------------------------------------------------------
@@ -72,6 +73,55 @@
       chip.dataset.low = "false";
     }
     chip.classList.remove("fn-hidden");
+  };
+
+  const normalizePlan = (plan) => {
+    const normalized = String(plan || "").trim().toLowerCase();
+    if (normalized === "free" || normalized === "pro" || normalized === "ultra") {
+      return normalized;
+    }
+    return "";
+  };
+
+  const inferPlanFromReport = (report = {}) => {
+    const maxClaims = Number(report?.max_claims || 0);
+    const maxEvidences = Number(report?.max_evidences || 0);
+    const maxChars = Number(report?.max_chars || 0);
+    const dailyLimit = Number(report?.daily_limit || 0);
+
+    if (maxClaims >= 8 || maxEvidences >= 5 || maxChars >= 12000) {
+      return "ultra";
+    }
+
+    if (maxClaims >= 3 || maxEvidences >= 3 || maxChars >= 6000 || dailyLimit >= 50) {
+      return "pro";
+    }
+
+    if (maxClaims >= 1 || maxEvidences >= 1 || maxChars >= 2000) {
+      return "free";
+    }
+
+    return "";
+  };
+
+  const resolveDisplayedPlan = (report = {}) => {
+    const reportedPlan = normalizePlan(report?.plan);
+    const inferredPlan = inferPlanFromReport(report);
+    const cachedPlan = normalizePlan(activeWidget?.cachedQuota?.plan);
+
+    if (!reportedPlan) {
+      return inferredPlan || cachedPlan || "free";
+    }
+
+    if (reportedPlan === "free" && (inferredPlan === "pro" || inferredPlan === "ultra")) {
+      return inferredPlan;
+    }
+
+    if (reportedPlan === "pro" && inferredPlan === "ultra") {
+      return inferredPlan;
+    }
+
+    return reportedPlan;
   };
 
   // ---------------------------------------------------------------------------
@@ -194,6 +244,7 @@
   // ---------------------------------------------------------------------------
   let activeWidget = null;
   let loadingProgressTimer = null;
+  let loadingProgressFinalizeTimer = null;
   let currentLanguage = "es";
   let translateMessage = null;
 
@@ -221,6 +272,11 @@
     if (loadingProgressTimer) {
       window.clearInterval(loadingProgressTimer);
       loadingProgressTimer = null;
+    }
+
+    if (loadingProgressFinalizeTimer) {
+      window.clearTimeout(loadingProgressFinalizeTimer);
+      loadingProgressFinalizeTimer = null;
     }
   };
 
@@ -312,6 +368,41 @@
     }, 140);
   };
 
+  const transitionFromLoading = (nextStep, { complete = false } = {}) => {
+    if (!activeWidget || typeof nextStep !== "function") {
+      return;
+    }
+
+    const body = activeWidget.panel.querySelector(".fn-panel-body");
+    if (!body || body.dataset.state !== "loading") {
+      clearLoadingProgressTimer();
+      nextStep();
+      return;
+    }
+
+    clearLoadingProgressTimer();
+    if (!complete) {
+      nextStep();
+      return;
+    }
+
+    updateLoadingProgress(100);
+    loadingProgressFinalizeTimer = window.setTimeout(() => {
+      loadingProgressFinalizeTimer = null;
+
+      if (!activeWidget) {
+        return;
+      }
+
+      const currentBody = activeWidget.panel.querySelector(".fn-panel-body");
+      if (currentBody !== body || currentBody?.dataset.state !== "loading") {
+        return;
+      }
+
+      nextStep();
+    }, LOADING_PROGRESS_COMPLETE_DELAY_MS);
+  };
+
   // ---------------------------------------------------------------------------
   // 4. Construccion del marco + panel anclados a la selección.
   // ---------------------------------------------------------------------------
@@ -360,7 +451,10 @@
 
     // Pinta de inmediato la cuota cacheada (si existe) en el header.
     loadQuotaCache().then((quota) => {
-      if (activeWidget?.panel === panel) renderQuotaChip(quota);
+      if (activeWidget?.panel === panel) {
+        activeWidget.cachedQuota = quota;
+        renderQuotaChip(quota);
+      }
     });
 
     // Snippet del texto seleccionado (truncado).
@@ -436,6 +530,7 @@
       savedInHistory: false,
       saveLoading: false,
       saveError: "",
+      cachedQuota: null,
     };
 
     window.addEventListener("scroll", reposition, {
@@ -578,24 +673,31 @@
     const confidence = Math.round((claim?.confidence ?? 0) * 100);
 
     return `
-      <li class="fn-claim">
-        <div class="fn-claim-head">
-          <span class="fn-claim-index">#${index + 1}</span>
-          <p class="fn-claim-text">${escapeHtml(claim?.text || "")}</p>
-          <span class="fn-claim-badge" data-tone="${tone}">${escapeHtml(getVerdictLabel(label))}</span>
-          <span class="fn-claim-confidence" title="${escapeHtml(translate("verify.confidence", {}, "Aggregate confidence"))}">${confidence}%</span>
-        </div>
-        ${claim?.rationale ? `<p class="fn-rationale">${escapeHtml(claim.rationale)}</p>` : ""}
-        ${evidences.length > 0
-          ? `
-            <div class="fn-evidence-card">
-              <p class="fn-evidence-label">${escapeHtml(translate("verify.evidences", {}, "Evidence"))}</p>
-              <ol class="fn-evidences-inline">
-                ${evidences.map((evidence, evidenceIndex) => renderEvidence(evidence, evidenceIndex, evidences.length)).join("")}
-              </ol>
+      <li>
+        <details class="fn-claim">
+          <summary class="fn-claim-summary">
+            <div class="fn-claim-head">
+              <span class="fn-claim-index">#${index + 1}</span>
+              <p class="fn-claim-text">${escapeHtml(claim?.text || "")}</p>
+              <span class="fn-claim-badge" data-tone="${tone}">${escapeHtml(getVerdictLabel(label))}</span>
+              <span class="fn-claim-confidence" title="${escapeHtml(translate("verify.confidence", {}, "Aggregate confidence"))}">${confidence}%</span>
             </div>
-          `
-          : `<p class="fn-no-evidence">${escapeHtml(translate("verify.noEvidence", {}, "Not enough web evidence."))}</p>`}
+            <span class="fn-claim-chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="fn-claim-body">
+            ${claim?.rationale ? `<p class="fn-rationale">${escapeHtml(claim.rationale)}</p>` : ""}
+            ${evidences.length > 0
+              ? `
+                <div class="fn-evidence-card">
+                  <p class="fn-evidence-label">${escapeHtml(translate("verify.evidences", {}, "Evidence"))}</p>
+                  <ol class="fn-evidences-inline">
+                    ${evidences.map((evidence, evidenceIndex) => renderEvidence(evidence, evidenceIndex, evidences.length)).join("")}
+                  </ol>
+                </div>
+              `
+              : `<p class="fn-no-evidence">${escapeHtml(translate("verify.noEvidence", {}, "Not enough web evidence."))}</p>`}
+          </div>
+        </details>
       </li>
     `;
   };
@@ -612,15 +714,16 @@
     }
   };
 
-  const renderVerifyReport = (report) => {
+  const renderVerifyReportContent = (report) => {
     clearLoadingProgressTimer();
     const overall = String(report?.overall_label || "").toUpperCase();
     const tone = VERIFY_LABEL_TONE[overall] || "unknown";
     const label = getVerdictLabel(overall);
 
-    const plan = String(report?.plan || "free").toUpperCase();
-    const remaining = report?.remaining_today;
-    const limit = report?.daily_limit;
+    const resolvedPlan = resolveDisplayedPlan(report);
+    const plan = String(resolvedPlan || "free").toUpperCase();
+    const remaining = report?.remaining_today ?? activeWidget?.cachedQuota?.remaining ?? null;
+    const limit = report?.daily_limit ?? activeWidget?.cachedQuota?.limit ?? null;
     const quotaText = buildQuotaText(plan, remaining, limit);
 
     if (activeWidget) {
@@ -638,11 +741,14 @@
     }
 
     const quotaPayload = {
-      plan: report?.plan || "free",
+      plan: resolvedPlan || "free",
       remaining: remaining ?? null,
       limit: limit ?? null,
       updatedAt: Date.now(),
     };
+    if (activeWidget) {
+      activeWidget.cachedQuota = quotaPayload;
+    }
     saveQuotaCache(quotaPayload);
     renderQuotaChip(quotaPayload);
 
@@ -700,6 +806,10 @@
       "verify"
     );
     attachVerifyActions();
+  };
+
+  const renderVerifyReport = (report) => {
+    transitionFromLoading(() => renderVerifyReportContent(report), { complete: true });
   };
 
   const handleSaveVerification = async () => {
@@ -799,7 +909,14 @@
   // ---------------------------------------------------------------------------
   // 7. Listener de selección + cierre por interaccion externa.
   // ---------------------------------------------------------------------------
-  const handleMouseUp = () => {
+  const handleMouseUp = (event) => {
+    if (activeWidget) {
+      const path = typeof event?.composedPath === "function" ? event.composedPath() : [];
+      if (path.includes(activeWidget.panel) || path.includes(activeWidget.frame)) {
+        return;
+      }
+    }
+
     setTimeout(() => {
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed) {

@@ -13,17 +13,17 @@ const VERIFICATION_HISTORY_SAVE_PATH = "/verification-history/save";
 const LAST_HISTORY_SAVE_PAYLOAD_KEY = "fakenews-insight-last-history-save-payload";
 
 const shouldRetryOnAlternateBackend = ({ path, status, message }) => {
-  if (status >= 500) {
-    return true;
+  if (path === VERIFICATION_HISTORY_SAVE_PATH) {
+    if (status !== 400) {
+      return false;
+    }
+
+    return /run_id|informe de verificaci|input_text|required|verification report/i.test(
+      String(message || "")
+    );
   }
 
-  if (path !== VERIFICATION_HISTORY_SAVE_PATH || status !== 400) {
-    return false;
-  }
-
-  return /run_id|informe de verificaci|input_text|required|verification report/i.test(
-    String(message || "")
-  );
+  return status >= 500;
 };
 
 export const serializeVerificationReport = (report) => {
@@ -152,9 +152,15 @@ export const saveVerificationHistoryPayload = async (payload = {}) => {
 const normalizeBaseUrl = (baseUrl) => String(baseUrl || "").trim().replace(/\/+$/, "");
 
 const getApiBaseUrls = () => {
+  const enableFallbacks =
+    CONFIG.ANALYSIS_API_ENABLE_FALLBACKS === true ||
+    /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?$/i.test(
+      normalizeBaseUrl(CONFIG.ANALYSIS_API_BASE_URL)
+    );
+
   const configured = [
     CONFIG.ANALYSIS_API_BASE_URL,
-    ...(Array.isArray(CONFIG.ANALYSIS_API_FALLBACK_BASE_URLS)
+    ...(enableFallbacks && Array.isArray(CONFIG.ANALYSIS_API_FALLBACK_BASE_URLS)
       ? CONFIG.ANALYSIS_API_FALLBACK_BASE_URLS
       : []),
   ];

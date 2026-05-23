@@ -61,6 +61,18 @@ PAID_PLANS = {PLAN_PRO, PLAN_ULTRA}
 # Planes con verificacion FEVER/NLI completa o limitada segun cuota.
 PLANS_WITH_VERIFY = {PLAN_FREE, PLAN_PRO, PLAN_ULTRA}
 
+VERIFY_DAILY_LIMITS = {
+    PLAN_FREE: 5,
+    PLAN_PRO: 50,
+    PLAN_ULTRA: 200,
+}
+
+
+def _verification_limit_for_plan(plan: Optional[str]) -> int:
+    """Devuelve el límite diario FEVER persistible para el plan indicado."""
+    normalized_plan = str(plan or PLAN_FREE).strip().lower()
+    return VERIFY_DAILY_LIMITS.get(normalized_plan, VERIFY_DAILY_LIMITS[PLAN_FREE])
+
 
 def _price_for_plan(plan: str) -> str:
     """Devuelve el price_id de Stripe configurado para el plan dado."""
@@ -371,6 +383,7 @@ def billing_checkout(
             user_id,
             {
                 "plan": target_plan,
+                "daily_verification_limit": _verification_limit_for_plan(target_plan),
                 "stripe_subscription_status": updated.get("status"),
                 "current_period_end": period_end_iso,
                 "scheduled_plan": None,
@@ -545,6 +558,7 @@ def billing_confirm(
         user_id,
         {
             "plan": plan,
+            "daily_verification_limit": _verification_limit_for_plan(plan),
             "stripe_customer_id": subscription.get("customer") or session.get("customer"),
             "stripe_subscription_id": subscription.get("id"),
             "stripe_subscription_status": subscription.get("status"),
@@ -607,6 +621,7 @@ def _apply_subscription_to_profile(profile_id: str, subscription: Dict[str, Any]
 
     update: Dict[str, Any] = {
         "plan": plan,
+        "daily_verification_limit": _verification_limit_for_plan(plan),
         "stripe_subscription_id": subscription.get("id"),
         "stripe_subscription_status": subscription.get("status"),
         "current_period_end": period_end_iso,
@@ -629,6 +644,7 @@ def _clear_subscription_for_profile(profile_id: str) -> None:
         profile_id,
         {
             "plan": PLAN_FREE,
+            "daily_verification_limit": _verification_limit_for_plan(PLAN_FREE),
             "stripe_subscription_id": None,
             "stripe_subscription_status": "canceled",
             "current_period_end": None,

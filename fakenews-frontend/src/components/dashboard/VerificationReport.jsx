@@ -33,6 +33,37 @@ const VERDICT_TO_PANEL_CLASS = {
 
 const VERDICT_ORDER = ["SUPPORTED", "REFUTED", "NOT_ENOUGH_INFO", "CONFLICTING"];
 
+const buildLocalizedSummary = ({ report, t }) => {
+  const claimsCount = Array.isArray(report?.claims) ? report.claims.length : 0;
+
+  if (claimsCount === 0) {
+    return t("verify.summary.noClaims", "No verifiable claims could be extracted from the text.");
+  }
+
+  return t("verify.summary.generated", {
+    count: claimsCount,
+    verdict: t(`verify.verdict.${report?.veredicto_global}`, report?.veredicto_global),
+    defaultValue: "Text analyzed: {{count}} extracted claim(s). Overall verdict: {{verdict}}.",
+  });
+};
+
+const buildLocalizedClaimRationale = ({ claim, t }) => {
+  const evidenceCount = Array.isArray(claim?.evidencias) ? claim.evidencias.length : 0;
+
+  if (evidenceCount === 0) {
+    return "";
+  }
+
+  const citations = claim.evidencias.map((_, index) => `[${index + 1}]`).join(" ");
+
+  return t("verify.rationale.generated", {
+    count: evidenceCount,
+    citations,
+    verdict: t(`verify.verdict.${claim?.veredicto}`, claim?.veredicto),
+    defaultValue: "Verdict {{verdict}} based on {{count}} evidence item(s) {{citations}}.",
+  });
+};
+
 /** Componente principal del informe de verificacion. */
 function VerificationReport({
   report,
@@ -52,6 +83,7 @@ function VerificationReport({
 
   const overallTitleTone = VERDICT_TO_TEXT_CLASS[report.veredicto_global] || "text-white";
   const overallPanelTone = VERDICT_TO_PANEL_CLASS[report.veredicto_global] || "border-outline-variant/25";
+  const summaryText = buildLocalizedSummary({ report, t });
   const reportTitleId = `${idPrefix}-title`;
   const guideTitleId = `${idPrefix}-guide-title`;
   const guideContentId = `${idPrefix}-guide-content`;
@@ -85,8 +117,8 @@ function VerificationReport({
             <h2 id={reportTitleId} className={`mt-3 font-headline text-3xl font-bold sm:text-4xl ${overallTitleTone}`}>
               {t(`verify.verdict.${report.veredicto_global}`, report.veredicto_global)}
             </h2>
-            {report.resumen ? (
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-on-surface-variant">{report.resumen}</p>
+            {summaryText ? (
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-on-surface-variant">{summaryText}</p>
             ) : null}
 
             {typeof onSaveResult === "function" ? (
@@ -207,6 +239,11 @@ function VerificationReport({
         <ol className="space-y-3" aria-label={t("verify.claimsLabel", "Afirmaciones") }>
         {report.claims.map((claim, idx) => (
           <li key={claim.id || idx} className={`rounded-2xl border bg-surface/50 p-3 sm:p-4 ${VERDICT_TO_PANEL_CLASS[claim.veredicto] || "border-outline-variant/25"}`}>
+            {(() => {
+              const rationaleText = buildLocalizedClaimRationale({ claim, t });
+
+              return (
+                <>
             <header className="flex flex-wrap items-start gap-2">
               <span className="rounded-full border border-outline-variant/30 px-2 py-1 text-xs font-bold text-on-surface-variant" aria-hidden="true">#{idx + 1}</span>
               <p className="min-w-0 flex-1 text-sm font-semibold leading-relaxed text-on-surface">{claim.texto}</p>
@@ -220,8 +257,8 @@ function VerificationReport({
                 {Math.round((claim.confianza ?? 0) * 100)}%
               </span>
             </header>
-            {claim.razonamiento ? (
-              <p className="mt-3 text-xs leading-relaxed text-on-surface-variant">{claim.razonamiento}</p>
+            {rationaleText ? (
+              <p className="mt-3 text-xs leading-relaxed text-on-surface-variant">{rationaleText}</p>
             ) : null}
             {claim.evidencias?.length > 0 ? (
               <div className="mt-3 rounded-xl border border-outline-variant/20 bg-surface-container-low/40 px-3 py-2">
@@ -254,6 +291,9 @@ function VerificationReport({
                 {t("verify.noEvidence", "Sin evidencias web suficientes.")}
               </p>
             )}
+                </>
+              );
+            })()}
           </li>
         ))}
         </ol>

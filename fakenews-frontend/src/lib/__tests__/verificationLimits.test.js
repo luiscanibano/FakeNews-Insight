@@ -6,7 +6,7 @@ describe("verificationLimits", () => {
   it("alinea la cuota diaria con los planes publicados", () => {
     expect(getVerifyDailyLimit(USER_PLAN.FREE)).toBe(5);
     expect(getVerifyDailyLimit(USER_PLAN.PRO)).toBe(50);
-    expect(getVerifyDailyLimit(USER_PLAN.ULTRA)).toBe(50);
+    expect(getVerifyDailyLimit(USER_PLAN.ULTRA)).toBe(200);
   });
 
   it("mantiene los límites de claims/evidencias implícitos por longitud de texto por plan", () => {

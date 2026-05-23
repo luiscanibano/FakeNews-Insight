@@ -274,6 +274,13 @@
     "subtitle": "Extrae afirmaciones del texto, recupera evidencias web y calcula etiquetas FEVER/NLI.",
     "action": "Verificar",
     "submitting": "Verificando...",
+    "summary": {
+      "generated": "Texto analizado: {{count}} afirmacion(es) extraida(s). Veredicto global: {{verdict}}.",
+      "noClaims": "No se pudieron extraer afirmaciones verificables del texto."
+    },
+    "rationale": {
+      "generated": "Veredicto {{verdict}} basado en {{count}} evidencia(s) {{citations}}."
+    },
     "overallLabel": "Veredicto global",
     "claimsLabel": "Afirmaciones extraídas",
     "claimsIntro": "Estas son las afirmaciones concretas que el sistema ha extraído del texto para contrastarlas con evidencias web.",

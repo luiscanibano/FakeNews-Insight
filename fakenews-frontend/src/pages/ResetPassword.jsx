@@ -35,6 +35,7 @@ function ResetPassword() {
  */
   const setRecoverySession = useAuthStore((state) => state.setRecoverySession);
   const updatePassword = useAuthStore((state) => state.updatePassword);
+  const logout = useAuthStore((state) => state.logout);
   const loading = useAuthStore((state) => state.loading);
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
@@ -109,6 +110,7 @@ function ResetPassword() {
 
     try {
       await updatePassword({ password: submittedPassword });
+      await logout();
       setSuccessMessage(t("reset.successMessage"));
       setTimeout(() => {
         navigate("/login", {

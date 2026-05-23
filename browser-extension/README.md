@@ -43,8 +43,11 @@ Antes de cargar la extensión, edita
 SUPABASE_URL: "https://<tu-proyecto>.supabase.co",
 SUPABASE_ANON_KEY: "eyJhbGciOi...",       // mismo VITE_SUPABASE_ANON_KEY que el frontend
 ANALYSIS_API_BASE_URL: "https://api.fakenewsinsight.com",
+ANALYSIS_API_ENABLE_FALLBACKS: false,     // activar solo en desarrollo controlado
 WEB_REGISTER_URL: "https://<tu-proyecto>.pages.dev/register",
 ```
+
+Si quieres que la extension reintente contra backends locales (`localhost`, `127.0.0.1`), actívalo manualmente con `ANALYSIS_API_ENABLE_FALLBACKS: true`. Para una versión distribuida a usuarios finales debe quedarse en `false`.
 
 > El `anon key` de Supabase es público por diseño; la seguridad real reside en
 > las políticas **RLS** de tu base de datos. No lo confundas con el

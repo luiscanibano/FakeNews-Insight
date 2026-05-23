@@ -274,6 +274,13 @@
     "subtitle": "Extracts claims from text, retrieves web evidence and computes FEVER/NLI labels.",
     "action": "Verify",
     "submitting": "Verifying...",
+    "summary": {
+      "generated": "Text analyzed: {{count}} extracted claim(s). Overall verdict: {{verdict}}.",
+      "noClaims": "No verifiable claims could be extracted from the text."
+    },
+    "rationale": {
+      "generated": "Verdict {{verdict}} based on {{count}} evidence item(s) {{citations}}."
+    },
     "overallLabel": "Overall verdict",
     "claimsLabel": "Extracted claims",
     "claimsIntro": "These are the concrete claims the system extracted from the text to contrast them against web evidence.",

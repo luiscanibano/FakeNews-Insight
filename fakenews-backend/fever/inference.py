@@ -17,6 +17,11 @@ from typing import Protocol
 from .schemas import NLIScore
 
 
+# Evita advisory warnings ruidosos de transformers cuando trabajamos con
+# tokenizers/ONNX sin backends de entrenamiento completos instalados.
+os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
+
+
 class NLIClassifier(Protocol):
     """Protocolo para clasificadores NLI sustituibles."""
 
@@ -53,7 +58,10 @@ class FeverNLIClassifier:
         # en entornos donde el agente no se usa.
         from transformers import AutoModelForSequenceClassification, AutoTokenizer  # type: ignore
 
-        self._tokenizer = AutoTokenizer.from_pretrained(str(self.model_path))
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            str(self.model_path),
+            fix_mistral_regex=True,
+        )
         self._model = AutoModelForSequenceClassification.from_pretrained(
             str(self.model_path)
         )
@@ -107,7 +115,10 @@ class OnnxNLIClassifier:
         import onnxruntime as ort  # type: ignore
         from transformers import AutoTokenizer  # type: ignore
 
-        self._tokenizer = AutoTokenizer.from_pretrained(str(self.model_path))
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            str(self.model_path),
+            fix_mistral_regex=True,
+        )
         providers = ["CPUExecutionProvider"]
         self._session = ort.InferenceSession(str(onnx_file), providers=providers)
         self._input_names = [i.name for i in self._session.get_inputs()]

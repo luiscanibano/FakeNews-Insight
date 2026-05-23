@@ -51,6 +51,7 @@ class FakeProfile:
         self.data: Dict[str, Any] = {
             "id": USER_ID,
             "plan": "free",
+            "daily_verification_limit": None,
             "role": "user",
             "stripe_customer_id": None,
             "stripe_subscription_id": None,
@@ -151,6 +152,7 @@ def test_checkout_upgrade_pro_to_ultra_is_prorated(fake_profile, stripe_mock):
     fake_profile.data.update(
         {
             "plan": "pro",
+            "daily_verification_limit": 50,
             "stripe_customer_id": "cus_existing",
             "stripe_subscription_id": "sub_123",
             "stripe_subscription_status": "active",
@@ -174,6 +176,7 @@ def test_checkout_upgrade_pro_to_ultra_is_prorated(fake_profile, stripe_mock):
     assert body["status"] == "upgraded"
     assert body["plan"] == "ultra"
     assert body["prorated"] is True
+    assert fake_profile.data["daily_verification_limit"] == 200
 
     modify_kwargs = stripe_mock.Subscription.modify.call_args.kwargs
     assert modify_kwargs["proration_behavior"] == "create_prorations"
@@ -327,6 +330,7 @@ def test_webhook_processes_subscription_updated_once(fake_profile, stripe_mock):
     assert first.status_code == 200
     assert first.json() == {"received": True}
     assert fake_profile.data["plan"] == "ultra"
+    assert fake_profile.data["daily_verification_limit"] == 200
 
     fake_profile.data["plan"] = "free"
     second = client.post("/billing/webhook", content=body, headers=headers)
@@ -340,6 +344,7 @@ def test_webhook_subscription_deleted_returns_to_free(fake_profile, stripe_mock)
     fake_profile.data.update(
         {
             "plan": "pro",
+            "daily_verification_limit": 50,
             "stripe_customer_id": "cus_d",
             "stripe_subscription_id": "sub_d",
         }
@@ -359,7 +364,36 @@ def test_webhook_subscription_deleted_returns_to_free(fake_profile, stripe_mock)
     )
     assert response.status_code == 200
     assert fake_profile.data["plan"] == "free"
+    assert fake_profile.data["daily_verification_limit"] == 5
     assert fake_profile.data["stripe_subscription_id"] is None
+
+
+def test_billing_confirm_updates_verification_limit_when_session_is_ultra(fake_profile, stripe_mock):
+    stripe_mock.checkout.Session.retrieve.return_value = {
+        "id": "cs_ultra",
+        "client_reference_id": USER_ID,
+        "payment_status": "paid",
+        "customer": "cus_ultra",
+        "subscription": {
+            "id": "sub_ultra",
+            "customer": "cus_ultra",
+            "status": "active",
+            "cancel_at_period_end": False,
+            "current_period_end": 1_900_000_000,
+            "items": {"data": [{"id": "si_ultra", "price": {"id": "price_ultra_test"}}]},
+        },
+    }
+
+    response = client.post(
+        "/billing/confirm",
+        json={"session_id": "cs_ultra"},
+        headers=AUTH_HEADER,
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["plan"] == "ultra"
+    assert fake_profile.data["plan"] == "ultra"
+    assert fake_profile.data["daily_verification_limit"] == 200
 
 
 def test_billing_routes_are_registered():
