@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 const navigateMock = vi.fn();
@@ -114,7 +114,10 @@ describe("<ResetPassword />", () => {
 
     const passwordInput = await screen.findByLabelText(/nueva contraseña/i);
 
-    expect(passwordInput).not.toBeDisabled();
+    await waitFor(() => {
+      expect(passwordInput).not.toBeDisabled();
+    });
+
     expect(screen.queryByText(/inválido|ha expirado/i)).not.toBeInTheDocument();
     expect(setRecoverySessionMock).not.toHaveBeenCalled();
   });
