@@ -18,6 +18,7 @@
   const LOADING_PROGRESS_INITIAL = 9;
   const LOADING_PROGRESS_MAX = 92;
   const LOADING_PROGRESS_COMPLETE_DELAY_MS = 180;
+  const TASK_POLL_INTERVAL_MS = 1500;
   const QUOTA_CACHE_KEY = "fakenews-insight-quota";
 
   // ---------------------------------------------------------------------------
@@ -209,6 +210,104 @@
     input_text: inputText || undefined,
     report: serializeVerificationReport(report) || undefined,
   });
+
+  const delay = (ms) =>
+    new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+
+  const getTaskStateUi = (status) => {
+    const language = currentLanguage === "en" ? "en" : "es";
+    const copy = {
+      es: {
+        pendingLabel: "En cola",
+        pendingCopy: "La verificación ya está encolada. Puedes cerrar este panel y seguirla desde la extensión.",
+        processingLabel: "Analizando",
+        processingCopy: "El backend está verificando afirmaciones y reuniendo evidencias para este texto.",
+      },
+      en: {
+        pendingLabel: "Queued",
+        pendingCopy: "This verification is queued already. You can close this panel and keep tracking it in the extension.",
+        processingLabel: "Checking",
+        processingCopy: "The backend is verifying claims and collecting evidence for this text.",
+      },
+    }[language];
+
+    if (status === "processing") {
+      return {
+        label: copy.processingLabel,
+        description: copy.processingCopy,
+      };
+    }
+
+    return {
+      label: copy.pendingLabel,
+      description: copy.pendingCopy,
+    };
+  };
+
+  const renderTaskLoadingState = (status = "pending") => {
+    if (!activeWidget) return;
+
+    const ui = getTaskStateUi(status);
+    const body = activeWidget.panel.querySelector(".fn-panel-body");
+    if (!body || body.dataset.state !== "loading") {
+      return;
+    }
+
+    const badge = body.querySelector(".fn-task-state-badge");
+    const copy = body.querySelector(".fn-task-state-copy");
+    if (badge) {
+      badge.dataset.state = status;
+      badge.textContent = ui.label;
+    }
+    if (copy) {
+      copy.textContent = ui.description;
+    }
+  };
+
+  const mapTaskToReport = (task) => ({
+    ...(task?.result || {}),
+    run_id: task?.runId || task?.result?.run_id || null,
+    plan: task?.plan ?? task?.result?.plan ?? null,
+    remaining_today: task?.remainingToday ?? task?.result?.remaining_today ?? null,
+    daily_limit: task?.dailyLimit ?? task?.result?.daily_limit ?? null,
+    max_claims: task?.maxClaims ?? task?.result?.max_claims ?? null,
+    max_evidences: task?.maxEvidences ?? task?.result?.max_evidences ?? null,
+    max_chars: task?.maxChars ?? task?.result?.max_chars ?? null,
+    saved_to_history: Boolean(task?.savedInHistory),
+  });
+
+  const waitForVerificationTask = async (taskId) => {
+    const normalizedTaskId = String(taskId || "").trim();
+    if (!normalizedTaskId) {
+      throw new Error(translate("errors.genericVerify", {}, "The text could not be verified."));
+    }
+
+    while (activeWidget && String(activeWidget.taskId || "").trim() === normalizedTaskId) {
+      const task = await sendToBackground("fn:task-get", {
+        taskId: normalizedTaskId,
+        refresh: true,
+      });
+
+      if (task?.status === "completed" && task?.result) {
+        return mapTaskToReport(task);
+      }
+
+      if (task?.status === "failed") {
+        throw new Error(
+          task?.error ||
+            translate("errors.genericVerify", {}, "The text could not be verified.")
+        );
+      }
+
+      renderTaskLoadingState(task?.status || "pending");
+
+      await delay(TASK_POLL_INTERVAL_MS);
+    }
+
+    return null;
+  };
 
   // ---------------------------------------------------------------------------
   // 2. Shadow DOM contenedor unico.
@@ -553,13 +652,17 @@
     requestAnimationFrame(() => activeWidget?.onScroll?.());
   };
 
-  const renderLoading = () => {
+  const renderLoading = (taskStatus = "pending") => {
     clearLoadingProgressTimer();
+    const taskUi = getTaskStateUi(taskStatus);
     setPanelBody(
       `
       <div class="fn-loading">
         <span class="fn-spinner" aria-hidden="true"></span>
         <span>${escapeHtml(translate("analyze.loadingTitle", {}, "Verifying selected claims..."))}</span>
+      </div>
+      <div class="fn-task-state-row">
+        <span class="fn-task-state-badge" data-state="${escapeHtml(taskStatus)}">${escapeHtml(taskUi.label)}</span>
       </div>
       <div class="fn-progress" role="progressbar" aria-label="Verificando" aria-valuenow="${LOADING_PROGRESS_INITIAL}" aria-valuemin="0" aria-valuemax="100">
         <div class="fn-progress-bar" style="width: ${LOADING_PROGRESS_INITIAL}%"></div>
@@ -572,6 +675,7 @@
         )
       )}</p>
       <p class="fn-loading-stage">${getLoadingStage(LOADING_PROGRESS_INITIAL)}</p>
+      <p class="fn-task-state-copy">${escapeHtml(taskUi.description)}</p>
       <p class="fn-loading-hint">${escapeHtml(translate("analyze.loadingHint", {}, "The first verification after some idle time may take 10-30s while the server wakes up."))}</p>
     `,
       "loading"
@@ -853,6 +957,11 @@
           report: activeWidget.report,
           inputText: activeWidget.text,
         });
+        if (activeWidget.taskId) {
+          await sendToBackground("fn:task-dismiss", {
+            taskId: activeWidget.taskId,
+          }).catch(() => null);
+        }
       }
     } catch (error) {
       if (error?.sessionExpired) {
@@ -886,7 +995,7 @@
       return;
     }
 
-    renderLoading();
+    renderLoading("pending");
 
     const session = await libs.loadSession().catch(() => null);
     if (!session) {
@@ -895,7 +1004,24 @@
     }
 
     try {
-      const report = await sendToBackground("fn:verify", { text });
+      const task = await sendToBackground("fn:verify-submit", {
+        text,
+        source: "content",
+      });
+
+      if (!activeWidget) {
+        return;
+      }
+
+      activeWidget.taskId = task?.taskId || task?.runId || null;
+      activeWidget.runId = task?.runId || null;
+      renderTaskLoadingState(task?.status || "pending");
+
+      const report = task?.result ? mapTaskToReport(task) : await waitForVerificationTask(activeWidget.taskId);
+      if (!report) {
+        return;
+      }
+
       renderVerifyReport(report);
     } catch (error) {
       if (error?.sessionExpired) {

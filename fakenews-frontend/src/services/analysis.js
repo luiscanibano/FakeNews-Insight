@@ -44,6 +44,9 @@ const ANALYSIS_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_SAVE_PATH}`;
 const ANALYSIS_VERIFY_ENDPOINT = `${ANALYSIS_API_BASE_URL}${ANALYSIS_VERIFY_PATH}`;
 const VERIFICATION_HISTORY_SAVE_ENDPOINT = `${ANALYSIS_API_BASE_URL}${VERIFICATION_HISTORY_SAVE_PATH}`;
 
+const buildVerificationStatusEndpoint = (runId) =>
+  `${ANALYSIS_VERIFY_ENDPOINT}/${encodeURIComponent(runId)}`;
+
 /** Extrae un mensaje de error legible desde la respuesta HTTP o usa un fallback semántico. */
 const getErrorMessage = async (response, fallbackMessage) => {
   try {
@@ -194,6 +197,34 @@ export const verifyClaims = async ({ text, jwtToken }) => {
         ? "No quedan verificaciones disponibles para tu plan."
         : "No se pudo verificar el texto en este momento.";
     const message = await getErrorMessage(response, fallback);
+    throw new Error(message);
+  }
+
+  return response.json();
+};
+
+/** Consulta el estado actual de una verificacion asincrona ya enviada al backend. */
+export const getVerificationStatus = async ({ runId, jwtToken }) => {
+  if (!jwtToken) {
+    throw new Error("Tu sesión no es válida. Inicia sesión de nuevo.");
+  }
+
+  if (!runId) {
+    throw new Error("No se encontró el identificador de la verificación.");
+  }
+
+  const response = await fetch(buildVerificationStatusEndpoint(runId), {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const message = await getErrorMessage(
+      response,
+      "No se pudo consultar el estado de la verificación."
+    );
     throw new Error(message);
   }
 

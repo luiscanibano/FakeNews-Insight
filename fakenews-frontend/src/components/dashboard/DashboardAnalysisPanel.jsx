@@ -12,6 +12,7 @@ function DashboardAnalysisPanel({
   modeTagline,
   canUseCsvAnalysis,
   isAnalysing,
+  disableInteractions = false,
   onModeChange,
   onSubmit,
   textPayload,
@@ -52,7 +53,7 @@ function DashboardAnalysisPanel({
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => onModeChange(mode.id)}
-                disabled={mode.locked || isAnalysing}
+                disabled={mode.locked || disableInteractions}
                 className={`dash-seg-item ${isActive ? "is-active" : ""}`}
               >
                 <Icon className="size-3.5" />
@@ -74,7 +75,7 @@ function DashboardAnalysisPanel({
                 value={textPayload}
                 onChange={(event) => onTextPayloadChange(event.target.value)}
                 placeholder={t("analysisPanel.textPlaceholder")}
-                disabled={isAnalysing}
+                disabled={disableInteractions}
                 maxLength={maxTextLength}
                 className="dash-textarea"
               />
@@ -97,7 +98,7 @@ function DashboardAnalysisPanel({
                 type="url"
                 placeholder={t("analysisPanel.urlPlaceholder")}
                 value={urlPayload}
-                disabled={isAnalysing}
+                disabled={disableInteractions}
                 onChange={(event) => onUrlPayloadChange(event.target.value)}
                 className="dash-input mt-2"
               />
@@ -119,7 +120,7 @@ function DashboardAnalysisPanel({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isAnalysing}
+                disabled={disableInteractions}
                 className="dash-drop"
               >
                 <span className="dash-drop-icon">
@@ -152,8 +153,8 @@ function DashboardAnalysisPanel({
           <p className="dash-panel-meta">
             {isAnalysing ? t("analysisPanel.processing") : t("analysisPanel.ready")}
           </p>
-          <button type="submit" disabled={isAnalysing} className="dash-cta">
-            {isAnalysing ? t("analysisPanel.analyzing") : t("analysisPanel.analyze")}
+          <button type="submit" disabled={disableInteractions} className="dash-cta">
+            {disableInteractions ? t("analysisPanel.analyzing") : t("analysisPanel.analyze")}
             <ArrowRight className="dash-cta-arrow size-4" aria-hidden="true" />
           </button>
         </div>

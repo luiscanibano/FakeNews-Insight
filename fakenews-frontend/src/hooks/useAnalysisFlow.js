@@ -65,6 +65,8 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const progressTimerRef = useRef(null);
   const finalizeTimerRef = useRef(null);
 
+  const verificationTasks = useAnalysisStore((state) => state.tasks);
+  const selectedVerificationTaskId = useAnalysisStore((state) => state.selectedTaskId);
   const textResult = useAnalysisStore((state) => state.result);
   const isTextAnalysing = useAnalysisStore((state) => state.isAnalysing);
   const textAnalysisProgress = useAnalysisStore((state) => state.analysisProgress);
@@ -72,12 +74,15 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const saveTextAnalysisError = useAnalysisStore((state) => state.saveError);
   const isSavingTextAnalysis = useAnalysisStore((state) => state.saveLoading);
   const analyzeText = useAnalysisStore((state) => state.analyzeText);
+  const selectVerificationTask = useAnalysisStore((state) => state.selectTask);
+  const saveVerificationTaskToHistory = useAnalysisStore(
+    (state) => state.saveTaskResultToHistory
+  );
   const fetchHomeData = useDashboardStore((state) => state.fetchHomeData);
   const saveCurrentTextResultToHistory = useAnalysisStore(
     (state) => state.saveCurrentResultToHistory
   );
   const clearTextAnalysisError = useAnalysisStore((state) => state.clearError);
-  const resetTextAnalysis = useAnalysisStore((state) => state.reset);
   const maxTextLength = getVerifyTextMaxLength(plan);
 
   const clearPendingTimers = () => {
@@ -103,7 +108,6 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
 
     setLocalError("");
     clearTextAnalysisError();
-    resetTextAnalysis();
     setMockResult(null);
     setIsMockAnalysing(false);
     clearPendingTimers();
@@ -174,6 +178,7 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
       clearTextAnalysisError();
       try {
         await analyzeText(textSnapshot);
+        setTextPayload("");
         if (user?.id) {
           void fetchHomeData({ userId: user.id, fallbackPlan: plan });
         }
@@ -223,6 +228,13 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const result = analysisMode === ANALYSIS_MODE.TEXT ? textResult : mockResult;
   const resolvedError =
     localError || (analysisMode === ANALYSIS_MODE.TEXT ? textAnalysisError : "");
+  const disableAnalysisPanelInteractions =
+    analysisMode === ANALYSIS_MODE.TEXT ? false : isMockAnalysing;
+
+  const handleSelectVerificationTask = (taskId) => {
+    setAnalysisMode(ANALYSIS_MODE.TEXT);
+    selectVerificationTask(taskId);
+  };
 
   return {
     analysisMode,
@@ -236,13 +248,18 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
     resolvedError,
     isSavingTextAnalysis,
     saveTextAnalysisError,
+    verificationTasks,
+    selectedVerificationTaskId,
     maxTextLength,
     minTextLength: VERIFY_TEXT_MIN_LENGTH,
+    disableAnalysisPanelInteractions,
     handleModeChange,
     handleSubmit,
     handleTextPayloadChange,
     handleUrlPayloadChange,
     handleCsvPick,
+    selectVerificationTask: handleSelectVerificationTask,
+    saveVerificationTaskToHistory,
     saveCurrentTextResultToHistory,
   };
 };

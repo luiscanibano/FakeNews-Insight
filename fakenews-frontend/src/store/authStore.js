@@ -4,6 +4,7 @@
  */
 
 import { create } from "zustand";
+import { useAnalysisStore } from "./analysisStore";
 import {
   getCurrentUser,
   getProfileByUserId,
@@ -31,6 +32,14 @@ const getUserFromAuthData = (authData) =>
   authData?.user || authData?.session?.user || null;
 
 let initializeAuthInFlightPromise = null;
+
+const resetAnalysisState = () => {
+  try {
+    useAnalysisStore.getState().reset();
+  } catch {
+    /** Ignore reset issues during auth transitions. */
+  }
+};
 
 /** Comprueba si la ultima actividad del usuario supera el umbral de inactividad permitido. */
 const hasExpiredByInactivity = (userId, { allowGlobalFallback = true } = {}) => {
@@ -127,6 +136,7 @@ export const useAuthStore = create((set) => ({
 
         if (user?.id && hasExpiredByInactivity(user.id, { allowGlobalFallback: true })) {
           clearSessionActivity();
+          resetAnalysisState();
 
           try {
             await logout();
@@ -164,6 +174,7 @@ export const useAuthStore = create((set) => ({
     onAuthStateChange(async (event, user) => {
       if (!user) {
         clearSessionActivity();
+        resetAnalysisState();
         set({
           user: null,
           profile: null,
@@ -181,6 +192,7 @@ export const useAuthStore = create((set) => ({
        */
       if (hasExpiredByInactivity(user.id, { allowGlobalFallback: event !== "SIGNED_IN" })) {
         clearSessionActivity();
+        resetAnalysisState();
 
         try {
           await logout();
@@ -221,6 +233,7 @@ export const useAuthStore = create((set) => ({
     try {
       await logout();
       clearSessionActivity();
+      resetAnalysisState();
       set({
         user: null,
         profile: null,
@@ -234,6 +247,7 @@ export const useAuthStore = create((set) => ({
        * que el usuario permanezca visualmente autenticado.
        */
       clearSessionActivity();
+      resetAnalysisState();
       set({
         user: null,
         profile: null,

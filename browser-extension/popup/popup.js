@@ -8,7 +8,6 @@ import { CONFIG } from "../lib/config.js";
 import {
   buildVerificationHistorySavePayload,
   saveVerificationHistoryPayload,
-  verifyText,
 } from "../lib/api.js";
 import {
   getLanguageOptions,
@@ -85,6 +84,10 @@ const elements = {
   analysisProgressBar: document.getElementById("analysis-progress-bar"),
   analysisProgressLabel: document.getElementById("analysis-progress-label"),
   analysisProgressStage: document.getElementById("analysis-progress-stage"),
+  analysisTaskQueue: document.getElementById("analysis-task-queue"),
+  analysisTaskQueueLabel: document.getElementById("analysis-task-queue-label"),
+  analysisTaskQueueCopy: document.getElementById("analysis-task-queue-copy"),
+  analysisTaskList: document.getElementById("analysis-task-list"),
 
   verifyTitle: document.getElementById("verify-title"),
   verifyOverallChip: document.getElementById("verify-overall-chip"),
@@ -114,6 +117,44 @@ const state = {
   analysisProgress: 0,
   progressTimer: null,
   saveLoading: false,
+  tasks: [],
+  taskSyncTimer: null,
+  selectedTaskId: null,
+};
+
+const TASK_SYNC_INTERVAL_MS = 2000;
+
+const TASK_COPY = {
+  es: {
+    queueLabel: "Cola de verificaciones",
+    queueCopy: "Revisa el estado de los análisis encolados y abre el resultado cuando termine.",
+    pending: "En cola",
+    processing: "Analizando",
+    completed: "Listo",
+    failed: "Error",
+    popupSource: "Popup",
+    pageSource: "Página",
+    updatedAt: "Actualizado",
+    claimsCount: "Afirmaciones",
+    viewResults: "Ver resultados",
+    removeTask: "Quitar",
+    queuedErrorFallback: "La verificación encolada terminó con error.",
+  },
+  en: {
+    queueLabel: "Verification queue",
+    queueCopy: "Track queued analyses and open the result when it is ready.",
+    pending: "Queued",
+    processing: "Checking",
+    completed: "Ready",
+    failed: "Failed",
+    popupSource: "Popup",
+    pageSource: "Page",
+    updatedAt: "Updated",
+    claimsCount: "Claims",
+    viewResults: "View results",
+    removeTask: "Remove",
+    queuedErrorFallback: "The queued verification finished with an error.",
+  },
 };
 
 const syncLastAnalysisSavePayload = (report = state.lastAnalysis, inputText = state.lastInputText) => {
@@ -124,10 +165,66 @@ const syncLastAnalysisSavePayload = (report = state.lastAnalysis, inputText = st
   });
 };
 
+const sendToBackground = (type, payload = {}) =>
+  new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type, ...payload }, (response) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+        return;
+      }
+
+      if (!response?.ok) {
+        const error = new Error(response?.message || "Error desconocido.");
+        if (response?.sessionExpired) {
+          error.sessionExpired = true;
+        }
+        reject(error);
+        return;
+      }
+
+      resolve(response.data);
+    });
+  });
+
 const localeForLanguage = () =>
   state.currentLanguage === "en" ? "en-US" : "es-ES";
 
+const taskCopy = (key) => TASK_COPY[state.currentLanguage === "en" ? "en" : "es"][key] || "";
+
 const formatNumber = (value) => Number(value || 0).toLocaleString(localeForLanguage());
+
+const formatTaskTimestamp = (value) => {
+  if (!value) {
+    return "";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "";
+  }
+
+  return parsed.toLocaleTimeString(localeForLanguage(), {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const isActiveTaskStatus = (status) => status === "pending" || status === "processing";
+
+const mapTaskToReport = (task) => ({
+  ...(task?.result || {}),
+  run_id: task?.runId || task?.result?.run_id || null,
+  taskId: task?.taskId || task?.runId || null,
+  plan: task?.plan ?? task?.result?.plan ?? null,
+  remaining_today: task?.remainingToday ?? task?.result?.remaining_today ?? null,
+  daily_limit: task?.dailyLimit ?? task?.result?.daily_limit ?? null,
+  max_claims: task?.maxClaims ?? task?.result?.max_claims ?? null,
+  max_evidences: task?.maxEvidences ?? task?.result?.max_evidences ?? null,
+  max_chars: task?.maxChars ?? task?.result?.max_chars ?? null,
+  status: task?.status || null,
+  error: task?.error || null,
+  saved_to_history: Boolean(task?.savedInHistory),
+});
 
 const showView = (viewName) => {
   Object.entries(elements.views).forEach(([name, node]) => {
@@ -167,6 +264,244 @@ const setButtonLoading = (button, isLoading) => {
   if (spinner) {
     spinner.classList.toggle("hidden", !isLoading);
   }
+};
+
+const stopTaskSync = () => {
+  if (state.taskSyncTimer) {
+    window.clearInterval(state.taskSyncTimer);
+    state.taskSyncTimer = null;
+  }
+};
+
+const refreshCurrentAnalysisFromTasks = () => {
+  const currentTaskId = String(
+    state.selectedTaskId || state.lastAnalysis?.taskId || ""
+  ).trim();
+  if (!currentTaskId) {
+    return;
+  }
+
+  const matchingTask = state.tasks.find((task) => String(task?.taskId || "").trim() === currentTaskId);
+  if (!matchingTask?.result) {
+    return;
+  }
+
+  state.lastAnalysis = {
+    ...mapTaskToReport(matchingTask),
+    saveError: state.lastAnalysis?.saveError || "",
+  };
+  state.selectedTaskId = matchingTask.taskId || matchingTask.runId || currentTaskId;
+  state.lastInputText = matchingTask.inputText || state.lastInputText;
+  syncLastAnalysisSavePayload(state.lastAnalysis, state.lastInputText);
+};
+
+const openTaskResult = async (taskId) => {
+  try {
+    const task = await sendToBackground("fn:task-get", {
+      taskId,
+      refresh: true,
+    });
+
+    if (!task?.result) {
+      setBanner(
+        elements.analyzeError,
+        task?.error || taskCopy("queuedErrorFallback")
+      );
+      return;
+    }
+
+    state.lastAnalysis = {
+      ...mapTaskToReport(task),
+      saveError: "",
+    };
+    state.selectedTaskId = task.taskId || task.runId || null;
+    state.lastInputText = task.inputText || "";
+    state.saveLoading = false;
+    syncLastAnalysisSavePayload(state.lastAnalysis, state.lastInputText);
+    renderVerifyReport(state.lastAnalysis);
+    showView("verify");
+    void sendToBackground("fn:task-select", { taskId: task.taskId || task.runId }).catch(() => {});
+  } catch (error) {
+    if (error?.sessionExpired) {
+      await handleSessionExpired();
+      return;
+    }
+    setBanner(elements.analyzeError, error.message || taskCopy("queuedErrorFallback"));
+  }
+};
+
+const renderTaskQueue = () => {
+  const tasks = Array.isArray(state.tasks) ? state.tasks : [];
+  elements.analysisTaskList.replaceChildren();
+  elements.analysisTaskQueue.classList.toggle("hidden", tasks.length === 0);
+
+  if (!tasks.length) {
+    return;
+  }
+
+  tasks.forEach((task) => {
+    const article = document.createElement("article");
+    article.className = "task-card";
+    article.dataset.state = task?.status || "pending";
+    article.dataset.selected = String(
+      String(task?.taskId || task?.runId || "").trim() === String(state.selectedTaskId || "").trim()
+    );
+
+    const head = document.createElement("div");
+    head.className = "task-card-head";
+
+    const chip = document.createElement("span");
+    chip.className = "task-chip";
+    chip.dataset.state = task?.status || "pending";
+    chip.textContent = taskCopy(task?.status || "pending");
+
+    const source = document.createElement("span");
+    source.className = "task-source";
+    source.textContent = task?.source === "content" ? taskCopy("pageSource") : taskCopy("popupSource");
+
+    head.append(chip, source);
+    article.appendChild(head);
+
+    const preview = document.createElement("p");
+    preview.className = "task-card-preview";
+    preview.textContent = task?.textPreview || task?.inputText || "";
+    article.appendChild(preview);
+
+    const claimsCount = Array.isArray(task?.result?.claims) ? task.result.claims.length : null;
+    const meta = document.createElement("p");
+    meta.className = "task-card-meta";
+    meta.textContent = [
+      formatTaskTimestamp(task?.updatedAt || task?.createdAt)
+        ? `${taskCopy("updatedAt")}: ${formatTaskTimestamp(task?.updatedAt || task?.createdAt)}`
+        : "",
+      claimsCount !== null ? `${taskCopy("claimsCount")}: ${claimsCount}` : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    if (meta.textContent) {
+      article.appendChild(meta);
+    }
+
+    if (task?.status === "failed" && task?.error) {
+      const error = document.createElement("p");
+      error.className = "task-card-error";
+      error.textContent = task.error;
+      article.appendChild(error);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "task-card-actions";
+
+    if (task?.status === "completed" && task?.result) {
+      const viewButton = document.createElement("button");
+      viewButton.type = "button";
+      viewButton.className = "secondary-button compact-button";
+      viewButton.textContent = taskCopy("viewResults");
+      viewButton.addEventListener("click", () => {
+        void openTaskResult(task.taskId || task.runId);
+      });
+      actions.appendChild(viewButton);
+    } else {
+      const spacer = document.createElement("span");
+      spacer.setAttribute("aria-hidden", "true");
+      actions.appendChild(spacer);
+    }
+
+    if (!isActiveTaskStatus(task?.status)) {
+      const dismissButton = document.createElement("button");
+      dismissButton.type = "button";
+      dismissButton.className = "secondary-button compact-button";
+      dismissButton.textContent = taskCopy("removeTask");
+      dismissButton.addEventListener("click", async () => {
+        try {
+          state.tasks = await sendToBackground("fn:task-dismiss", {
+            taskId: task.taskId || task.runId,
+          });
+          if (String(state.selectedTaskId || "") === String(task.taskId || task.runId || "")) {
+            state.selectedTaskId = null;
+          }
+          refreshCurrentAnalysisFromTasks();
+          renderTaskQueue();
+        } catch (error) {
+          if (error?.sessionExpired) {
+            await handleSessionExpired();
+            return;
+          }
+          setBanner(elements.analyzeError, error.message || taskCopy("queuedErrorFallback"));
+        }
+      });
+      actions.appendChild(dismissButton);
+    }
+
+    article.appendChild(actions);
+    elements.analysisTaskList.appendChild(article);
+  });
+};
+
+const upsertLocalTask = (task) => {
+  if (!task || typeof task !== "object") {
+    return;
+  }
+
+  const taskId = String(task?.taskId || task?.runId || "").trim();
+  if (!taskId) {
+    return;
+  }
+
+  const nextTasks = [...state.tasks];
+  const existingIndex = nextTasks.findIndex(
+    (entry) => String(entry?.taskId || entry?.runId || "").trim() === taskId
+  );
+
+  if (existingIndex >= 0) {
+    nextTasks[existingIndex] = { ...nextTasks[existingIndex], ...task };
+  } else {
+    nextTasks.unshift(task);
+  }
+
+  state.tasks = nextTasks;
+};
+
+const syncTaskQueue = async ({ restoreSelectedView = false } = {}) => {
+  try {
+    const taskState = await sendToBackground("fn:tasks-state");
+    state.tasks = Array.isArray(taskState?.tasks) ? taskState.tasks : [];
+    state.selectedTaskId = String(taskState?.selectedTaskId || "").trim() || null;
+    refreshCurrentAnalysisFromTasks();
+    renderTaskQueue();
+    if (restoreSelectedView) {
+      const selectedTask = state.tasks.find(
+        (task) => String(task?.taskId || task?.runId || "").trim() === String(state.selectedTaskId || "").trim()
+      );
+      if (selectedTask?.result) {
+        state.lastAnalysis = {
+          ...mapTaskToReport(selectedTask),
+          saveError: state.lastAnalysis?.saveError || "",
+        };
+        state.lastInputText = selectedTask.inputText || state.lastInputText;
+        syncLastAnalysisSavePayload(state.lastAnalysis, state.lastInputText);
+        renderVerifyReport(state.lastAnalysis);
+        showView("verify");
+      }
+    }
+    if (state.lastAnalysis) {
+      renderVerifyReport(state.lastAnalysis);
+    }
+  } catch (error) {
+    if (error?.sessionExpired) {
+      await handleSessionExpired();
+      return;
+    }
+    console.error("[FEVER] No se pudo sincronizar la cola de verificaciones:", error);
+  }
+};
+
+const startTaskSync = () => {
+  stopTaskSync();
+  void syncTaskQueue({ restoreSelectedView: true });
+  state.taskSyncTimer = window.setInterval(() => {
+    void syncTaskQueue();
+  }, TASK_SYNC_INTERVAL_MS);
 };
 
 const closeLanguageMenu = () => {
@@ -444,6 +779,8 @@ const applyTranslations = () => {
   elements.analyzeButtonLabel.textContent = t("analyze.verify", {}, state.currentLanguage);
   elements.analyzeTextarea.placeholder = t("analyze.placeholder", {}, state.currentLanguage);
   elements.analysisProgressTitle.textContent = t("analyze.loadingTitle", {}, state.currentLanguage);
+  elements.analysisTaskQueueLabel.textContent = taskCopy("queueLabel");
+  elements.analysisTaskQueueCopy.textContent = taskCopy("queueCopy");
   if (state.analysisProgress > 0) {
     updateAnalysisProgressUI(state.analysisProgress);
   }
@@ -462,14 +799,24 @@ const applyTranslations = () => {
   if (state.lastAnalysis) {
     renderVerifyReport(state.lastAnalysis);
   }
+  renderTaskQueue();
 };
 
 const handleSessionExpired = async () => {
+  stopTaskSync();
+  try {
+    await sendToBackground("fn:tasks-clear");
+  } catch {
+    /** ignored */
+  }
   await clearSession();
   state.lastAnalysis = null;
   state.lastAnalysisSavePayload = null;
   state.lastInputText = "";
   state.saveLoading = false;
+  state.tasks = [];
+  state.selectedTaskId = null;
+  renderTaskQueue();
   showHeaderForSession(null);
   showView("login");
   setBanner(elements.loginError, t("auth.expired", {}, state.currentLanguage));
@@ -484,7 +831,9 @@ const bootstrap = async () => {
     if (session) {
       showHeaderForSession(session);
       showView("analyze");
+      startTaskSync();
     } else {
+      stopTaskSync();
       showHeaderForSession(null);
       showView("login");
     }
@@ -531,6 +880,7 @@ elements.loginForm.addEventListener("submit", async (event) => {
     showHeaderForSession(session);
     showView("analyze");
     updateAnalyzeButtonState();
+    startTaskSync();
   } catch (error) {
     setBanner(elements.loginError, error.message || t("errors.invalidSession", {}, state.currentLanguage));
   } finally {
@@ -547,6 +897,7 @@ elements.loginGoogleButton.addEventListener("click", async () => {
     showHeaderForSession(session);
     showView("analyze");
     updateAnalyzeButtonState();
+    startTaskSync();
   } catch (error) {
     setBanner(elements.loginError, error.message || t("errors.invalidSession", {}, state.currentLanguage));
   } finally {
@@ -562,11 +913,20 @@ elements.openRegister.addEventListener("click", (event) => {
 });
 
 elements.logoutButton.addEventListener("click", async () => {
+  stopTaskSync();
+  try {
+    await sendToBackground("fn:tasks-clear");
+  } catch {
+    /** ignored */
+  }
   await signOut();
   state.lastAnalysis = null;
   state.lastAnalysisSavePayload = null;
   state.lastInputText = "";
   state.saveLoading = false;
+  state.tasks = [];
+  state.selectedTaskId = null;
+  renderTaskQueue();
   showHeaderForSession(null);
   showView("login");
   setBanner(elements.loginError, "", false);
@@ -636,20 +996,22 @@ elements.analyzeButton.addEventListener("click", async () => {
   }
 
   setButtonLoading(elements.analyzeButton, true);
-  startAnalysisProgress();
+  hideAnalysisProgress();
 
   try {
-    const report = await verifyText(text);
-    state.lastAnalysis = { ...report, saveError: "" };
-    state.lastInputText = text;
-    syncLastAnalysisSavePayload(state.lastAnalysis, text);
+    const task = await sendToBackground("fn:verify-submit", {
+      text,
+      source: "popup",
+    });
+    upsertLocalTask(task);
+    state.selectedTaskId = task?.taskId || task?.runId || state.selectedTaskId;
+    renderTaskQueue();
+    elements.analyzeTextarea.value = "";
+    updateAnalyzeButtonState();
     state.saveLoading = false;
-    completeAnalysisProgress();
-    renderVerifyReport(state.lastAnalysis);
-    showView("verify");
+    void syncTaskQueue();
   } catch (error) {
-    hideAnalysisProgress();
-    if (error instanceof SessionExpiredError) {
+    if (error?.sessionExpired || error instanceof SessionExpiredError) {
       await handleSessionExpired();
       return;
     }
@@ -686,10 +1048,17 @@ elements.verifySaveButton.addEventListener("click", async () => {
       saved_to_history: true,
       saveError: "",
     };
+    if (state.lastAnalysis?.taskId) {
+      state.tasks = await sendToBackground("fn:task-dismiss", {
+        taskId: state.lastAnalysis.taskId,
+      });
+    }
+    state.selectedTaskId = null;
     syncLastAnalysisSavePayload(state.lastAnalysis, state.lastInputText);
+    renderTaskQueue();
     renderVerifyReport(state.lastAnalysis);
   } catch (error) {
-    if (error instanceof SessionExpiredError) {
+    if (error?.sessionExpired || error instanceof SessionExpiredError) {
       await handleSessionExpired();
       return;
     }
@@ -705,6 +1074,7 @@ elements.verifySaveButton.addEventListener("click", async () => {
 });
 
 elements.verifyBackButton.addEventListener("click", () => {
+  void syncTaskQueue();
   showView("analyze");
 });
 

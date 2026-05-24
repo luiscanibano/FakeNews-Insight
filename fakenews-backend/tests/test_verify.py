@@ -91,6 +91,13 @@ def _make_agent() -> VerificationAgent:
     return _Agent()  # type: ignore[return-value]
 
 
+def _fake_enqueue_verification_job(*, run_id, user_id, jwt_token, text, quota):
+    return {
+        "job_id": f"job-for-{run_id}",
+        "status": "pending",
+    }
+
+
 @pytest.fixture(autouse=True)
 def _reset_agent():
     yield
@@ -115,8 +122,7 @@ def test_verify_returns_verdict_for_ultra(monkeypatch):
     })
     monkeypatch.setattr(main, "_supabase_json_request", spy)
     monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
-    import fever_runtime
-    fever_runtime.set_verification_agent(_make_agent())
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
 
     response = client.post(
         "/verify",
@@ -124,14 +130,14 @@ def test_verify_returns_verdict_for_ultra(monkeypatch):
         headers={"Authorization": "Bearer faketoken"},
     )
 
-    assert response.status_code == 200, response.text
+    assert response.status_code == 202, response.text
     data = response.json()
-    assert data["veredicto_global"] == "SUPPORTED"
-    assert data["limite_diario"] == 10
-    assert data["verificaciones_restantes_hoy"] == 9
+    assert data["status"] == "pending"
+    assert data["daily_limit"] == 10
+    assert data["remaining_today"] == 9
     assert data["run_id"] == "row-1"
-    assert len(data["claims"]) == 1
-    assert data["claims"][0]["evidencias"][0]["nli_label"] == "SUPPORTS"
+    assert data["job_id"] == "job-for-row-1"
+    assert data["result"] is None
 
 
 def test_verify_returns_verdict_for_pro_with_plan_limits(monkeypatch):
@@ -143,20 +149,20 @@ def test_verify_returns_verdict_for_pro_with_plan_limits(monkeypatch):
     })
     monkeypatch.setattr(main, "_supabase_json_request", spy)
     monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
-    import fever_runtime
-    fever_runtime.set_verification_agent(_make_agent())
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
 
     response = client.post(
         "/verify",
         json={"texto": VALID_TEXT},
         headers={"Authorization": "Bearer faketoken"},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 202, response.text
     data = response.json()
     assert data["plan"] == "pro"
-    assert data["limite_diario"] == 50
+    assert data["daily_limit"] == 50
     assert data["max_claims"] == 3
     assert data["max_evidences"] == 3
+    assert data["status"] == "pending"
 
 
 def test_verify_returns_verdict_for_ultra_with_plan_limits(monkeypatch):
@@ -168,20 +174,20 @@ def test_verify_returns_verdict_for_ultra_with_plan_limits(monkeypatch):
     })
     monkeypatch.setattr(main, "_supabase_json_request", spy)
     monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
-    import fever_runtime
-    fever_runtime.set_verification_agent(_make_agent())
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
 
     response = client.post(
         "/verify",
         json={"texto": VALID_TEXT},
         headers={"Authorization": "Bearer faketoken"},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 202, response.text
     data = response.json()
     assert data["plan"] == "ultra"
-    assert data["limite_diario"] == 200
+    assert data["daily_limit"] == 200
     assert data["max_claims"] == 8
     assert data["max_evidences"] == 5
+    assert data["status"] == "pending"
 
 
 def test_verify_returns_run_id_even_when_service_role_handles_persistence(monkeypatch):
@@ -207,8 +213,7 @@ def test_verify_returns_run_id_even_when_service_role_handles_persistence(monkey
 
     monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
     monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
-    import fever_runtime
-    fever_runtime.set_verification_agent(_make_agent())
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
 
     response = client.post(
         "/verify",
@@ -216,8 +221,112 @@ def test_verify_returns_run_id_even_when_service_role_handles_persistence(monkey
         headers={"Authorization": "Bearer faketoken"},
     )
 
-    assert response.status_code == 200, response.text
+    assert response.status_code == 202, response.text
     assert response.json()["run_id"] == "row-1"
+
+
+def test_verify_enqueues_async_job_and_returns_pending_status(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "ultra",
+        "daily_verification_limit": 10,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+
+    enqueued_calls = []
+
+    def _enqueue_verification_job(*, run_id, user_id, jwt_token, text, quota):
+        enqueued_calls.append({
+            "run_id": run_id,
+            "user_id": user_id,
+            "jwt_token": jwt_token,
+            "text": text,
+            "quota": quota,
+        })
+        return {"job_id": "job-123", "status": "pending"}
+
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    monkeypatch.setattr(main, "_enqueue_verification_job", _enqueue_verification_job)
+
+    response = client.post(
+        "/verify",
+        json={"texto": VALID_TEXT},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 202, response.text
+    data = response.json()
+    assert data["run_id"] == "row-1"
+    assert data["job_id"] == "job-123"
+    assert data["status"] == "pending"
+    assert data["max_claims"] == 8
+    assert data["max_evidences"] == 5
+    assert data["result"] is None
+    assert len(enqueued_calls) == 1
+    assert enqueued_calls[0]["text"] == VALID_TEXT
+
+
+def test_verify_status_returns_completed_result(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 200, [{
+                "id": "run-1",
+                "user_id": "user-1",
+                "input_text": VALID_TEXT,
+                "overall_label": "SUPPORTED",
+                "summary": "ok",
+                "model_version": "fever-stub-v0",
+                "duration_ms": 10,
+                "created_at": "2026-01-01T10:00:00Z",
+                "saved_to_history": False,
+                "saved_at": None,
+                "status": "completed",
+                "job_id": "job-1",
+                "started_at": "2026-01-01T10:00:01Z",
+                "completed_at": "2026-01-01T10:00:10Z",
+                "error_message": None,
+                "selected_claims": 1,
+            }]
+        if path == "/rest/v1/verification_claims" and method == "GET":
+            return 200, [{
+                "id": "claim-1",
+                "claim_text": "afirmacion de prueba",
+                "label": "SUPPORTED",
+                "confidence": 0.9,
+                "rationale": "basado en [1]",
+                "position": 0,
+            }]
+        if path == "/rest/v1/verification_evidences" and method == "GET":
+            return 200, [{
+                "url": "https://x",
+                "title": "t",
+                "snippet": "evidencia",
+                "nli_label": "SUPPORTS",
+                "nli_score": 0.9,
+                "position": 0,
+            }]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+
+    response = client.get(
+        "/verify/run-1",
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["run_id"] == "run-1"
+    assert data["status"] == "completed"
+    assert data["error"] is None
+    assert data["result"]["overall_label"] == "SUPPORTED"
+    assert data["result"]["selected_claims"] == 1
+    assert data["result"]["claims"][0]["evidencias"][0]["nli_label"] == "SUPPORTS"
 
 
 def test_verify_rejects_short_text(monkeypatch):

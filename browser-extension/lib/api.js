@@ -11,6 +11,14 @@ import { clearSession } from "./storage.js";
 const ANALYSIS_VERIFY_PATH = "/verify";
 const VERIFICATION_HISTORY_SAVE_PATH = "/verification-history/save";
 const LAST_HISTORY_SAVE_PAYLOAD_KEY = "fakenews-insight-last-history-save-payload";
+const VERIFY_STATUS_PATH_PREFIX = "/verify/";
+
+export const VERIFY_STATUS = {
+  PENDING: "pending",
+  PROCESSING: "processing",
+  COMPLETED: "completed",
+  FAILED: "failed",
+};
 
 const shouldRetryOnAlternateBackend = ({ path, status, message }) => {
   if (path === VERIFICATION_HISTORY_SAVE_PATH) {
@@ -216,9 +224,11 @@ const parseErrorMessage = async (response, fallback) => {
 };
 
 /** Wrapper comun: anade Authorization, maneja 401, devuelve JSON. */
-const authorizedFetch = async (path, body) => {
+const authorizedFetch = async (path, body, options = {}) => {
   const accessToken = await getValidAccessToken();
   const apiBaseUrls = getApiBaseUrls();
+  const method = String(options.method || "POST").toUpperCase();
+  const responseType = options.responseType || "json";
   let lastError = null;
 
   for (let index = 0; index < apiBaseUrls.length; index += 1) {
@@ -227,13 +237,22 @@ const authorizedFetch = async (path, body) => {
 
     let response;
     try {
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        ...(options.headers && typeof options.headers === "object" ? options.headers : {}),
+      };
+      const fetchOptions = {
+        method,
+        headers,
+      };
+
+      if (body !== undefined && body !== null) {
+        headers["Content-Type"] = headers["Content-Type"] || "application/json";
+        fetchOptions.body = JSON.stringify(body);
+      }
+
       response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(body),
+        ...fetchOptions,
       });
     } catch (error) {
       lastError = error;
@@ -249,6 +268,12 @@ const authorizedFetch = async (path, body) => {
     }
 
     if (response.ok) {
+      if (responseType === "text") {
+        return response.text();
+      }
+      if (response.status === 204) {
+        return null;
+      }
       return response.json();
     }
 
@@ -262,6 +287,9 @@ const authorizedFetch = async (path, body) => {
         : message;
 
     lastError = new Error(enrichedMessage);
+    lastError.status = response.status;
+    lastError.path = path;
+    lastError.backend = apiBaseUrls[index];
 
     if (
       hasMoreCandidates &&
@@ -285,16 +313,86 @@ const authorizedFetch = async (path, body) => {
  * Devuelve { run_id, overall_label, summary, claims, plan, remaining_today }.
  * Lanza Error con mensaje legible si se agota la cuota del usuario (403).
  */
+export const submitVerification = async (text) =>
+  authorizedFetch(ANALYSIS_VERIFY_PATH, { texto: text });
+
+export const getVerificationStatus = async (runId) => {
+  const normalizedRunId = String(runId || "").trim();
+  if (!normalizedRunId) {
+    throw new Error("run_id es obligatorio para consultar la verificacion.");
+  }
+
+  return authorizedFetch(`${VERIFY_STATUS_PATH_PREFIX}${encodeURIComponent(normalizedRunId)}`, null, {
+    method: "GET",
+  });
+};
+
+export const waitForVerification = async (
+  runId,
+  {
+    pollIntervalMs = 1500,
+    maxAttempts = 120,
+    onStatus = null,
+  } = {}
+) => {
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    const payload = await getVerificationStatus(runId);
+    if (typeof onStatus === "function") {
+      onStatus(payload);
+    }
+
+    if (payload?.status === VERIFY_STATUS.COMPLETED) {
+      return payload;
+    }
+
+    if (payload?.status === VERIFY_STATUS.FAILED) {
+      throw new Error(payload?.error || "La verificacion ha fallado.");
+    }
+
+    attempts += 1;
+    await new Promise((resolve) => {
+      globalThis.setTimeout(resolve, pollIntervalMs);
+    });
+  }
+
+  throw new Error("La verificacion esta tardando demasiado en completarse.");
+};
+
 export const verifyText = async (text) => {
-  const report = await authorizedFetch(ANALYSIS_VERIFY_PATH, { texto: text });
+  const submission = await submitVerification(text);
+  const payload = await waitForVerification(submission?.run_id);
+  const report = payload?.result || null;
+
+  if (!report) {
+    throw new Error("La verificacion no devolvio un informe completo.");
+  }
+
+  const enrichedReport = {
+    ...report,
+    run_id: report?.run_id || submission?.run_id || null,
+    job_id: submission?.job_id || payload?.job_id || null,
+    status: payload?.status || submission?.status || VERIFY_STATUS.COMPLETED,
+    error: payload?.error || null,
+    plan: payload?.plan || submission?.plan || report?.plan || null,
+    remaining_today:
+      payload?.remaining_today ?? submission?.remaining_today ?? report?.remaining_today ?? null,
+    daily_limit: payload?.daily_limit ?? submission?.daily_limit ?? report?.daily_limit ?? null,
+    max_claims: payload?.max_claims ?? submission?.max_claims ?? report?.max_claims ?? null,
+    max_evidences:
+      payload?.max_evidences ?? submission?.max_evidences ?? report?.max_evidences ?? null,
+    max_chars: payload?.max_chars ?? submission?.max_chars ?? report?.max_chars ?? null,
+  };
+
   persistLastHistorySavePayload(
     buildVerificationHistorySavePayload({
-      runId: report?.run_id || null,
-      report,
+      runId: enrichedReport?.run_id || null,
+      report: enrichedReport,
       inputText: text,
     })
   );
-  return report;
+  return enrichedReport;
 };
 
 export const saveVerificationToHistory = ({ runId = null, report = null, inputText = "" }) =>

@@ -3,7 +3,6 @@
  * @description Estado vacio del panel de resultados antes del primer análisis.
  */
 
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
 /** Placeholder mostrado antes de cualquier análisis para guiar al usuario. */
@@ -29,18 +28,6 @@ function EmptyResultView() {
           <p className="text-xs uppercase tracking-wider text-on-surface-variant">{t("result.empty.svmStrengthLabel")}</p>
           <p className="mt-1 text-lg font-bold text-on-surface/50">--</p>
         </div>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          {t("result.actions.saveHistory")}
-        </Button>
-        <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          {t("result.actions.publicLink")}
-        </Button>
-        <Button type="button" variant="outline" className="w-full sm:w-auto" disabled>
-          {t("result.actions.report")}
-        </Button>
       </div>
     </>
   );

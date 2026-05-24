@@ -7,6 +7,7 @@ import { useOutletContext } from "react-router-dom";
 import DashboardHeroSection from "../components/dashboard/DashboardHeroSection";
 import DashboardAnalysisPanel from "../components/dashboard/DashboardAnalysisPanel";
 import DashboardResultPanel from "../components/dashboard/DashboardResultPanel";
+import VerificationTaskQueue from "../components/dashboard/VerificationTaskQueue";
 
 /** Vista principal de análisis que compone hero, formulario y panel de resultados. */
 function DashboardAnalyze() {
@@ -27,8 +28,13 @@ function DashboardAnalyze() {
     resolvedError,
     analysisProgress,
     result,
+    verificationTasks,
+    selectedVerificationTaskId,
     maxTextLength,
     minTextLength,
+    disableAnalysisPanelInteractions,
+    selectVerificationTask,
+    saveVerificationTaskToHistory,
     saveCurrentTextResultToHistory,
     isSavingTextAnalysis,
     saveTextAnalysisError,
@@ -44,6 +50,7 @@ function DashboardAnalyze() {
         modeTagline={modeTagline}
         canUseCsvAnalysis={canUseCsvAnalysis}
         isAnalysing={isAnalysing}
+        disableInteractions={disableAnalysisPanelInteractions}
         onModeChange={handleModeChange}
         onSubmit={handleSubmit}
         textPayload={textPayload}
@@ -57,6 +64,13 @@ function DashboardAnalyze() {
         analysisProgress={analysisProgress}
         maxTextLength={maxTextLength}
         minTextLength={minTextLength}
+      />
+
+      <VerificationTaskQueue
+        tasks={verificationTasks}
+        selectedTaskId={selectedVerificationTaskId}
+        onSelectTask={selectVerificationTask}
+        onSaveTask={saveVerificationTaskToHistory}
       />
 
       <DashboardResultPanel

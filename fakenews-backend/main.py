@@ -15,7 +15,7 @@ import string
 import nltk
 from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request as UrlRequest, urlopen
@@ -607,6 +607,19 @@ class SaveVerificationHistoryRequest(BaseModel):
     report: Optional[Dict[str, Any]] = None
 
 
+VERIFY_RUN_SELECT_FIELDS = (
+    "id,user_id,input_text,overall_label,summary,model_version,"
+    "duration_ms,created_at,saved_to_history,saved_at,status,job_id,"
+    "started_at,completed_at,error_message,selected_claims"
+)
+
+VERIFY_STATUS_PENDING = "pending"
+VERIFY_STATUS_PROCESSING = "processing"
+VERIFY_STATUS_COMPLETED = "completed"
+VERIFY_STATUS_FAILED = "failed"
+VERIFY_PENDING_MODEL_VERSION = "fever-async-pending-v1"
+
+
 def _load_verification_run(run_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
     """Carga una verificacion FEVER concreta verificando ownership."""
     status, payload = _supabase_json_request(
@@ -616,7 +629,7 @@ def _load_verification_run(run_id: str, user_id: str, jwt_token: str) -> Dict[st
         query={
             "id": f"eq.{run_id}",
             "user_id": f"eq.{user_id}",
-            "select": "id,user_id,input_text,overall_label,summary,model_version,duration_ms,created_at,saved_to_history,saved_at",
+            "select": VERIFY_RUN_SELECT_FIELDS,
             "limit": "1",
         },
     )
@@ -631,6 +644,211 @@ def _load_verification_run(run_id: str, user_id: str, jwt_token: str) -> Dict[st
         raise HTTPException(status_code=404, detail="No existe una verificacion con ese id.")
 
     return payload[0]
+
+
+def _load_verification_claim_rows(run_id: str, user_id: str, jwt_token: str) -> List[Dict[str, Any]]:
+    """Carga claims y evidencias persistidos para un run concreto."""
+    status, payload = _supabase_json_request(
+        "/rest/v1/verification_claims",
+        method="GET",
+        jwt_token=jwt_token,
+        query={
+            "run_id": f"eq.{run_id}",
+            "user_id": f"eq.{user_id}",
+            "select": "id,claim_text,label,confidence,rationale,position",
+            "order": "position.asc",
+        },
+    )
+
+    if status != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudieron leer las afirmaciones verificadas."),
+        )
+
+    claim_rows = payload if isinstance(payload, list) else []
+    for claim_row in claim_rows:
+        claim_id = str(claim_row.get("id") or "").strip()
+        if not claim_id:
+            claim_row["evidences"] = []
+            continue
+
+        estatus, epayload = _supabase_json_request(
+            "/rest/v1/verification_evidences",
+            method="GET",
+            jwt_token=jwt_token,
+            query={
+                "claim_id": f"eq.{claim_id}",
+                "user_id": f"eq.{user_id}",
+                "select": "url,title,snippet,nli_label,nli_score,position",
+                "order": "position.asc",
+            },
+        )
+        if estatus != 200:
+            raise HTTPException(
+                status_code=502,
+                detail=_extract_detail(epayload, "No se pudieron leer las evidencias verificadas."),
+            )
+        claim_row["evidences"] = epayload if isinstance(epayload, list) else []
+
+    return claim_rows
+
+
+def _serialize_stored_verification_report(
+    run: Dict[str, Any],
+    *,
+    claim_rows: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Reconstruye el payload publico de una verificacion ya persistida."""
+    claims = []
+    for claim_row in claim_rows:
+        evidences = claim_row.get("evidences") or []
+        serialized_evidences = [
+            {
+                "url": evidence.get("url") or "",
+                "titulo": evidence.get("title") or evidence.get("url") or "",
+                "title": evidence.get("title") or evidence.get("url") or "",
+                "snippet": evidence.get("snippet") or "",
+                "nli_label": evidence.get("nli_label") or "NOT ENOUGH INFO",
+                "nli_score": _normalize_confidence_for_history(evidence.get("nli_score")),
+            }
+            for evidence in evidences
+        ]
+
+        claims.append(
+            {
+                "id": claim_row.get("id"),
+                "texto": claim_row.get("claim_text") or "",
+                "text": claim_row.get("claim_text") or "",
+                "veredicto": claim_row.get("label") or "NOT_ENOUGH_INFO",
+                "label": claim_row.get("label") or "NOT_ENOUGH_INFO",
+                "confianza": _normalize_confidence_for_history(claim_row.get("confidence")),
+                "confidence": _normalize_confidence_for_history(claim_row.get("confidence")),
+                "razonamiento": claim_row.get("rationale") or "",
+                "rationale": claim_row.get("rationale") or "",
+                "evidencias": serialized_evidences,
+                "evidences": serialized_evidences,
+            }
+        )
+
+    return {
+        "run_id": run.get("id"),
+        "input_text": run.get("input_text") or "",
+        "guardado_en_historial": bool(run.get("saved_to_history")),
+        "saved_in_history": bool(run.get("saved_to_history")),
+        "plan": None,
+        "veredicto_global": run.get("overall_label") or "NOT_ENOUGH_INFO",
+        "overall_label": run.get("overall_label") or "NOT_ENOUGH_INFO",
+        "resumen": run.get("summary") or "",
+        "summary": run.get("summary") or "",
+        "model_version": run.get("model_version") or VERIFY_PENDING_MODEL_VERSION,
+        "duracion_ms": _to_int(run.get("duration_ms"), default=None),
+        "duration_ms": _to_int(run.get("duration_ms"), default=None),
+        "verificaciones_restantes_hoy": None,
+        "remaining_today": None,
+        "limite_diario": None,
+        "daily_limit": None,
+        "max_claims": None,
+        "max_evidences": None,
+        "max_chars": None,
+        "selected_claims": _to_int(run.get("selected_claims"), default=len(claims)),
+        "claims": claims,
+    }
+
+
+def _patch_verification_run(
+    run_id: str,
+    user_id: str,
+    *,
+    body: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Actualiza una verificacion FEVER usando service role y devuelve la fila."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_runs",
+        method="PATCH",
+        query={
+            "id": f"eq.{run_id}",
+            "user_id": f"eq.{user_id}",
+        },
+        body=body,
+        prefer="return=representation",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo actualizar el estado de la verificacion."),
+        )
+
+    if isinstance(payload, list) and payload:
+        return payload[0]
+    return {}
+
+
+def _create_pending_verification_run(user_id: str, *, input_text: str) -> str:
+    """Crea una fila raiz pending para una verificacion asincrona."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_runs",
+        method="POST",
+        body={
+            "user_id": user_id,
+            "input_text": input_text,
+            "overall_label": "NOT_ENOUGH_INFO",
+            "summary": "",
+            "model_version": VERIFY_PENDING_MODEL_VERSION,
+            "duration_ms": None,
+            "status": VERIFY_STATUS_PENDING,
+            "job_id": None,
+            "started_at": None,
+            "completed_at": None,
+            "error_message": None,
+            "selected_claims": None,
+        },
+        prefer="return=representation",
+    )
+
+    if status not in (200, 201) or not isinstance(payload, list) or not payload:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo crear la verificacion en cola."),
+        )
+
+    run_id = str(payload[0].get("id") or "").strip()
+    if not run_id:
+        raise HTTPException(status_code=502, detail="No se pudo confirmar el identificador de la verificacion en cola.")
+    return run_id
+
+
+def _enqueue_verification_job(
+    *,
+    run_id: str,
+    user_id: str,
+    jwt_token: str,
+    text: str,
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Encola una verificacion FEVER en el worker asincrono."""
+    from verification_queue import enqueue_verification_job
+
+    job = enqueue_verification_job(
+        run_id=run_id,
+        user_id=user_id,
+        jwt_token=jwt_token,
+        text=text,
+        quota=quota,
+    )
+    _patch_verification_run(
+        run_id,
+        user_id,
+        body={
+            "job_id": job.get("job_id"),
+            "status": job.get("status") or VERIFY_STATUS_PENDING,
+        },
+    )
+    return {
+        "job_id": job.get("job_id"),
+        "status": job.get("status") or VERIFY_STATUS_PENDING,
+    }
 
 
 def _mark_verification_run_as_saved(run_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
@@ -736,6 +954,51 @@ def _insert_saved_verification_from_payload(
             )
 
     return run_id
+
+
+def _insert_verification_claim_rows(report, *, run_id: str, user_id: str) -> None:
+    """Inserta claims y evidencias asociadas a un run ya existente."""
+    for position, claim_verdict in enumerate(report.claims):
+        try:
+            cstatus, cpayload = _supabase_service_json_request(
+                "/rest/v1/verification_claims",
+                method="POST",
+                body={
+                    "run_id": run_id,
+                    "user_id": user_id,
+                    "claim_text": claim_verdict.claim.text,
+                    "label": claim_verdict.label.value,
+                    "confidence": claim_verdict.confidence,
+                    "rationale": claim_verdict.rationale,
+                    "position": position,
+                },
+                prefer="return=representation",
+            )
+        except HTTPException:
+            continue
+        if cstatus not in (200, 201) or not isinstance(cpayload, list) or not cpayload:
+            continue
+        claim_id = cpayload[0].get("id")
+        if not claim_id:
+            continue
+        for ev_pos, scored in enumerate(claim_verdict.evidences):
+            try:
+                _supabase_service_json_request(
+                    "/rest/v1/verification_evidences",
+                    method="POST",
+                    body={
+                        "claim_id": claim_id,
+                        "user_id": user_id,
+                        "url": scored.evidence.url,
+                        "title": scored.evidence.title,
+                        "snippet": scored.evidence.snippet,
+                        "nli_label": scored.nli.label,
+                        "nli_score": scored.nli.score,
+                        "position": ev_pos,
+                    },
+                )
+            except HTTPException:
+                continue
 
 
 def _delete_verification_run_with_admin(run_id: str, user_id: str) -> None:
@@ -1117,48 +1380,81 @@ def _persist_verification_report(report, user_id: str, jwt_token: str) -> Option
     if run_id is None:
         return None
 
-    for position, claim_verdict in enumerate(report.claims):
-        try:
-            cstatus, cpayload = _supabase_service_json_request(
-                "/rest/v1/verification_claims",
-                method="POST",
-                body={
-                    "run_id": run_id,
-                    "user_id": user_id,
-                    "claim_text": claim_verdict.claim.text,
-                    "label": claim_verdict.label.value,
-                    "confidence": claim_verdict.confidence,
-                    "rationale": claim_verdict.rationale,
-                    "position": position,
-                },
-                prefer="return=representation",
-            )
-        except HTTPException:
-            continue
-        if cstatus not in (200, 201) or not isinstance(cpayload, list) or not cpayload:
-            continue
-        claim_id = cpayload[0].get("id")
-        if not claim_id:
-            continue
-        for ev_pos, scored in enumerate(claim_verdict.evidences):
-            try:
-                _supabase_service_json_request(
-                    "/rest/v1/verification_evidences",
-                    method="POST",
-                    body={
-                        "claim_id": claim_id,
-                        "user_id": user_id,
-                        "url": scored.evidence.url,
-                        "title": scored.evidence.title,
-                        "snippet": scored.evidence.snippet,
-                        "nli_label": scored.nli.label,
-                        "nli_score": scored.nli.score,
-                        "position": ev_pos,
-                    },
-                )
-            except HTTPException:
-                continue
+    _insert_verification_claim_rows(report, run_id=run_id, user_id=user_id)
     return run_id
+
+
+def _complete_verification_run(report, *, run_id: str, user_id: str) -> None:
+    """Vuelca el informe final en un run ya creado como pending."""
+    _patch_verification_run(
+        run_id,
+        user_id,
+        body={
+            "overall_label": report.overall_label.value,
+            "summary": report.summary,
+            "model_version": report.model_version,
+            "duration_ms": report.duration_ms,
+            "status": VERIFY_STATUS_COMPLETED,
+            "completed_at": _now_iso_utc(),
+            "error_message": None,
+            "selected_claims": len(report.claims),
+        },
+    )
+    _insert_verification_claim_rows(report, run_id=run_id, user_id=user_id)
+
+
+def _fail_verification_run(run_id: str, user_id: str, *, error_message: str) -> None:
+    """Marca un run como fallido para que la UI pueda reflejar el error."""
+    _patch_verification_run(
+        run_id,
+        user_id,
+        body={
+            "status": VERIFY_STATUS_FAILED,
+            "completed_at": _now_iso_utc(),
+            "error_message": error_message,
+        },
+    )
+
+
+def _execute_verification_job(
+    *,
+    run_id: str,
+    user_id: str,
+    jwt_token: str,
+    text: str,
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Ejecuta el pipeline FEVER dentro del worker y persiste el resultado."""
+    _patch_verification_run(
+        run_id,
+        user_id,
+        body={
+            "status": VERIFY_STATUS_PROCESSING,
+            "started_at": _now_iso_utc(),
+            "error_message": None,
+        },
+    )
+
+    try:
+        from fever.agent import AgentConfig
+        from fever.aggregation import AggregationConfig
+        from fever_runtime import get_verification_agent
+
+        agent = get_verification_agent(config=AgentConfig(
+            max_claims=_to_int(quota.get("max_claims"), default=1),
+            max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
+            aggregation=AggregationConfig(),
+        ))
+        report = agent.verify(text)
+        _complete_verification_run(report, run_id=run_id, user_id=user_id)
+        return {
+            "run_id": run_id,
+            "status": VERIFY_STATUS_COMPLETED,
+            "selected_claims": len(report.claims),
+        }
+    except Exception as exc:
+        _fail_verification_run(run_id, user_id, error_message=str(exc))
+        raise
 
 
 def _serialize_report(report, *, run_id: Optional[str], quota: Dict[str, Any]) -> Dict[str, Any]:
@@ -1219,11 +1515,38 @@ def _serialize_report(report, *, run_id: Optional[str], quota: Dict[str, Any]) -
         "max_claims": quota.get("max_claims"),
         "max_evidences": quota.get("max_evidences"),
         "max_chars": quota.get("max_chars"),
+        "selected_claims": len(report.claims),
         "claims": claims,
     }
 
 
-@app.post("/verify")
+def _serialize_verification_job_response(
+    *,
+    run_id: str,
+    job_id: Optional[str],
+    status: str,
+    quota: Optional[Dict[str, Any]] = None,
+    result: Optional[Dict[str, Any]] = None,
+    error: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Serializa el estado publico de un job de verificacion asincrono."""
+    quota = quota or {}
+    return {
+        "run_id": run_id,
+        "job_id": job_id,
+        "status": status,
+        "error": error,
+        "plan": quota.get("plan"),
+        "remaining_today": quota.get("remaining_today"),
+        "daily_limit": quota.get("daily_limit"),
+        "max_claims": quota.get("max_claims"),
+        "max_evidences": quota.get("max_evidences"),
+        "max_chars": quota.get("max_chars"),
+        "result": result,
+    }
+
+
+@app.post("/verify", status_code=202)
 def verificar_afirmaciones(
     payload: VerifyRequest,
     authorization: Optional[str] = Header(default=None),
@@ -1262,27 +1585,66 @@ def verificar_afirmaciones(
 
     quota = _consume_verification_quota(profile, user_id, token)
 
-    # Import diferido: evita cargar fever/fever_runtime en arranque para
-    # tests del backend que no necesitan el agente.
-    from fever.agent import AgentConfig
-    from fever.aggregation import AggregationConfig
-    from fever_runtime import get_verification_agent
-
-    agent = get_verification_agent(config=AgentConfig(
-        max_claims=_to_int(quota.get("max_claims"), default=1),
-        max_evidences_per_claim=_to_int(quota.get("max_evidences"), default=1),
-        aggregation=AggregationConfig(),
-    ))
     try:
-        report = agent.verify(text)
-    except Exception as exc:  # pragma: no cover - bubble up sanitized error
+        run_id = _create_pending_verification_run(user_id, input_text=text)
+        job_meta = _enqueue_verification_job(
+            run_id=run_id,
+            user_id=user_id,
+            jwt_token=token,
+            text=text,
+            quota=quota,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
         raise HTTPException(
             status_code=503,
-            detail=f"El agente de verificacion no pudo completar la peticion: {exc}",
+            detail=f"No se pudo encolar la verificacion: {exc}",
         )
 
-    run_id = _persist_verification_report(report, user_id, token)
-    return _serialize_report(report, run_id=run_id, quota=quota)
+    return _serialize_verification_job_response(
+        run_id=run_id,
+        job_id=job_meta.get("job_id"),
+        status=job_meta.get("status") or VERIFY_STATUS_PENDING,
+        quota=quota,
+        result=None,
+        error=None,
+    )
+
+
+@app.get("/verify/{run_id}")
+def obtener_estado_verificacion(
+    run_id: str,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Devuelve el estado actual de una verificacion asincrona."""
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    normalized_run_id = str(run_id or "").strip()
+    if not normalized_run_id:
+        raise HTTPException(status_code=400, detail="run_id es obligatorio para consultar una verificacion.")
+
+    run = _load_verification_run(normalized_run_id, user_id, token)
+    status = str(run.get("status") or VERIFY_STATUS_COMPLETED).strip() or VERIFY_STATUS_COMPLETED
+    result = None
+    if status == VERIFY_STATUS_COMPLETED:
+        claim_rows = _load_verification_claim_rows(normalized_run_id, user_id, token)
+        result = _serialize_stored_verification_report(run, claim_rows=claim_rows)
+
+    return _serialize_verification_job_response(
+        run_id=normalized_run_id,
+        job_id=str(run.get("job_id") or "").strip() or None,
+        status=status,
+        result=result,
+        error=str(run.get("error_message") or "").strip() or None,
+    )
 
 
 @app.post("/verification-history/save")
@@ -1322,6 +1684,8 @@ def guardar_verificacion_en_historial(
         }
 
     run = _load_verification_run(run_id, user_id, token)
+    if str(run.get("status") or VERIFY_STATUS_COMPLETED) != VERIFY_STATUS_COMPLETED:
+        raise HTTPException(status_code=409, detail="La verificacion aun no ha terminado y no se puede guardar.")
     if bool(run.get("saved_to_history")):
         return {
             "saved": True,
