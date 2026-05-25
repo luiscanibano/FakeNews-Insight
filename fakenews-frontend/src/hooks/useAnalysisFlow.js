@@ -15,38 +15,6 @@ import { useDashboardStore } from "../store/dashboardStore";
 import { ANALYSIS_MODE } from "../lib/dashboardConstants";
 import { VERIFY_TEXT_MIN_LENGTH, getVerifyTextMaxLength } from "../lib/verificationLimits";
 
-/** Construye un resultado simulado para los modos URL/CSV manteniendo el contrato de DashboardResultPanel. */
-const buildMockResult = ({ mode, text, url, file }) => {
-  if (mode === ANALYSIS_MODE.CSV) {
-    const estimatedRows = Math.max(12, Math.min(450, Math.round(file.size / 140)));
-    const suspiciousRows = Math.max(1, Math.round(estimatedRows * 0.38));
-    return {
-      kind: "batch",
-      fileName: file.name,
-      totalRows: estimatedRows,
-      suspiciousRows,
-    };
-  }
-
-  const payloadSize = mode === ANALYSIS_MODE.TEXT ? text.length : url.length;
-  const confidence = 53 + (payloadSize % 39);
-  const normalizedScore = Math.max(50, Math.min(96, confidence));
-  const verdictLabel =
-    normalizedScore >= 78 ? "FIABLE" : normalizedScore >= 63 ? "DUDOSA" : "FALSA";
-
-  return {
-    kind: "single",
-    mode,
-    verdictLabel,
-    normalizedScore,
-    source: mode === ANALYSIS_MODE.URL ? url : "Texto pegado manualmente",
-    excerpt:
-      mode === ANALYSIS_MODE.TEXT
-        ? text.slice(0, 260)
-        : "Revisión semántica generada desde la URL facilitada.",
-  };
-};
-
 /**
  * Devuelve el estado y los handlers necesarios para alimentar `DashboardAnalyze`.
  */
