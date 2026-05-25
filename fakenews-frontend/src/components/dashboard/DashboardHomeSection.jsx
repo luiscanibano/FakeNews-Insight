@@ -184,7 +184,7 @@ function DashboardHomeSection({
                   <span className="truncate">{analysis.title}</span>
                 </div>
                 <div className="dash-list-row-meta">
-                  <span>Señal {analysis.svmStrength.toFixed(2)}</span>
+                  <span>{analysis.metricLabel || `Señal ${analysis.svmStrength.toFixed(2)}`}</span>
                   <span>{analysis.timestampLabel}</span>
                 </div>
               </div>

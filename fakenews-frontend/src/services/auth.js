@@ -55,10 +55,12 @@ export const signInWithGoogle = async () => {
 /** Registra un usuario nuevo en Supabase con metadatos iniciales de plan y rol. */
 export const register = async ({ email, password }) => {
   const supabase = getSupabaseClient();
+  const redirectTo = buildAuthRedirectUrl("");
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      redirectTo,
       data: {
         role: "user",
         plan: "free",

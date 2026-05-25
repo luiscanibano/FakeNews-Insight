@@ -54,4 +54,33 @@ describe("<HistoryDetailModal />", () => {
 
     expect(onClose).toHaveBeenCalled();
   });
+
+  it("muestra el resumen de un lote CSV guardado", () => {
+    render(
+      <HistoryDetailModal
+        analysis={{
+          id: "batch-1",
+          batchId: "batch-1",
+          kind: "batch",
+          title: "lote.csv",
+          timestampLabel: "18/05 11:45",
+          batchResult: {
+            kind: "batch",
+            fileName: "lote.csv",
+            totalRows: 12,
+            processedRows: 12,
+            successRows: 10,
+            failedRows: 2,
+            items: [{ row_index: 1, status: "completed", overall_label: "SUPPORTED" }],
+            batchId: "batch-1",
+          },
+        }}
+        isOpen
+        onClose={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/lote procesado/i)).toBeInTheDocument();
+    expect(screen.getByText(/12 textos analizados/i)).toBeInTheDocument();
+  });
 });

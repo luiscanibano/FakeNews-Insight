@@ -30,19 +30,21 @@ export const useHistoryStore = create((set) => ({
   },
 
   /** Elimina una verificacion FEVER del historial y actualiza el listado en memoria. */
-  deleteHistoryItem: async ({ runId }) => {
-    if (!runId) {
+  deleteHistoryItem: async ({ itemId }) => {
+    if (!itemId) {
       throw new Error("No se encontró el identificador del historial a eliminar.");
     }
 
-    set({ deleteLoadingId: runId, error: null });
+    set({ deleteLoadingId: itemId, error: null });
 
     try {
       const jwtToken = await getAccessToken();
-      await deleteSavedHistoryItem({ runId, jwtToken });
+      await deleteSavedHistoryItem({ itemId, jwtToken });
 
       set((state) => ({
-        items: state.items.filter((item) => item.id !== runId && item.runId !== runId),
+        items: state.items.filter(
+          (item) => item.id !== itemId && item.runId !== itemId && item.batchId !== itemId
+        ),
         deleteLoadingId: null,
         error: null,
       }));

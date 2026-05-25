@@ -3,7 +3,7 @@
 @description API FastAPI de anÃ¡lisis de noticias: autenticaciÃ³n JWT, control de cuota y persistencia de ejecuciones/historial en Supabase.
 """
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, File, Header, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -605,13 +605,32 @@ class SaveVerificationHistoryRequest(BaseModel):
     run_id: Optional[str] = None
     input_text: Optional[str] = None
     report: Optional[Dict[str, Any]] = None
+    run_type: Optional[str] = None
+    source_url: Optional[str] = None
+    source_title: Optional[str] = None
+    batch_id: Optional[str] = None
+    input_origin: Optional[str] = None
+
+
+def _infer_input_origin_from_request(request: Request) -> Optional[str]:
+    """Infiera el origen del input a partir del contexto HTTP de la petición."""
+    for header_name in ("origin", "referer"):
+        raw_value = str(request.headers.get(header_name) or "").strip().lower()
+        if raw_value.startswith(("chrome-extension://", "moz-extension://", "edge-extension://")):
+            return "extension"
+
+    return None
 
 
 VERIFY_RUN_SELECT_FIELDS = (
-    "id,user_id,input_text,overall_label,summary,model_version,"
+    "id,user_id,input_text,run_type,source_url,source_title,batch_id,batch_row_index,input_origin,overall_label,summary,model_version,"
     "duration_ms,created_at,saved_to_history,saved_at,status,job_id,"
     "started_at,completed_at,error_message,selected_claims"
 )
+
+VERIFY_RUN_TYPE_TEXT = "text"
+VERIFY_RUN_TYPE_URL = "url"
+VERIFY_RUN_TYPE_CSV = "csv"
 
 VERIFY_STATUS_PENDING = "pending"
 VERIFY_STATUS_PROCESSING = "processing"
@@ -734,6 +753,12 @@ def _serialize_stored_verification_report(
     return {
         "run_id": run.get("id"),
         "input_text": run.get("input_text") or "",
+        "run_type": run.get("run_type") or VERIFY_RUN_TYPE_TEXT,
+        "source_url": run.get("source_url") or None,
+        "source_title": run.get("source_title") or None,
+        "batch_id": run.get("batch_id") or None,
+        "batch_row_index": _to_int(run.get("batch_row_index"), default=None),
+        "input_origin": run.get("input_origin") or None,
         "guardado_en_historial": bool(run.get("saved_to_history")),
         "saved_in_history": bool(run.get("saved_to_history")),
         "plan": None,
@@ -785,7 +810,17 @@ def _patch_verification_run(
     return {}
 
 
-def _create_pending_verification_run(user_id: str, *, input_text: str) -> str:
+def _create_pending_verification_run(
+    user_id: str,
+    *,
+    input_text: str,
+    run_type: str = VERIFY_RUN_TYPE_TEXT,
+    source_url: Optional[str] = None,
+    source_title: Optional[str] = None,
+    batch_id: Optional[str] = None,
+    batch_row_index: Optional[int] = None,
+    input_origin: Optional[str] = None,
+) -> str:
     """Crea una fila raiz pending para una verificacion asincrona."""
     status, payload = _supabase_service_json_request(
         "/rest/v1/verification_runs",
@@ -793,6 +828,12 @@ def _create_pending_verification_run(user_id: str, *, input_text: str) -> str:
         body={
             "user_id": user_id,
             "input_text": input_text,
+            "run_type": run_type,
+            "source_url": source_url,
+            "source_title": source_title,
+            "batch_id": batch_id,
+            "batch_row_index": batch_row_index,
+            "input_origin": input_origin,
             "overall_label": "NOT_ENOUGH_INFO",
             "summary": "",
             "model_version": VERIFY_PENDING_MODEL_VERSION,
@@ -892,6 +933,11 @@ def _insert_saved_verification_from_payload(
         body={
             "user_id": user_id,
             "input_text": input_text,
+            "run_type": payload.get("run_type") or VERIFY_RUN_TYPE_TEXT,
+            "source_url": payload.get("source_url") or None,
+            "source_title": payload.get("source_title") or None,
+            "batch_id": payload.get("batch_id") or None,
+            "input_origin": payload.get("input_origin") or None,
             "overall_label": payload.get("overall_label") or payload.get("veredicto_global") or "NOT_ENOUGH_INFO",
             "summary": payload.get("summary") or payload.get("resumen") or "",
             "model_version": payload.get("model_version") or "fever-stub-v0",
@@ -1020,6 +1066,25 @@ def _delete_verification_run_with_admin(run_id: str, user_id: str) -> None:
         )
 
 
+def _delete_verification_batch_with_admin(batch_id: str, user_id: str) -> None:
+    """Elimina un lote CSV FEVER usando service role tras validar ownership."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_batches",
+        method="DELETE",
+        query={
+            "id": f"eq.{batch_id}",
+            "user_id": f"eq.{user_id}",
+        },
+        prefer="return=representation",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo eliminar el lote CSV del historial."),
+        )
+
+
 
 @app.post("/predecir/")
 def predecir_noticia(
@@ -1135,6 +1200,17 @@ def borrar_verificacion_del_historial(
     normalized_run_id = str(run_id or "").strip()
     if not normalized_run_id:
         raise HTTPException(status_code=400, detail="run_id es obligatorio para eliminar del historial.")
+
+    try:
+        _load_verification_batch(normalized_run_id, user_id, token)
+        _delete_verification_batch_with_admin(normalized_run_id, user_id)
+        return {
+            "deleted": True,
+            "batch_id": normalized_run_id,
+        }
+    except HTTPException as exc:
+        if exc.status_code != 404:
+            raise
 
     _load_verification_run(normalized_run_id, user_id, token)
     _delete_verification_run_with_admin(normalized_run_id, user_id)
@@ -1252,7 +1328,12 @@ class VerifyRequest(BaseModel):
     texto: str
 
 
+class VerifyUrlRequest(BaseModel):
+    url: str
+
+
 VERIFY_TEXT_MIN_LENGTH = 80
+VERIFY_CSV_MAX_ROWS = 25
 
 VERIFY_PLAN_LIMITS: Dict[str, Dict[str, int]] = {
     "free": {"daily_limit": 5, "max_claims": 1, "max_evidences": 1, "max_chars": 2000},
@@ -1274,17 +1355,50 @@ def _verify_limits_for_plan(plan: str) -> Dict[str, int]:
     return VERIFY_PLAN_LIMITS[_normalize_verify_plan(plan)]
 
 
+def _parse_verification_csv_file(*, file_bytes: bytes, filename: str, max_chars: int) -> Dict[str, Any]:
+    """Parsea un CSV de una sola columna de texto para contraste FEVER por lotes."""
+    from csv_contrast import CsvContrastValidationError, parse_csv_verification_file
+
+    try:
+        return parse_csv_verification_file(
+            file_bytes=file_bytes,
+            filename=filename,
+            max_rows=VERIFY_CSV_MAX_ROWS,
+            max_chars=max_chars,
+        )
+    except CsvContrastValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+def _extract_verification_input_from_url(*, url: str, max_chars: int) -> Dict[str, Optional[str]]:
+    """Descarga una URL y extrae texto legible listo para el agente FEVER."""
+    from url_contrast import (
+        UrlContrastFetchError,
+        UrlContrastValidationError,
+        extract_verification_input_from_url,
+    )
+
+    try:
+        return extract_verification_input_from_url(
+            url=url,
+            max_chars=max_chars,
+            min_chars=VERIFY_TEXT_MIN_LENGTH,
+        )
+    except UrlContrastValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except UrlContrastFetchError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
 def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
-                                 jwt_token: str) -> Dict[str, Any]:
+                                 jwt_token: str, *, units: int = 1) -> Dict[str, Any]:
     """Consume una unidad de cuota diaria del contraste FEVER por plan."""
     raw_plan = str(profile.get("plan") or "free")
     plan = _normalize_verify_plan(raw_plan)
     limits = _verify_limits_for_plan(plan)
+    normalized_units = max(1, _to_int(units, default=1))
 
-    daily_limit = _to_int(
-        profile.get("daily_verification_limit"),
-        default=limits["daily_limit"],
-    )
+    daily_limit = limits["daily_limit"]
     if daily_limit <= 0:
         raise HTTPException(
             status_code=403,
@@ -1297,13 +1411,13 @@ def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
     stored_used = _to_int(raw_used, default=0)
     used_today = stored_used if stored_date == today_key else 0
 
-    if used_today >= daily_limit:
+    if used_today + normalized_units > daily_limit:
         raise HTTPException(
             status_code=403,
             detail=f"Has alcanzado tu limite diario de verificaciones para el plan {plan.title()}.",
         )
 
-    next_used = used_today + 1
+    next_used = used_today + normalized_units
     update_filters: Dict[str, str] = {"id": f"eq.{user_id}"}
     if stored_date is None:
         update_filters["daily_verification_date"] = "is.null"
@@ -1320,6 +1434,7 @@ def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
         jwt_token=jwt_token,
         query=update_filters,
         body={
+            "daily_verification_limit": daily_limit,
             "daily_verification_date": today_key,
             "daily_verification_used": next_used,
         },
@@ -1342,6 +1457,7 @@ def _consume_verification_quota(profile: Dict[str, Any], user_id: str,
         "remaining_today": max(0, daily_limit - next_used),
         "daily_limit": daily_limit,
         "used_today": next_used,
+        "reserved_units": normalized_units,
         "max_claims": limits["max_claims"],
         "max_evidences": limits["max_evidences"],
         "max_chars": limits["max_chars"],
@@ -1498,6 +1614,12 @@ def _serialize_report(report, *, run_id: Optional[str], quota: Dict[str, Any]) -
     return {
         "run_id": run_id,
         "input_text": report.input_text,
+        "run_type": VERIFY_RUN_TYPE_TEXT,
+        "source_url": None,
+        "source_title": None,
+        "batch_id": None,
+        "batch_row_index": None,
+        "input_origin": None,
         "guardado_en_historial": False,
         "saved_in_history": False,
         "plan": quota.get("plan"),
@@ -1525,6 +1647,12 @@ def _serialize_verification_job_response(
     run_id: str,
     job_id: Optional[str],
     status: str,
+    run_type: str = VERIFY_RUN_TYPE_TEXT,
+    source_url: Optional[str] = None,
+    source_title: Optional[str] = None,
+    batch_id: Optional[str] = None,
+    batch_row_index: Optional[int] = None,
+    input_origin: Optional[str] = None,
     quota: Optional[Dict[str, Any]] = None,
     result: Optional[Dict[str, Any]] = None,
     error: Optional[str] = None,
@@ -1536,6 +1664,12 @@ def _serialize_verification_job_response(
         "job_id": job_id,
         "status": status,
         "error": error,
+        "run_type": run_type,
+        "source_url": source_url,
+        "source_title": source_title,
+        "batch_id": batch_id,
+        "batch_row_index": batch_row_index,
+        "input_origin": input_origin,
         "plan": quota.get("plan"),
         "remaining_today": quota.get("remaining_today"),
         "daily_limit": quota.get("daily_limit"),
@@ -1544,6 +1678,344 @@ def _serialize_verification_job_response(
         "max_chars": quota.get("max_chars"),
         "result": result,
     }
+
+
+VERIFY_BATCH_SELECT_FIELDS = (
+    "id,user_id,filename,status,job_id,total_rows,processed_rows,success_rows,failed_rows,"
+    "error_message,input_origin,created_at,started_at,completed_at,saved_to_history,saved_at"
+)
+
+
+def _load_verification_batch(batch_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
+    """Carga un lote CSV FEVER concreto verificando ownership."""
+    status, payload = _supabase_json_request(
+        "/rest/v1/verification_batches",
+        method="GET",
+        jwt_token=jwt_token,
+        query={
+            "id": f"eq.{batch_id}",
+            "user_id": f"eq.{user_id}",
+            "select": VERIFY_BATCH_SELECT_FIELDS,
+            "limit": "1",
+        },
+    )
+
+    if status == 404:
+        raise HTTPException(status_code=404, detail="No existe un lote CSV con ese id.")
+
+    if status != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo leer el lote CSV de verificaciones."),
+        )
+
+    if not isinstance(payload, list) or len(payload) == 0:
+        raise HTTPException(status_code=404, detail="No existe un lote CSV con ese id.")
+
+    return payload[0]
+
+
+def _load_verification_batch_items(batch_id: str, user_id: str, jwt_token: str) -> List[Dict[str, Any]]:
+    """Carga el resumen de runs hijos asociados a un lote CSV."""
+    status, payload = _supabase_json_request(
+        "/rest/v1/verification_runs",
+        method="GET",
+        jwt_token=jwt_token,
+        query={
+            "batch_id": f"eq.{batch_id}",
+            "user_id": f"eq.{user_id}",
+            "select": (
+                "id,run_type,batch_row_index,status,overall_label,summary,error_message,"
+                "source_url,source_title,selected_claims,created_at"
+            ),
+            "order": "batch_row_index.asc",
+        },
+    )
+
+    if status != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudieron leer las filas del lote CSV."),
+        )
+
+    return payload if isinstance(payload, list) else []
+
+
+def _patch_verification_batch(batch_id: str, user_id: str, *, body: Dict[str, Any]) -> Dict[str, Any]:
+    """Actualiza un lote CSV FEVER usando service role y devuelve la fila."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_batches",
+        method="PATCH",
+        query={
+            "id": f"eq.{batch_id}",
+            "user_id": f"eq.{user_id}",
+        },
+        body=body,
+        prefer="return=representation",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo actualizar el estado del lote CSV."),
+        )
+
+    if isinstance(payload, list) and payload:
+        return payload[0]
+    return {}
+
+
+def _mark_verification_batch_as_saved(batch_id: str, user_id: str) -> Dict[str, Any]:
+    """Marca verification_batch como guardado manualmente en historial."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_batches",
+        method="PATCH",
+        query={
+            "id": f"eq.{batch_id}",
+            "user_id": f"eq.{user_id}",
+        },
+        body={
+            "saved_to_history": True,
+            "saved_at": _now_iso_utc(),
+        },
+        prefer="return=representation",
+    )
+
+    if status not in (200, 204):
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo marcar el lote CSV como guardado en historial."),
+        )
+
+    if isinstance(payload, list) and len(payload) > 0:
+        return payload[0]
+
+    raise HTTPException(status_code=502, detail="No se pudo confirmar que el lote CSV quedase guardado en historial.")
+
+
+def _create_pending_verification_batch(
+    user_id: str,
+    *,
+    filename: str,
+    total_rows: int,
+    input_origin: Optional[str] = None,
+) -> str:
+    """Crea una fila raiz pending para un lote CSV asincrono."""
+    status, payload = _supabase_service_json_request(
+        "/rest/v1/verification_batches",
+        method="POST",
+        body={
+            "user_id": user_id,
+            "filename": filename,
+            "status": VERIFY_STATUS_PENDING,
+            "job_id": None,
+            "total_rows": total_rows,
+            "processed_rows": 0,
+            "success_rows": 0,
+            "failed_rows": 0,
+            "error_message": None,
+            "input_origin": input_origin,
+            "started_at": None,
+            "completed_at": None,
+        },
+        prefer="return=representation",
+    )
+
+    if status not in (200, 201) or not isinstance(payload, list) or not payload:
+        raise HTTPException(
+            status_code=502,
+            detail=_extract_detail(payload, "No se pudo crear el lote CSV en cola."),
+        )
+
+    batch_id = str(payload[0].get("id") or "").strip()
+    if not batch_id:
+        raise HTTPException(status_code=502, detail="No se pudo confirmar el identificador del lote CSV en cola.")
+    return batch_id
+
+
+def _serialize_verification_batch_item(run: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "run_id": run.get("id"),
+        "run_type": run.get("run_type") or VERIFY_RUN_TYPE_CSV,
+        "row_index": _to_int(run.get("batch_row_index"), default=None),
+        "status": run.get("status") or VERIFY_STATUS_PENDING,
+        "overall_label": run.get("overall_label"),
+        "summary": run.get("summary") or "",
+        "error": run.get("error_message") or None,
+        "source_url": run.get("source_url") or None,
+        "source_title": run.get("source_title") or None,
+        "selected_claims": _to_int(run.get("selected_claims"), default=None),
+        "created_at": run.get("created_at"),
+    }
+
+
+def _serialize_verification_batch_response(
+    *,
+    batch_id: str,
+    filename: str,
+    status: str,
+    job_id: Optional[str],
+    total_rows: int,
+    processed_rows: int,
+    success_rows: int,
+    failed_rows: int,
+    error: Optional[str],
+    quota: Optional[Dict[str, Any]] = None,
+    items: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
+    quota = quota or {}
+    return {
+        "batch_id": batch_id,
+        "filename": filename,
+        "status": status,
+        "job_id": job_id,
+        "total_rows": total_rows,
+        "processed_rows": processed_rows,
+        "success_rows": success_rows,
+        "failed_rows": failed_rows,
+        "error": error,
+        "plan": quota.get("plan"),
+        "remaining_today": quota.get("remaining_today"),
+        "daily_limit": quota.get("daily_limit"),
+        "max_claims": quota.get("max_claims"),
+        "max_evidences": quota.get("max_evidences"),
+        "max_chars": quota.get("max_chars"),
+        "items": items or [],
+    }
+
+
+def _enqueue_csv_batch_job(
+    *,
+    batch_id: str,
+    user_id: str,
+    jwt_token: str,
+    rows: List[Dict[str, Any]],
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Encola un lote CSV FEVER en el worker asincrono."""
+    from verification_queue import enqueue_csv_batch_job
+
+    job = enqueue_csv_batch_job(
+        batch_id=batch_id,
+        user_id=user_id,
+        jwt_token=jwt_token,
+        rows=rows,
+        quota=quota,
+    )
+    _patch_verification_batch(
+        batch_id,
+        user_id,
+        body={
+            "job_id": job.get("job_id"),
+            "status": job.get("status") or VERIFY_STATUS_PENDING,
+        },
+    )
+    return {
+        "job_id": job.get("job_id"),
+        "status": job.get("status") or VERIFY_STATUS_PENDING,
+    }
+
+
+def _execute_csv_batch_job(
+    *,
+    batch_id: str,
+    user_id: str,
+    jwt_token: str,
+    rows: List[Dict[str, Any]],
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Procesa un lote CSV creando un run hijo FEVER por cada fila."""
+    _patch_verification_batch(
+        batch_id,
+        user_id,
+        body={
+            "status": VERIFY_STATUS_PROCESSING,
+            "started_at": _now_iso_utc(),
+            "error_message": None,
+        },
+    )
+
+    processed_rows = 0
+    success_rows = 0
+    failed_rows = 0
+    try:
+        for row in rows:
+            row_index = _to_int(row.get("row_index"), default=processed_rows + 1)
+            text = str(row.get("input_text") or "").strip()
+            run_id = _create_pending_verification_run(
+                user_id,
+                input_text=text,
+                run_type=VERIFY_RUN_TYPE_CSV,
+                batch_id=batch_id,
+                batch_row_index=row_index,
+            )
+
+            try:
+                if len(text) < VERIFY_TEXT_MIN_LENGTH:
+                    _fail_verification_run(
+                        run_id,
+                        user_id,
+                        error_message=(
+                            f"La fila {row_index} no alcanza el minimo de {VERIFY_TEXT_MIN_LENGTH} caracteres verificables."
+                        ),
+                    )
+                    failed_rows += 1
+                else:
+                    _execute_verification_job(
+                        run_id=run_id,
+                        user_id=user_id,
+                        jwt_token=jwt_token,
+                        text=text,
+                        quota=quota,
+                    )
+                    success_rows += 1
+            except Exception:
+                failed_rows += 1
+
+            processed_rows += 1
+            _patch_verification_batch(
+                batch_id,
+                user_id,
+                body={
+                    "processed_rows": processed_rows,
+                    "success_rows": success_rows,
+                    "failed_rows": failed_rows,
+                },
+            )
+
+        _patch_verification_batch(
+            batch_id,
+            user_id,
+            body={
+                "status": VERIFY_STATUS_COMPLETED,
+                "completed_at": _now_iso_utc(),
+                "processed_rows": processed_rows,
+                "success_rows": success_rows,
+                "failed_rows": failed_rows,
+                "error_message": None,
+            },
+        )
+        return {
+            "batch_id": batch_id,
+            "status": VERIFY_STATUS_COMPLETED,
+            "processed_rows": processed_rows,
+            "success_rows": success_rows,
+            "failed_rows": failed_rows,
+        }
+    except Exception as exc:
+        _patch_verification_batch(
+            batch_id,
+            user_id,
+            body={
+                "status": VERIFY_STATUS_FAILED,
+                "completed_at": _now_iso_utc(),
+                "processed_rows": processed_rows,
+                "success_rows": success_rows,
+                "failed_rows": failed_rows,
+                "error_message": str(exc),
+            },
+        )
+        raise
 
 
 @app.post("/verify", status_code=202)
@@ -1606,9 +2078,180 @@ def verificar_afirmaciones(
         run_id=run_id,
         job_id=job_meta.get("job_id"),
         status=job_meta.get("status") or VERIFY_STATUS_PENDING,
+        run_type=VERIFY_RUN_TYPE_TEXT,
         quota=quota,
         result=None,
         error=None,
+    )
+
+
+@app.post("/verify/url", status_code=202)
+def verificar_url(
+    payload: VerifyUrlRequest,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Descarga una URL, extrae su contenido legible y lo envía al agente FEVER."""
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    profile = _load_profile_for_verify(user_id, token)
+    plan = _normalize_verify_plan(str(profile.get("plan") or "free"))
+    limits = _verify_limits_for_plan(plan)
+
+    extracted_input = _extract_verification_input_from_url(
+        url=payload.url,
+        max_chars=limits["max_chars"],
+    )
+    source_url = str(extracted_input.get("source_url") or payload.url or "").strip() or None
+    source_title = str(extracted_input.get("source_title") or "").strip() or None
+    input_text = str(extracted_input.get("input_text") or "").strip()
+    if len(input_text) < VERIFY_TEXT_MIN_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"La URL no contiene suficiente texto legible para verificar. Se requieren al menos {VERIFY_TEXT_MIN_LENGTH} caracteres útiles.",
+        )
+
+    quota = _consume_verification_quota(profile, user_id, token)
+
+    try:
+        run_id = _create_pending_verification_run(
+            user_id,
+            input_text=input_text,
+            run_type=VERIFY_RUN_TYPE_URL,
+            source_url=source_url,
+            source_title=source_title,
+        )
+        job_meta = _enqueue_verification_job(
+            run_id=run_id,
+            user_id=user_id,
+            jwt_token=token,
+            text=input_text,
+            quota=quota,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"No se pudo encolar la verificacion de la URL: {exc}",
+        )
+
+    return _serialize_verification_job_response(
+        run_id=run_id,
+        job_id=job_meta.get("job_id"),
+        status=job_meta.get("status") or VERIFY_STATUS_PENDING,
+        run_type=VERIFY_RUN_TYPE_URL,
+        source_url=source_url,
+        source_title=source_title,
+        quota=quota,
+        result=None,
+        error=None,
+    )
+
+
+@app.post("/verify/csv", status_code=202)
+async def verificar_csv(
+    file: UploadFile = File(...),
+    authorization: Optional[str] = Header(default=None),
+):
+    """Acepta un CSV de una columna de texto y crea un lote FEVER asincrono."""
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    profile = _load_profile_for_verify(user_id, token)
+    plan = _normalize_verify_plan(str(profile.get("plan") or "free"))
+    limits = _verify_limits_for_plan(plan)
+
+    file_bytes = await file.read()
+    parsed_csv = _parse_verification_csv_file(
+        file_bytes=file_bytes,
+        filename=file.filename or "lote.csv",
+        max_chars=limits["max_chars"],
+    )
+    rows = parsed_csv.get("rows") or []
+    total_rows = len(rows)
+    quota = _consume_verification_quota(profile, user_id, token, units=total_rows)
+
+    try:
+        batch_id = _create_pending_verification_batch(
+            user_id,
+            filename=str(parsed_csv.get("filename") or file.filename or "lote.csv"),
+            total_rows=total_rows,
+        )
+        job_meta = _enqueue_csv_batch_job(
+            batch_id=batch_id,
+            user_id=user_id,
+            jwt_token=token,
+            rows=rows,
+            quota=quota,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"No se pudo encolar el lote CSV: {exc}",
+        )
+
+    return _serialize_verification_batch_response(
+        batch_id=batch_id,
+        filename=str(parsed_csv.get("filename") or file.filename or "lote.csv"),
+        status=job_meta.get("status") or VERIFY_STATUS_PENDING,
+        job_id=job_meta.get("job_id"),
+        total_rows=total_rows,
+        processed_rows=0,
+        success_rows=0,
+        failed_rows=0,
+        error=None,
+        quota=quota,
+    )
+
+
+@app.get("/verify/csv/{batch_id}")
+def obtener_estado_verificacion_csv(
+    batch_id: str,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Devuelve el estado actual de un lote CSV FEVER."""
+    token = _extract_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Falta el token JWT en la cabecera Authorization.")
+
+    user_payload = _validate_user_with_supabase(token)
+    user_id = str(user_payload.get("id") or "").strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
+
+    normalized_batch_id = str(batch_id or "").strip()
+    if not normalized_batch_id:
+        raise HTTPException(status_code=400, detail="batch_id es obligatorio para consultar un lote CSV.")
+
+    batch = _load_verification_batch(normalized_batch_id, user_id, token)
+    items = _load_verification_batch_items(normalized_batch_id, user_id, token)
+
+    return _serialize_verification_batch_response(
+        batch_id=normalized_batch_id,
+        filename=str(batch.get("filename") or "lote.csv"),
+        status=str(batch.get("status") or VERIFY_STATUS_PENDING),
+        job_id=str(batch.get("job_id") or "").strip() or None,
+        total_rows=_to_int(batch.get("total_rows"), default=0),
+        processed_rows=_to_int(batch.get("processed_rows"), default=0),
+        success_rows=_to_int(batch.get("success_rows"), default=0),
+        failed_rows=_to_int(batch.get("failed_rows"), default=0),
+        error=str(batch.get("error_message") or "").strip() or None,
+        items=[_serialize_verification_batch_item(item) for item in items],
     )
 
 
@@ -1642,6 +2285,12 @@ def obtener_estado_verificacion(
         run_id=normalized_run_id,
         job_id=str(run.get("job_id") or "").strip() or None,
         status=status,
+        run_type=str(run.get("run_type") or VERIFY_RUN_TYPE_TEXT),
+        source_url=str(run.get("source_url") or "").strip() or None,
+        source_title=str(run.get("source_title") or "").strip() or None,
+        batch_id=str(run.get("batch_id") or "").strip() or None,
+        batch_row_index=_to_int(run.get("batch_row_index"), default=None),
+        input_origin=str(run.get("input_origin") or "").strip() or None,
         result=result,
         error=str(run.get("error_message") or "").strip() or None,
     )
@@ -1650,6 +2299,7 @@ def obtener_estado_verificacion(
 @app.post("/verification-history/save")
 def guardar_verificacion_en_historial(
     payload: SaveVerificationHistoryRequest,
+    request: Request,
     authorization: Optional[str] = Header(default=None),
 ):
     """Guarda manualmente una verificacion FEVER ya ejecutada en el historial visible."""
@@ -1663,17 +2313,53 @@ def guardar_verificacion_en_historial(
         raise HTTPException(status_code=401, detail="No se pudo validar la identidad del usuario.")
 
     run_id = str(payload.run_id or "").strip()
+    batch_id = str(payload.batch_id or "").strip()
     input_text = str(payload.input_text or "").strip()
+    inferred_input_origin = payload.input_origin or _infer_input_origin_from_request(request)
 
-    if not run_id and not payload.report:
-        raise HTTPException(status_code=400, detail="Debes indicar run_id o un informe de verificación para guardar en historial.")
+    if not run_id and not batch_id and not payload.report:
+        raise HTTPException(status_code=400, detail="Debes indicar run_id, batch_id o un informe de verificación para guardar en historial.")
+
+    if batch_id:
+        batch = _load_verification_batch(batch_id, user_id, token)
+        if str(batch.get("status") or VERIFY_STATUS_COMPLETED) != VERIFY_STATUS_COMPLETED:
+            raise HTTPException(status_code=409, detail="El lote CSV aun no ha terminado y no se puede guardar.")
+        if bool(batch.get("saved_to_history")):
+            return {
+                "saved": True,
+                "already_saved": True,
+                "batch_id": batch_id,
+            }
+
+        if inferred_input_origin and not str(batch.get("input_origin") or "").strip():
+            _patch_verification_batch(
+                batch_id,
+                user_id,
+                body={
+                    "input_origin": inferred_input_origin,
+                },
+            )
+
+        _mark_verification_batch_as_saved(batch_id, user_id)
+        return {
+            "saved": True,
+            "already_saved": False,
+            "batch_id": batch_id,
+        }
 
     if not run_id:
         if not input_text:
             raise HTTPException(status_code=400, detail="input_text es obligatorio cuando no existe run_id.")
 
         created_run_id = _insert_saved_verification_from_payload(
-            payload.report or {},
+            {
+                **(payload.report or {}),
+                "run_type": payload.run_type,
+                "source_url": payload.source_url,
+                "source_title": payload.source_title,
+                "batch_id": payload.batch_id,
+                "input_origin": inferred_input_origin,
+            },
             input_text=input_text,
             user_id=user_id,
         )
@@ -1692,6 +2378,15 @@ def guardar_verificacion_en_historial(
             "already_saved": True,
             "run_id": run_id,
         }
+
+    if inferred_input_origin and not str(run.get("input_origin") or "").strip():
+        _patch_verification_run(
+            run_id,
+            user_id,
+            body={
+                "input_origin": inferred_input_origin,
+            },
+        )
 
     _mark_verification_run_as_saved(run_id, user_id, token)
     return {

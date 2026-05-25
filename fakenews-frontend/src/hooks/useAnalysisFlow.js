@@ -4,8 +4,8 @@
  *
  * Encapsula:
  *  - estado local (modo activo, payloads de texto/URL/CSV, errores locales).
- *  - simulacion de progreso para los modos URL/CSV (sin backend real todavia).
- *  - delegacion al store de análisis para el modo TEXT.
+ *  - simulacion de progreso solo para flujos aun no conectados.
+ *  - delegacion al store de análisis para texto, URL y CSV.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -74,6 +74,8 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
   const saveTextAnalysisError = useAnalysisStore((state) => state.saveError);
   const isSavingTextAnalysis = useAnalysisStore((state) => state.saveLoading);
   const analyzeText = useAnalysisStore((state) => state.analyzeText);
+  const analyzeUrl = useAnalysisStore((state) => state.analyzeUrl);
+  const analyzeCsv = useAnalysisStore((state) => state.analyzeCsv);
   const selectVerificationTask = useAnalysisStore((state) => state.selectTask);
   const saveVerificationTaskToHistory = useAnalysisStore(
     (state) => state.saveTaskResultToHistory
@@ -173,12 +175,17 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
     const urlSnapshot = urlPayload.trim();
     const csvSnapshot = csvFile;
 
-    if (analysisMode === ANALYSIS_MODE.TEXT) {
+    if (analysisMode === ANALYSIS_MODE.TEXT || analysisMode === ANALYSIS_MODE.URL) {
       setLocalError("");
       clearTextAnalysisError();
       try {
-        await analyzeText(textSnapshot);
-        setTextPayload("");
+        if (analysisMode === ANALYSIS_MODE.TEXT) {
+          await analyzeText(textSnapshot);
+          setTextPayload("");
+        } else {
+          await analyzeUrl(urlSnapshot);
+          setUrlPayload("");
+        }
         if (user?.id) {
           void fetchHomeData({ userId: user.id, fallbackPlan: plan });
         }
@@ -188,51 +195,38 @@ export const useAnalysisFlow = ({ canUseCsvAnalysis, plan }) => {
       return;
     }
 
-    clearPendingTimers();
     setLocalError("");
-    setMockResult(null);
-    setIsMockAnalysing(true);
-    setMockAnalysisProgress(9);
-
-    progressTimerRef.current = window.setInterval(() => {
-      setMockAnalysisProgress((previous) => {
-        if (previous >= 92) {
-          return previous;
-        }
-        return Math.min(92, previous + Math.max(3, Math.round((100 - previous) / 11)));
-      });
-    }, 140);
-
-    finalizeTimerRef.current = window.setTimeout(() => {
-      clearPendingTimers();
-      setMockAnalysisProgress(100);
-      setIsMockAnalysing(false);
-      setMockResult(
-        buildMockResult({
-          mode: analysisMode,
-          text: textSnapshot,
-          url: urlSnapshot,
-          file: csvSnapshot,
-        })
-      );
-
-      window.setTimeout(() => {
-        setMockAnalysisProgress(0);
-      }, 550);
-    }, 1700);
+    clearTextAnalysisError();
+    try {
+      await analyzeCsv(csvSnapshot);
+      setCsvFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      if (user?.id) {
+        void fetchHomeData({ userId: user.id, fallbackPlan: plan });
+      }
+    } catch {
+      /** Error gestionado por el store. */
+    }
   };
 
-  const isAnalysing = analysisMode === ANALYSIS_MODE.TEXT ? isTextAnalysing : isMockAnalysing;
-  const analysisProgress =
-    analysisMode === ANALYSIS_MODE.TEXT ? textAnalysisProgress : mockAnalysisProgress;
-  const result = analysisMode === ANALYSIS_MODE.TEXT ? textResult : mockResult;
-  const resolvedError =
-    localError || (analysisMode === ANALYSIS_MODE.TEXT ? textAnalysisError : "");
-  const disableAnalysisPanelInteractions =
-    analysisMode === ANALYSIS_MODE.TEXT ? false : isMockAnalysing;
+  const usesAsyncVerification = true;
+  const isAnalysing = usesAsyncVerification ? isTextAnalysing : isMockAnalysing;
+  const analysisProgress = usesAsyncVerification ? textAnalysisProgress : mockAnalysisProgress;
+  const result = usesAsyncVerification ? textResult : mockResult;
+  const resolvedError = localError || (usesAsyncVerification ? textAnalysisError : "");
+  const disableAnalysisPanelInteractions = false;
 
   const handleSelectVerificationTask = (taskId) => {
-    setAnalysisMode(ANALYSIS_MODE.TEXT);
+    const selectedTask = verificationTasks.find((task) => task.clientTaskId === taskId);
+    if (selectedTask?.mode === ANALYSIS_MODE.CSV) {
+      setAnalysisMode(ANALYSIS_MODE.CSV);
+    } else if (selectedTask?.mode === ANALYSIS_MODE.URL) {
+      setAnalysisMode(ANALYSIS_MODE.URL);
+    } else {
+      setAnalysisMode(ANALYSIS_MODE.TEXT);
+    }
     selectVerificationTask(taskId);
   };
 

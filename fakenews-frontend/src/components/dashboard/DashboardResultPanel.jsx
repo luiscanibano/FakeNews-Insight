@@ -37,7 +37,12 @@ function DashboardResultPanel({
             onSaveResult={onSaveResult}
           />
         ) : result?.kind === "batch" ? (
-          <BatchResultView result={result} />
+          <BatchResultView
+            result={result}
+            isSavingResult={isSavingResult}
+            saveResultError={saveResultError}
+            onSaveResult={onSaveResult}
+          />
         ) : isAnalysing ? (
           <AnalysingView />
         ) : (

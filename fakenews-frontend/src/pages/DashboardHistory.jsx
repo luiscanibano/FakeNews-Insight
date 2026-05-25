@@ -72,10 +72,12 @@ function DashboardHistory() {
       const reportHaystack = [
         analysis.summary,
         analysis.report?.resumen,
+        analysis.batchResult?.fileName,
         ...(analysis.report?.claims || []).map((claim) => claim.texto),
         ...(analysis.report?.claims || []).flatMap((claim) =>
           (claim.evidencias || []).map((evidence) => evidence.titulo || evidence.url)
         ),
+        ...(analysis.batchResult?.items || []).map((item) => item.summary || item.error || item.input_text || ""),
       ]
         .join(" ")
         .toLowerCase();
@@ -88,7 +90,7 @@ function DashboardHistory() {
     if (selectedAnalysis?.id === analysis.id) {
       setSelectedAnalysis(null);
     }
-    await deleteHistoryItem({ runId: analysis.runId || analysis.id });
+    await deleteHistoryItem({ itemId: analysis.batchId || analysis.runId || analysis.id });
   };
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
@@ -188,7 +190,7 @@ function DashboardHistory() {
               index={index}
               onDelete={handleDeleteHistoryItem}
               onOpenDetails={setSelectedAnalysis}
-              isDeleting={deleteLoadingId === (analysis.runId || analysis.id)}
+              isDeleting={deleteLoadingId === (analysis.batchId || analysis.runId || analysis.id)}
             />
           ))}
         </div>

@@ -62,4 +62,38 @@ describe("<HistoryItem />", () => {
 
     expect(onDelete).toHaveBeenCalledWith(sampleAnalysis);
   });
+
+  it("muestra metadatos diferenciados para lotes CSV guardados", () => {
+    render(
+      <HistoryItem
+        analysis={{
+          ...sampleAnalysis,
+          id: "batch-1",
+          runId: null,
+          batchId: "batch-1",
+          runType: "csv",
+          kindLabel: "CSV",
+          metaCountLabel: "12 filas",
+          source: "CSV batch",
+        }}
+      />
+    );
+
+    expect(screen.getByText("12 filas")).toBeInTheDocument();
+    expect(screen.getByText("CSV")).toBeInTheDocument();
+  });
+
+  it("muestra la extensión como origen cuando el historial viene de la extensión", () => {
+    render(
+      <HistoryItem
+        analysis={{
+          ...sampleAnalysis,
+          source: null,
+          inputOrigin: "extension",
+        }}
+      />
+    );
+
+    expect(screen.getByText(/Extensión del navegador/i)).toBeInTheDocument();
+  });
 });

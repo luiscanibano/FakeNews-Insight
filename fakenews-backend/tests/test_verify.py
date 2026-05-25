@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 import main
@@ -98,6 +99,13 @@ def _fake_enqueue_verification_job(*, run_id, user_id, jwt_token, text, quota):
     }
 
 
+def _fake_enqueue_csv_batch_job(*, batch_id, user_id, jwt_token, rows, quota):
+    return {
+        "job_id": f"job-for-{batch_id}",
+        "status": "pending",
+    }
+
+
 @pytest.fixture(autouse=True)
 def _reset_agent():
     yield
@@ -133,8 +141,9 @@ def test_verify_returns_verdict_for_ultra(monkeypatch):
     assert response.status_code == 202, response.text
     data = response.json()
     assert data["status"] == "pending"
-    assert data["daily_limit"] == 10
-    assert data["remaining_today"] == 9
+    assert data["run_type"] == "text"
+    assert data["daily_limit"] == 200
+    assert data["remaining_today"] == 199
     assert data["run_id"] == "row-1"
     assert data["job_id"] == "job-for-row-1"
     assert data["result"] is None
@@ -163,6 +172,38 @@ def test_verify_returns_verdict_for_pro_with_plan_limits(monkeypatch):
     assert data["max_claims"] == 3
     assert data["max_evidences"] == 3
     assert data["status"] == "pending"
+
+
+def test_verify_ignores_stale_persisted_limit_and_repairs_profile(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "free",
+        "daily_verification_limit": 20,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
+
+    response = client.post(
+        "/verify",
+        json={"texto": VALID_TEXT},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 202, response.text
+    data = response.json()
+    assert data["plan"] == "free"
+    assert data["daily_limit"] == 5
+    assert data["remaining_today"] == 4
+
+    profile_patch = next(
+        body
+        for path, method, _query, body in spy.calls
+        if path == "/rest/v1/profiles" and method == "PATCH"
+    )
+    assert profile_patch["daily_verification_limit"] == 5
 
 
 def test_verify_returns_verdict_for_ultra_with_plan_limits(monkeypatch):
@@ -278,6 +319,12 @@ def test_verify_status_returns_completed_result(monkeypatch):
                 "id": "run-1",
                 "user_id": "user-1",
                 "input_text": VALID_TEXT,
+                "run_type": "text",
+                "source_url": None,
+                "source_title": None,
+                "batch_id": None,
+                "batch_row_index": None,
+                "input_origin": None,
                 "overall_label": "SUPPORTED",
                 "summary": "ok",
                 "model_version": "fever-stub-v0",
@@ -323,7 +370,9 @@ def test_verify_status_returns_completed_result(monkeypatch):
     data = response.json()
     assert data["run_id"] == "run-1"
     assert data["status"] == "completed"
+    assert data["run_type"] == "text"
     assert data["error"] is None
+    assert data["result"]["run_type"] == "text"
     assert data["result"]["overall_label"] == "SUPPORTED"
     assert data["result"]["selected_claims"] == 1
     assert data["result"]["claims"][0]["evidencias"][0]["nli_label"] == "SUPPORTS"
@@ -367,7 +416,7 @@ def test_verify_blocks_when_quota_exhausted(monkeypatch):
     spy = _SupabaseSpy(profile={
         "id": "user-1", "plan": "ultra",
         "daily_verification_limit": 1,
-        "daily_verification_used": 1,
+        "daily_verification_used": 200,
         "daily_verification_date": "2999-01-01",
     })
     # Forzar misma fecha
@@ -393,6 +442,314 @@ def test_verify_blocks_when_quota_exhausted(monkeypatch):
 def test_verify_endpoint_is_registered():
     paths = {route.path for route in main.app.routes}
     assert "/verify" in paths
+    assert "/verify/url" in paths
+    assert "/verify/csv" in paths
+
+
+def test_verify_url_enqueues_async_job_with_extracted_content(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "pro",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+
+    captured_enqueue = {}
+
+    def _enqueue_verification_job(*, run_id, user_id, jwt_token, text, quota):
+        captured_enqueue.update({
+            "run_id": run_id,
+            "user_id": user_id,
+            "jwt_token": jwt_token,
+            "text": text,
+            "quota": quota,
+        })
+        return {"job_id": "job-url-1", "status": "pending"}
+
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    monkeypatch.setattr(main, "_enqueue_verification_job", _enqueue_verification_job)
+    monkeypatch.setattr(
+        main,
+        "_extract_verification_input_from_url",
+        lambda *, url, max_chars: {
+            "input_text": VALID_TEXT,
+            "source_url": url,
+            "source_title": "Articulo de prueba",
+        },
+    )
+
+    response = client.post(
+        "/verify/url",
+        json={"url": "https://example.org/noticia"},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 202, response.text
+    data = response.json()
+    assert data["run_type"] == "url"
+    assert data["source_url"] == "https://example.org/noticia"
+    assert data["source_title"] == "Articulo de prueba"
+    assert data["daily_limit"] == 50
+    assert data["remaining_today"] == 49
+    assert captured_enqueue["text"] == VALID_TEXT
+
+    creation_body = next(
+        body
+        for path, method, _query, body in spy.calls
+        if path == "/rest/v1/verification_runs" and method == "POST"
+    )
+    assert creation_body["run_type"] == "url"
+    assert creation_body["source_url"] == "https://example.org/noticia"
+    assert creation_body["source_title"] == "Articulo de prueba"
+
+
+def test_verify_url_rejects_invalid_source_without_consuming_quota(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "free",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(
+        main,
+        "_extract_verification_input_from_url",
+        lambda *, url, max_chars: (_ for _ in ()).throw(
+            HTTPException(status_code=400, detail="Debes indicar una URL HTTP o HTTPS valida.")
+        ),
+    )
+
+    response = client.post(
+        "/verify/url",
+        json={"url": "nota-local"},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 400
+    assert "url http o https valida" in response.json()["detail"].lower()
+    assert not any(call[0] == "/rest/v1/profiles" and call[1] == "PATCH" for call in spy.calls)
+
+
+def test_verify_status_returns_source_metadata_for_url_runs(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 200, [{
+                "id": "run-url-1",
+                "user_id": "user-1",
+                "input_text": VALID_TEXT,
+                "run_type": "url",
+                "source_url": "https://example.org/noticia",
+                "source_title": "Articulo remoto",
+                "batch_id": None,
+                "batch_row_index": None,
+                "input_origin": None,
+                "overall_label": "SUPPORTED",
+                "summary": "ok",
+                "model_version": "fever-stub-v0",
+                "duration_ms": 10,
+                "created_at": "2026-01-01T10:00:00Z",
+                "saved_to_history": False,
+                "saved_at": None,
+                "status": "completed",
+                "job_id": "job-url-1",
+                "started_at": "2026-01-01T10:00:01Z",
+                "completed_at": "2026-01-01T10:00:10Z",
+                "error_message": None,
+                "selected_claims": 1,
+            }]
+        if path == "/rest/v1/verification_claims" and method == "GET":
+            return 200, [{
+                "id": "claim-1",
+                "claim_text": "afirmacion de prueba",
+                "label": "SUPPORTED",
+                "confidence": 0.9,
+                "rationale": "basado en [1]",
+                "position": 0,
+            }]
+        if path == "/rest/v1/verification_evidences" and method == "GET":
+            return 200, [{
+                "url": "https://x",
+                "title": "t",
+                "snippet": "evidencia",
+                "nli_label": "SUPPORTS",
+                "nli_score": 0.9,
+                "position": 0,
+            }]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+
+    response = client.get(
+        "/verify/run-url-1",
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["run_type"] == "url"
+    assert data["source_url"] == "https://example.org/noticia"
+    assert data["source_title"] == "Articulo remoto"
+    assert data["result"]["run_type"] == "url"
+    assert data["result"]["source_url"] == "https://example.org/noticia"
+    assert data["result"]["source_title"] == "Articulo remoto"
+
+
+def test_verify_csv_enqueues_batch_and_reserves_quota(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "free",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    monkeypatch.setattr(main, "_enqueue_csv_batch_job", _fake_enqueue_csv_batch_job)
+    monkeypatch.setattr(
+        main,
+        "_parse_verification_csv_file",
+        lambda *, file_bytes, filename, max_chars: {
+            "filename": filename,
+            "rows": [
+                {"row_index": 1, "input_text": VALID_TEXT},
+                {"row_index": 2, "input_text": VALID_TEXT},
+            ],
+        },
+    )
+
+    response = client.post(
+        "/verify/csv",
+        files={"file": ("lote.csv", b"texto\nuno\ndos\n", "text/csv")},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 202, response.text
+    data = response.json()
+    assert data["status"] == "pending"
+    assert data["total_rows"] == 2
+    assert data["daily_limit"] == 5
+    assert data["remaining_today"] == 3
+    assert data["job_id"] == "job-for-row-1"
+
+    profile_patch = next(
+        body
+        for path, method, _query, body in spy.calls
+        if path == "/rest/v1/profiles" and method == "PATCH"
+    )
+    assert profile_patch["daily_verification_used"] == 2
+
+    batch_creation_body = next(
+        body
+        for path, method, _query, body in spy.calls
+        if path == "/rest/v1/verification_batches" and method == "POST"
+    )
+    assert batch_creation_body["total_rows"] == 2
+
+
+def test_verify_csv_rejects_invalid_file_without_consuming_quota(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "free",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(
+        main,
+        "_parse_verification_csv_file",
+        lambda *, file_bytes, filename, max_chars: (_ for _ in ()).throw(
+            HTTPException(status_code=400, detail="El CSV debe contener exactamente una columna de texto para contrastar.")
+        ),
+    )
+
+    response = client.post(
+        "/verify/csv",
+        files={"file": ("lote.csv", b"texto,url\nuno,dos\n", "text/csv")},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 400
+    assert "exactamente una columna" in response.json()["detail"].lower()
+    assert not any(call[0] == "/rest/v1/profiles" and call[1] == "PATCH" for call in spy.calls)
+
+
+def test_verify_csv_status_returns_batch_items(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_batches" and method == "GET":
+            return 200, [{
+                "id": "batch-1",
+                "user_id": "user-1",
+                "filename": "lote.csv",
+                "status": "completed",
+                "job_id": "job-batch-1",
+                "total_rows": 2,
+                "processed_rows": 2,
+                "success_rows": 1,
+                "failed_rows": 1,
+                "error_message": None,
+                "input_origin": None,
+                "created_at": "2026-01-01T10:00:00Z",
+                "started_at": "2026-01-01T10:00:01Z",
+                "completed_at": "2026-01-01T10:00:10Z",
+            }]
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 200, [
+                {
+                    "id": "run-csv-1",
+                    "run_type": "csv",
+                    "batch_row_index": 1,
+                    "status": "completed",
+                    "overall_label": "SUPPORTED",
+                    "summary": "ok",
+                    "error_message": None,
+                    "source_url": None,
+                    "source_title": None,
+                    "selected_claims": 1,
+                    "created_at": "2026-01-01T10:00:02Z",
+                },
+                {
+                    "id": "run-csv-2",
+                    "run_type": "csv",
+                    "batch_row_index": 2,
+                    "status": "failed",
+                    "overall_label": "NOT_ENOUGH_INFO",
+                    "summary": "",
+                    "error_message": "Fila demasiado corta",
+                    "source_url": None,
+                    "source_title": None,
+                    "selected_claims": None,
+                    "created_at": "2026-01-01T10:00:03Z",
+                },
+            ]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+
+    response = client.get(
+        "/verify/csv/batch-1",
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["batch_id"] == "batch-1"
+    assert data["status"] == "completed"
+    assert data["total_rows"] == 2
+    assert data["items"][0]["run_type"] == "csv"
+    assert data["items"][0]["row_index"] == 1
+    assert data["items"][1]["status"] == "failed"
+    assert "corta" in data["items"][1]["error"].lower()
 
 
 def test_delete_verification_history_entry(monkeypatch):
@@ -429,6 +786,41 @@ def test_delete_verification_history_entry(monkeypatch):
 
     assert response.status_code == 200, response.text
     assert response.json() == {"deleted": True, "run_id": "run-1"}
+
+
+def test_delete_csv_batch_history_entry(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_batches" and method == "GET":
+            return 200, [{
+                "id": "batch-1",
+                "user_id": "user-1",
+                "filename": "lote.csv",
+                "status": "completed",
+                "saved_to_history": True,
+            }]
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 404, {}
+        return 404, {}
+
+    def _supabase_service_json_request(path, *, method="GET", query=None,
+                                       body=None, prefer=None):
+        if path == "/rest/v1/verification_batches" and method == "DELETE":
+            return 200, [{"id": "batch-1"}]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+    monkeypatch.setattr(main, "_supabase_service_json_request", _supabase_service_json_request)
+
+    response = client.delete(
+        "/verification-history/batch-1",
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json() == {"deleted": True, "batch_id": "batch-1"}
 
 
 def test_save_verification_history_entry(monkeypatch):
@@ -468,6 +860,87 @@ def test_save_verification_history_entry(monkeypatch):
 
     assert response.status_code == 200, response.text
     assert response.json() == {"saved": True, "already_saved": False, "run_id": "run-1"}
+
+
+def test_save_verification_history_entry_from_extension_marks_input_origin(monkeypatch):
+    patch_calls = []
+
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_runs" and method == "GET":
+            return 200, [{
+                "id": "run-1",
+                "user_id": "user-1",
+                "input_text": "texto",
+                "overall_label": "SUPPORTED",
+                "summary": "ok",
+                "model_version": "fever-stub-v0",
+                "duration_ms": 10,
+                "created_at": "2026-01-01T10:00:00Z",
+                "saved_to_history": False,
+                "saved_at": None,
+                "input_origin": None,
+            }]
+        return 404, {}
+
+    def _supabase_service_json_request(path, *, method="GET", query=None,
+                                       body=None, prefer=None):
+        if path == "/rest/v1/verification_runs" and method == "PATCH":
+            patch_calls.append(body or {})
+            return 200, [{"id": "run-1", "user_id": "user-1", **(body or {})}]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+    monkeypatch.setattr(main, "_supabase_service_json_request", _supabase_service_json_request)
+
+    response = client.post(
+        "/verification-history/save",
+        json={"run_id": "run-1"},
+        headers={
+            "Authorization": "Bearer faketoken",
+            "Origin": "chrome-extension://abcdefghijklmnopqrstuvwxyzaabbcc",
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    assert any(call.get("input_origin") == "extension" for call in patch_calls)
+
+
+def test_save_csv_batch_history_entry(monkeypatch):
+    def _supabase_json_request(path, *, method="GET", jwt_token="", query=None,
+                               body=None, prefer=None):
+        if path == "/auth/v1/user":
+            return 200, {"id": "user-1", "email": "u@example.com"}
+        if path == "/rest/v1/verification_batches" and method == "GET":
+            return 200, [{
+                "id": "batch-1",
+                "user_id": "user-1",
+                "filename": "lote.csv",
+                "status": "completed",
+                "saved_to_history": False,
+                "saved_at": None,
+            }]
+        return 404, {}
+
+    def _supabase_service_json_request(path, *, method="GET", query=None,
+                                       body=None, prefer=None):
+        if path == "/rest/v1/verification_batches" and method == "PATCH":
+            return 200, [{"id": "batch-1", "user_id": "user-1", **(body or {})}]
+        return 404, {}
+
+    monkeypatch.setattr(main, "_supabase_json_request", _supabase_json_request)
+    monkeypatch.setattr(main, "_supabase_service_json_request", _supabase_service_json_request)
+
+    response = client.post(
+        "/verification-history/save",
+        json={"batch_id": "batch-1"},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json() == {"saved": True, "already_saved": False, "batch_id": "batch-1"}
 
 
 def test_save_verification_history_entry_fails_when_patch_updates_no_rows(monkeypatch):
@@ -566,3 +1039,30 @@ def test_save_verification_history_entry_without_run_id(monkeypatch):
     assert response.status_code == 200, response.text
     assert response.json() == {"saved": True, "already_saved": False, "run_id": "run-created"}
     assert any(call[0] == "/rest/v1/verification_runs" and call[1] == "POST" for call in calls)
+
+
+def test_verify_persists_text_run_type_on_creation(monkeypatch):
+    spy = _SupabaseSpy(profile={
+        "id": "user-1",
+        "plan": "free",
+        "daily_verification_limit": None,
+        "daily_verification_used": 0,
+        "daily_verification_date": None,
+    })
+    monkeypatch.setattr(main, "_supabase_json_request", spy)
+    monkeypatch.setattr(main, "_supabase_service_json_request", spy.service_call)
+    monkeypatch.setattr(main, "_enqueue_verification_job", _fake_enqueue_verification_job)
+
+    response = client.post(
+        "/verify",
+        json={"texto": VALID_TEXT},
+        headers={"Authorization": "Bearer faketoken"},
+    )
+
+    assert response.status_code == 202, response.text
+    creation_body = next(
+        body
+        for path, method, _query, body in spy.calls
+        if path == "/rest/v1/verification_runs" and method == "POST"
+    )
+    assert creation_body["run_type"] == "text"

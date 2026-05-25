@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import VerificationReport from "../VerificationReport";
+import BatchResultView from "../result/BatchResultView";
 
 function HistoryDetailModal({ analysis, isOpen, onClose }) {
   const { t } = useTranslation("dashboard");
@@ -73,7 +74,11 @@ function HistoryDetailModal({ analysis, isOpen, onClose }) {
           </button>
         </div>
 
-        <VerificationReport report={analysis.report} idPrefix={reportIdPrefix} />
+        {analysis.kind === "batch" ? (
+          <BatchResultView result={analysis.batchResult} />
+        ) : (
+          <VerificationReport report={analysis.report} idPrefix={reportIdPrefix} />
+        )}
       </section>
     </div>
   );

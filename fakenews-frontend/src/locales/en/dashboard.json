@@ -152,6 +152,7 @@
     "deleting": "Deleting...",
     "deleteAria": "Delete {{title}} from history",
     "manualSource": "Pasted text",
+    "extensionSource": "Browser extension",
     "claimsCount": "{{count}} claims",
     "modalEyebrow": "Verification details",
     "closeDetailsAria": "Close verification details",

@@ -24,6 +24,10 @@ const VERIFICATION_QUERY_ATTEMPTS = [
   { table: "verification_runs", userColumn: "user_id", createdAtColumn: "created_at" },
 ];
 
+const VERIFICATION_BATCH_QUERY_ATTEMPTS = [
+  { table: "verification_batches", userColumn: "user_id", createdAtColumn: "created_at" },
+];
+
 /** Resuelve el límite por defecto cuando el perfil no expone límite diario explicito. */
 const getFallbackLimitFromPlan = (plan) => {
   return getVerifyDailyLimit(plan);
@@ -123,8 +127,27 @@ const formatTimestampLabel = (dateValue) => {
 
 /** Adapta una fila de análisis al contrato usado por Home y tarjetas de recientes. */
 export const normalizeRecentAnalysis = (row, index) => {
+  const isCsvBatch = row?.filename && row?.total_rows !== undefined;
   const inputText = String(row?.input_text || "").trim();
+  const runType = String(row?.run_type || "").toLowerCase();
+  if (isCsvBatch) {
+    const totalRows = Number(row?.total_rows) || 0;
+    const processedRows = Number(row?.processed_rows) || 0;
+    const failedRows = Number(row?.failed_rows) || 0;
+
+    return {
+      id: row?.id || `analysis-${index + 1}`,
+      title: row?.filename || `Lote CSV #${index + 1}`,
+      verdictLabel: failedRows > 0 ? "CONFLICTING" : "SUPPORTED",
+      svmStrength: 0,
+      metricLabel: `${processedRows}/${totalRows} filas`,
+      timestampLabel: formatTimestampLabel(row?.created_at ?? row?.createdAt),
+    };
+  }
+
   const title =
+    row?.source_title ||
+    row?.source_url ||
     row?.title ||
     row?.headline ||
     row?.titular ||
@@ -150,6 +173,12 @@ export const normalizeRecentAnalysis = (row, index) => {
       row?.overall_label ?? row?.verdict ?? row?.veredicto ?? row?.classification ?? row?.label
     ),
     svmStrength: numericStrength !== null ? Math.abs(numericStrength) : 0,
+    metricLabel:
+      runType === "url"
+        ? "URL"
+        : row?.overall_label
+        ? `${toNumericOrNull(row?.selected_claims) ?? 0} claims`
+        : `Señal ${(numericStrength !== null ? Math.abs(numericStrength) : 0).toFixed(2)}`,
     timestampLabel: formatTimestampLabel(
       row?.created_at ?? row?.createdAt ?? row?.fecha ?? row?.analysis_date
     ),
@@ -203,14 +232,20 @@ const isRecoverableSchemaError = (error) => {
 };
 
 /** Lee actividad del usuario probando tablas compatibles hasta encontrar una disponible. */
-const fetchRowsByAttempts = async ({ supabase, userId, attempts, emptyOnMissing = false }) => {
+const fetchRowsByAttempts = async ({ supabase, userId, attempts, emptyOnMissing = false, customizeQuery = null }) => {
   for (const attempt of attempts) {
-    const { data, error } = await supabase
+    let query = supabase
       .from(attempt.table)
       .select("*")
       .eq(attempt.userColumn, userId)
       .order(attempt.createdAtColumn, { ascending: false })
       .limit(300);
+
+    if (typeof customizeQuery === "function") {
+      query = customizeQuery(query, attempt) || query;
+    }
+
+    const { data, error } = await query;
 
     if (!error) {
       return data || [];
@@ -226,12 +261,24 @@ const fetchRowsByAttempts = async ({ supabase, userId, attempts, emptyOnMissing 
 
 /** Lee runs de análisis y contraste para construir la actividad consolidada del dashboard. */
 const fetchDashboardActivityRows = async ({ supabase, userId }) => {
-  const [analysisRows, verificationRows] = await Promise.all([
+  const [analysisRows, verificationRows, verificationBatchRows] = await Promise.all([
     fetchRowsByAttempts({ supabase, userId, attempts: ANALYSIS_QUERY_ATTEMPTS }),
-    fetchRowsByAttempts({ supabase, userId, attempts: VERIFICATION_QUERY_ATTEMPTS, emptyOnMissing: true }),
+    fetchRowsByAttempts({
+      supabase,
+      userId,
+      attempts: VERIFICATION_QUERY_ATTEMPTS,
+      emptyOnMissing: true,
+      customizeQuery: (query) => query.is("batch_id", null),
+    }),
+    fetchRowsByAttempts({
+      supabase,
+      userId,
+      attempts: VERIFICATION_BATCH_QUERY_ATTEMPTS,
+      emptyOnMissing: true,
+    }),
   ]);
 
-  return [...analysisRows, ...verificationRows].sort((leftRow, rightRow) => {
+  return [...analysisRows, ...verificationRows, ...verificationBatchRows].sort((leftRow, rightRow) => {
     const leftDate = new Date(
       leftRow?.created_at ?? leftRow?.createdAt ?? leftRow?.fecha ?? leftRow?.analysis_date ?? 0
     ).getTime();

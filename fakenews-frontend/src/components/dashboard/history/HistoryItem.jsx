@@ -11,6 +11,11 @@ import { translateVerdictLabel } from "../result/verdictI18n";
 /** Render unitario de un análisis con titulo, veredicto, fragmento y metadatos. */
 function HistoryItem({ analysis, index = 0, onDelete, onOpenDetails, isDeleting = false }) {
   const { t } = useTranslation("dashboard");
+  const resolvedSource =
+    analysis.source ||
+    (analysis.inputOrigin === "extension"
+      ? t("history.extensionSource")
+      : t("history.manualSource"));
 
   const handleDelete = async (event) => {
     event.stopPropagation();
@@ -52,8 +57,9 @@ function HistoryItem({ analysis, index = 0, onDelete, onOpenDetails, isDeleting 
 
               <div className="dash-list-row-meta mt-2">
                 <span>{analysis.timestampLabel}</span>
-                <span>{t("history.claimsCount", { count: analysis.claimsCount ?? 0 })}</span>
-                <span>{analysis.source || t("history.manualSource")}</span>
+                <span>{analysis.metaCountLabel || t("history.claimsCount", { count: analysis.claimsCount ?? 0 })}</span>
+                <span>{analysis.kindLabel || (analysis.runType === "csv" ? "CSV" : analysis.runType === "url" ? "URL" : "Texto")}</span>
+                <span>{resolvedSource}</span>
               </div>
             </div>
 

@@ -152,6 +152,7 @@
     "deleting": "Eliminando...",
     "deleteAria": "Eliminar {{title}} del historial",
     "manualSource": "Texto pegado manualmente",
+    "extensionSource": "Extensión del navegador",
     "claimsCount": "{{count}} claims",
     "modalEyebrow": "Detalle de verificación",
     "closeDetailsAria": "Cerrar detalle de la verificación",

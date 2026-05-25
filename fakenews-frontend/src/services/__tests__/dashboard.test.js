@@ -17,4 +17,22 @@ describe("normalizeRecentAnalysis", () => {
     expect(result.title).toContain("Este es el texto real que introdujo el usuario");
     expect(result.title).not.toContain("Texto analizado:");
   });
+
+  it("normaliza lotes CSV como una entrada de actividad unica", () => {
+    const result = normalizeRecentAnalysis(
+      {
+        id: "batch-1",
+        filename: "lote.csv",
+        total_rows: 12,
+        processed_rows: 12,
+        failed_rows: 2,
+        created_at: "2026-05-20T10:00:00Z",
+      },
+      0
+    );
+
+    expect(result.title).toBe("lote.csv");
+    expect(result.metricLabel).toContain("12/12 filas");
+    expect(result.verdictLabel).toBe("CONFLICTING");
+  });
 });

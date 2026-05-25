@@ -64,6 +64,44 @@ def enqueue_verification_job(
     }
 
 
+def enqueue_csv_batch_job(
+    *,
+    batch_id: str,
+    user_id: str,
+    jwt_token: str,
+    rows: list,
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Encola un lote CSV FEVER y devuelve su job_id."""
+    try:
+        from rq import Queue
+    except ImportError as exc:  # pragma: no cover - env issue
+        raise RuntimeError("Falta instalar rq en el backend para habilitar la cola de verificaciones.") from exc
+
+    queue = Queue(
+        VERIFY_QUEUE_NAME,
+        connection=_get_redis_connection(),
+        default_timeout=VERIFY_JOB_TIMEOUT,
+    )
+    job = queue.enqueue(
+        process_csv_batch_job,
+        kwargs={
+            "batch_id": batch_id,
+            "user_id": user_id,
+            "jwt_token": jwt_token,
+            "rows": rows,
+            "quota": quota,
+        },
+        job_timeout=VERIFY_JOB_TIMEOUT,
+        result_ttl=VERIFY_RESULT_TTL,
+        failure_ttl=VERIFY_FAILURE_TTL,
+    )
+    return {
+        "job_id": job.id,
+        "status": "pending",
+    }
+
+
 def process_verification_job(
     *,
     run_id: str,
@@ -80,6 +118,26 @@ def process_verification_job(
         user_id=user_id,
         jwt_token=jwt_token,
         text=text,
+        quota=quota,
+    )
+
+
+def process_csv_batch_job(
+    *,
+    batch_id: str,
+    user_id: str,
+    jwt_token: str,
+    rows: list,
+    quota: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Punto de entrada ejecutado por el worker para procesar un lote CSV."""
+    import main
+
+    return main._execute_csv_batch_job(
+        batch_id=batch_id,
+        user_id=user_id,
+        jwt_token=jwt_token,
+        rows=rows,
         quota=quota,
     )
 

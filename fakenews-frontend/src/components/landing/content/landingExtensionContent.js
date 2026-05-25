@@ -1,4 +1,4 @@
-import { GITHUB_RELEASES_URL } from "@/lib/constants";
+import { APP_VERSION, GITHUB_RELEASES_URL } from "@/lib/constants";
 
 /**
  * @file landingExtensionContent.js
@@ -18,7 +18,7 @@ export const landingExtensionContent = {
       "Verificación FEVER con evidencias web según tu plan.",
       "Compatible con Chrome, Edge y derivados (Manifest V3).",
     ],
-    ctaPrimary: "Descargar v0.3.0",
+    ctaPrimary: `Descargar v${APP_VERSION}`,
     ctaSecondary: "Como funciona",
     releasesUrl: GITHUB_RELEASES_URL,
     preview: {
@@ -42,7 +42,7 @@ export const landingExtensionContent = {
       "FEVER verification with web evidence according to your plan.",
       "Compatible with Chrome, Edge and derivatives (Manifest V3).",
     ],
-    ctaPrimary: "Download v0.3.0",
+    ctaPrimary: `Download v${APP_VERSION}`,
     ctaSecondary: "How it works",
     releasesUrl: GITHUB_RELEASES_URL,
     preview: {

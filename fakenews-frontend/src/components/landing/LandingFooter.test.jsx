@@ -9,6 +9,7 @@ describe("<LandingFooter />", () => {
   it("actualiza los enlaces del footer con legales, contacto y solo LinkedIn", () => {
     render(<LandingFooter content={landingFooterContent.es} />);
 
+    expect(screen.getByText("v0.1.0")).toBeInTheDocument();
     expect(screen.queryByText("API")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Política de privacidad" })).toHaveAttribute("href", "/privacy");
     expect(screen.getByRole("link", { name: "Términos y condiciones" })).toHaveAttribute("href", "/terms");

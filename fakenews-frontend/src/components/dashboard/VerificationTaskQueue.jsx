@@ -48,7 +48,7 @@ function VerificationTaskQueue({
         <div className="grid gap-3 xl:grid-cols-2">
           {tasks.map((task) => {
             const isSelected = task.clientTaskId === selectedTaskId;
-            const isCompleted = task.status === "completed" && task.report;
+            const isCompleted = task.status === "completed" && (task.report || task.mode === "csv");
             const isActive = task.status === "queued" || task.status === "pending" || task.status === "processing";
             const badgeTone = STATUS_BADGES[task.status] || STATUS_BADGES.pending;
 
@@ -65,7 +65,12 @@ function VerificationTaskQueue({
                       {task.excerpt}
                     </p>
                     <p className="mt-2 text-xs text-on-surface-variant">
-                      {task.inputText.length.toLocaleString("es-ES")} {t("verify.queue.characters", "caracteres")}
+                      {task.mode === "csv"
+                        ? t("verify.queue.rows", {
+                            count: task.totalRows || 0,
+                            defaultValue: "{{count}} fila(s) en el lote",
+                          })
+                        : `${task.inputText.length.toLocaleString("es-ES")} ${t("verify.queue.characters", "caracteres")}`}
                     </p>
                   </div>
 
@@ -123,7 +128,7 @@ function VerificationTaskQueue({
                       : t("verify.queue.viewStatus", "Ver estado")}
                   </Button>
 
-                  {isCompleted ? (
+                  {isCompleted && task.mode !== "csv" ? (
                     <Button
                       type="button"
                       variant="outline"

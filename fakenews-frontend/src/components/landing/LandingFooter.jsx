@@ -3,7 +3,10 @@
  * @description Componente de la landing page orientado a contenido, comunicacion de valor y conversion.
  */
 
-/** Cierre de landing con enlaces de navegacion, legales y redes. */
+import { APP_VERSION } from "@/lib/constants";
+
+/** Cierre de landing con enlaces de navegacion, legales y redes.
+ */
 function LandingFooter({ content }) {
   return (
     <footer className="border-t border-outline-variant/15 bg-surface-container-lowest px-6 py-12">
@@ -35,6 +38,7 @@ function LandingFooter({ content }) {
         </div>
 
         <div className="lg:text-right">
+          <p className="mb-2 font-label text-xs uppercase tracking-[0.24em] text-primary/80">v{APP_VERSION}</p>
           <p className="mb-4 text-sm text-on-surface/50">{content.copyright}</p>
           <div className="flex gap-6 lg:justify-end">
             {content.socials.map((item) => (
