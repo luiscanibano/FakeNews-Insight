@@ -6,6 +6,8 @@
 /**
  * Devuelve la lista deduplicada de proveedores asociados al usuario.
  * Combina `app_metadata.providers`, `app_metadata.provider` e `identities[].provider`.
+ * `app_metadata.providers` puede incluir `email` para cuentas OAuth aunque no exista
+ * password local, por lo que solo confiamos en ese origen para proveedores OAuth.
  */
 export const collectIdentityProviders = (user) => {
   const providers = new Set();
@@ -14,7 +16,7 @@ export const collectIdentityProviders = (user) => {
   if (Array.isArray(appProviders)) {
     appProviders.forEach((value) => {
       const normalized = String(value || "").toLowerCase();
-      if (normalized) {
+      if (normalized && normalized !== "email") {
         providers.add(normalized);
       }
     });

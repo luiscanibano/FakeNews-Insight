@@ -66,7 +66,7 @@ function LandingExtension({ content }) {
             <div className="relative">
               <div className="extension-preview relative mx-auto w-full max-w-[520px] overflow-hidden rounded-2xl border border-outline-variant/15 bg-[#0a0b10] shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
                 <img
-                  src="/landing/extension-preview.png"
+                  src="/landing/extension-preview.gif"
                   alt="Captura real de FakeNews Insight revisando un texto en una página web"
                   loading="lazy"
                   className="block h-auto w-full"

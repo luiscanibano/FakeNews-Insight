@@ -38,10 +38,11 @@ export const resolveProviderState = ({ identityProviders = [], primaryProvider =
   }
 
   /**
-   * Solo tratamos la cuenta como OAuth-only cuando no existe identidad email/password.
-   * Si el usuario tiene email y además ha vinculado Google, debe poder cambiar contraseña.
+   * Regla de producto: si la cuenta tiene cualquier proveedor OAuth asociado,
+   * tratamos la contraseña como gestionada externamente y ocultamos el cambio
+   * de contraseña dentro de la app.
    */
-  const isOauthOnly = oauthProviders.length > 0 && !hasEmailIdentity;
+  const isOauthOnly = oauthProviders.length > 0;
 
   const primaryOauthProvider =
     (normalizedPrimary && normalizedPrimary !== "email" ? normalizedPrimary : null) ||

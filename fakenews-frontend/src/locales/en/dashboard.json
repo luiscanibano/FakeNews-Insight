@@ -200,6 +200,7 @@
   },
   "password": {
     "title": "Change password",
+    "oauthTitle": "Password managed by {{provider}}",
     "oauthIntro": "Your account was created with {{provider}}, so you can't change the password here. It is managed directly by {{provider}} and is not stored on our platform.",
     "oauthIntroFallbackProvider": "an external provider",
     "oauthOpen": "Open security of {{provider}}",

@@ -6,12 +6,14 @@
 import { create } from "zustand";
 import {
   deactivateAdminUser,
+  getAdminRequestKpis,
   getAdminUserKpis,
   getAdminUsers,
   updateAdminUserPlan,
 } from "../services/admin";
 
 const emptyUserKpis = { total: 0, free: 0, pro: 0, ultra: 0 };
+const emptyRequestKpis = { web: 0, extension: 0 };
 
 const decrementPlanCounter = (kpis, plan) => {
   if (plan === "pro") {
@@ -37,7 +39,8 @@ const incrementPlanCounter = (kpis, plan) => {
   return { ...kpis, free: kpis.free + 1 };
 };
 
-/** Store del dominio admin: gestiona usuarios, errores y acciones de mantenimiento. */
+/** Store del dominio admin: gestiona usuarios, errores y acciones de mantenimiento.
+ */
 export const useAdminStore = create((set) => ({
   users: [],
   totalUsersCount: 0,
@@ -46,19 +49,18 @@ export const useAdminStore = create((set) => ({
   usersSearchTerm: "",
   loadingUsers: false,
   loadingUserKpis: false,
+  loadingRequestKpis: false,
   actionLoadingUserId: "",
   error: null,
   userKpis: emptyUserKpis,
-  simulatedApiCallsToday: {
-    web: 14,
-    extension: 53,
-    api: 133,
-  },
+  requestKpis: emptyRequestKpis,
 
-  /** Limpia errores del panel para evitar mensajes obsoletos. */
+  /** Limpia errores del panel para evitar mensajes obsoletos.
+ */
   clearError: () => set({ error: null }),
 
-  /** Carga usuarios gestionables desde el servicio con paginacion y busqueda. */
+  /** Carga usuarios gestionables desde el servicio con paginacion y busqueda.
+ */
   loadUsers: async ({
     includeAdmins = false,
     page = 1,
@@ -82,7 +84,8 @@ export const useAdminStore = create((set) => ({
     }
   },
 
-  /** Carga contadores globales por plan para los KPIs del panel. */
+  /** Carga contadores globales por plan para los KPIs del panel.
+ */
   loadUserKpis: async ({ includeAdmins = false } = {}) => {
     set({ loadingUserKpis: true, error: null });
 
@@ -94,7 +97,20 @@ export const useAdminStore = create((set) => ({
     }
   },
 
-  /** Asigna un plan concreto a un usuario y actualiza la lista en memoria. */
+  /** Carga volumen real de peticiones del día por canal (web/extensión). */
+  loadRequestKpis: async () => {
+    set({ loadingRequestKpis: true, error: null });
+
+    try {
+      const requestKpis = await getAdminRequestKpis();
+      set({ requestKpis, loadingRequestKpis: false });
+    } catch (error) {
+      set({ error: error.message, loadingRequestKpis: false });
+    }
+  },
+
+  /** Asigna un plan concreto a un usuario y actualiza la lista en memoria.
+ */
   setUserPlan: async ({ targetUser, plan }) => {
     set({ actionLoadingUserId: targetUser.id, error: null });
 
@@ -119,7 +135,8 @@ export const useAdminStore = create((set) => ({
     }
   },
 
-  /** Da de baja un usuario eliminando su perfil y retirandolo del listado local. */
+  /** Da de baja un usuario eliminando su perfil y retirandolo del listado local.
+ */
   deactivateUser: async ({ userId }) => {
     set({ actionLoadingUserId: userId, error: null });
 

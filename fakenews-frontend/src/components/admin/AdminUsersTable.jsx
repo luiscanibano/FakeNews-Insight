@@ -1,10 +1,10 @@
 /**
  * @file AdminUsersTable.jsx
- * @description Componente del panel administrativo para KPIs, gestion de usuarios y control de planes.
+ * @description Listado de usuarios admin con presentación alineada con el dashboard.
  */
 
 import { useState } from "react";
-import { Crown } from "lucide-react";
+import { Crown, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 
@@ -33,12 +33,15 @@ function AdminUsersTable({
   };
 
   return (
-    <section className="landing-glass-card rounded-2xl border border-outline-variant/20 bg-surface-container/60 p-5">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 font-headline text-2xl font-bold">
-          <Crown className="size-5 text-primary" />
-          {resolvedTitle}
-        </h2>
+    <section className="dash-in dash-panel space-y-5" style={{ "--i": 3 }}>
+      <div className="dash-panel-head flex-wrap gap-3">
+        <div>
+          <p className="dash-panel-meta">{t("usersTable.meta")}</p>
+          <h2 className="dash-panel-title flex items-center gap-2">
+            <Crown className="size-5 text-primary" />
+            {resolvedTitle}
+          </h2>
+        </div>
         {showMoreLabel && onShowMore ? (
           <Button type="button" variant="outline" onClick={onShowMore}>
             {showMoreLabel}
@@ -60,17 +63,27 @@ function AdminUsersTable({
             return (
               <div
                 key={managedUser.id}
-                className="grid gap-2 rounded-xl border border-outline-variant/20 bg-surface/50 p-3 md:grid-cols-[minmax(0,1fr)_130px_auto_auto] md:items-center"
+                className="grid gap-3 rounded-2xl border border-outline-variant/20 bg-surface/45 p-4 md:grid-cols-[minmax(0,1fr)_150px_auto_auto] md:items-center"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-on-surface">{userLabel}</p>
+                  <div className="flex items-center gap-2 text-on-surface">
+                    <span className="flex size-9 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-high/60">
+                      <UserRound className="size-4 text-primary" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-on-surface">{userLabel}</p>
+                      <p className="text-xs uppercase tracking-[0.14em] text-on-surface-variant/80">
+                        {(managedUser.plan || "free").toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
                   {showUserId ? (
-                    <p className="break-all text-xs text-on-surface-variant">{managedUser.id}</p>
+                    <p className="mt-2 break-all text-xs text-on-surface-variant">{managedUser.id}</p>
                   ) : null}
                 </div>
 
                 <select
-                  className="h-10 w-full rounded-lg border border-outline-variant/30 bg-surface-container-high px-3 text-xs font-bold uppercase tracking-wider text-primary md:w-auto"
+                  className="h-11 w-full rounded-xl border border-outline-variant/30 bg-surface-container-high/70 px-3 text-xs font-bold uppercase tracking-[0.16em] text-primary md:w-auto"
                   value={selectedPlan}
                   onChange={(event) => handleDraftPlanChange(managedUser.id, event.target.value)}
                   disabled={isPending}
@@ -82,7 +95,7 @@ function AdminUsersTable({
 
                 <Button
                   type="button"
-                  className="w-full bg-primary text-on-primary md:w-auto"
+                  className="w-full md:w-auto"
                   onClick={() =>
                     onChangePlan(
                       managedUser,

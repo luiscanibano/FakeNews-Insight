@@ -18,6 +18,9 @@ function PasswordChangeSection({
 }) {
   const { t } = useTranslation("dashboard");
   const providerLabel = primaryOauthLabel || t("password.oauthIntroFallbackProvider");
+  const sectionTitle = isOauthOnly
+    ? t("password.oauthTitle", { provider: providerLabel })
+    : t("password.title");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -62,7 +65,7 @@ function PasswordChangeSection({
     <div className="dash-section">
       <div className="dash-section-head">
         <KeyRound className="size-4 text-on-surface-variant" aria-hidden="true" />
-        <h3 className="dash-section-title-sm">{t("password.title")}</h3>
+        <h3 className="dash-section-title-sm">{sectionTitle}</h3>
       </div>
 
       {isOauthOnly ? (

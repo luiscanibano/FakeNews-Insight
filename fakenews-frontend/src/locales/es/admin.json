@@ -2,14 +2,26 @@
   "panel": {
     "eyebrow": "Administrador",
     "title": "Panel de administrador",
+    "titlePrefix": "Control total",
+    "titleSoft": "del entorno admin",
     "logout": "Cerrar sesión",
     "greeting": "Hola, {{name}}. Bienvenido al panel de administración.",
     "fallbackName": "admin",
     "usersTitle": "Gestión de usuarios",
-    "showMore": "Mostrar más"
+    "showMore": "Mostrar más",
+    "backToDashboard": "Ir al dashboard",
+    "summaryMeta": "Resumen operativo",
+    "summaryTitle": "Acciones rápidas",
+    "summaryDescription": "Gestiona cuentas, revisa volumen de peticiones y salta al listado completo sin salir de la misma estética operativa del dashboard.",
+    "visibleUsers": "Usuarios visibles en esta vista",
+    "openUsers": "Abrir listado completo"
   },
   "users": {
     "title": "Todos los usuarios",
+    "eyebrow": "Administración de usuarios",
+    "titlePrefix": "Gestiona",
+    "titleSoft": "toda la base de usuarios",
+    "subtitle": "Busca por nombre o ID completo, ajusta el plan activo y da de baja cuentas desde un flujo visual coherente con el dashboard principal.",
     "back": "Volver al panel",
     "searchPlaceholder": "Buscar por nombre o ID completo...",
     "found": "{{count}} usuario(s) encontrados",
@@ -19,6 +31,7 @@
   },
   "usersTable": {
     "defaultTitle": "Gestión de usuarios",
+    "meta": "Estado de cuentas",
     "loading": "Cargando usuarios...",
     "empty": "No hay usuarios para mostrar.",
     "savePlan": "Guardar plan",
@@ -26,15 +39,16 @@
   },
   "confirmDeactivate": "Vas a dar de baja a {{name}}. Esta acción elimina su perfil y análisis. ¿Continuar?",
   "kpis": {
-    "usersTitle": "Número de usuarios",
+    "usersTitle": "Distribución de usuarios",
+    "usersMeta": "Suscripciones activas",
     "totalUsers": "Total usuarios",
     "totalFree": "Total usuarios FREE",
     "totalPro": "Total usuarios PRO",
     "totalUltra": "Total usuarios ULTRA",
-    "apiCallsTitle": "Número de llamadas a la API",
+    "apiCallsTitle": "Volumen de peticiones",
+    "requestsMeta": "Actividad de hoy",
     "webToday": "Total peticiones WEB HOY",
     "extensionToday": "Total peticiones Extensión HOY",
-    "apiToday": "Total peticiones API HOY",
-    "simulatedNote": "Datos de llamadas API simulados temporalmente."
+    "requestsCaption": "Datos reales calculados desde verification_runs del día actual."
   }
 }

@@ -1,94 +1,102 @@
 /**
  * @file AdminKpiSections.jsx
- * @description Componente del panel administrativo para KPIs, gestion de usuarios y control de planes.
+ * @description Bloques KPI del panel admin con la misma familia visual del dashboard.
  */
 
-import { BarChart3, Globe2, PlugZap, Rocket, UserRound } from "lucide-react";
+import { BarChart3, Globe2, PlugZap, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 
 /** Renderiza KPI de usuarios y llamadas diarias por canal operativo. */
-function AdminKpiSections({ userKpis, apiCallsToday }) {
+function AdminKpiSections({ userKpis, requestKpis, loadingRequestKpis }) {
   const { t } = useTranslation("admin");
+
+  const requestCards = [
+    {
+      key: "web",
+      icon: Globe2,
+      label: t("kpis.webToday"),
+      value: requestKpis.web,
+    },
+    {
+      key: "extension",
+      icon: PlugZap,
+      label: t("kpis.extensionToday"),
+      value: requestKpis.extension,
+    },
+  ];
+
+  const userCards = [
+    { key: "total", label: t("kpis.totalUsers"), value: userKpis.total },
+    { key: "free", label: t("kpis.totalFree"), value: userKpis.free },
+    { key: "pro", label: t("kpis.totalPro"), value: userKpis.pro },
+    { key: "ultra", label: t("kpis.totalUltra"), value: userKpis.ultra },
+  ];
+
   return (
-    <>
-      <section className="mb-10">
-        <h2 className="mb-4 flex items-center gap-2 font-headline text-2xl font-bold">
-          <UserRound className="size-5 text-primary" />
-          {t("kpis.usersTitle")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription>{t("kpis.totalUsers")}</CardDescription>
-              <CardTitle>{userKpis.total}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription>{t("kpis.totalFree")}</CardDescription>
-              <CardTitle className="text-primary">{userKpis.free}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription>{t("kpis.totalPro")}</CardDescription>
-              <CardTitle className="text-primary">{userKpis.pro}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription>{t("kpis.totalUltra")}</CardDescription>
-              <CardTitle className="text-primary">{userKpis.ultra}</CardTitle>
-            </CardHeader>
-          </Card>
+    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <section className="dash-in dash-panel space-y-5" style={{ "--i": 1 }}>
+        <header className="dash-panel-head flex-wrap">
+          <div>
+            <p className="dash-panel-meta">{t("kpis.usersMeta")}</p>
+            <h2 className="dash-panel-title flex items-center gap-2">
+              <UserRound className="size-4 text-primary" />
+              {t("kpis.usersTitle")}
+            </h2>
+          </div>
+        </header>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {userCards.map((item) => (
+            <div
+              key={item.key}
+              className="rounded-2xl border border-outline-variant/20 bg-surface/50 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-on-surface-variant/90">
+                {item.label}
+              </p>
+              <p className="mt-3 font-headline text-3xl font-semibold text-on-surface">
+                {item.value}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="mb-10">
-        <h2 className="mb-4 flex items-center gap-2 font-headline text-2xl font-bold">
-          <BarChart3 className="size-5 text-primary" />
-          {t("kpis.apiCallsTitle")}
-        </h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription className="flex items-center gap-2">
-                <Globe2 className="size-4" />
-                {t("kpis.webToday")}
-              </CardDescription>
-              <CardTitle>{apiCallsToday.web}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription className="flex items-center gap-2">
-                <PlugZap className="size-4" />
-                {t("kpis.extensionToday")}
-              </CardDescription>
-              <CardTitle>{apiCallsToday.extension}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="landing-glass-card border-outline-variant/20 bg-surface-container/70">
-            <CardHeader>
-              <CardDescription className="flex items-center gap-2">
-                <Rocket className="size-4" />
-                {t("kpis.apiToday")}
-              </CardDescription>
-              <CardTitle>{apiCallsToday.api}</CardTitle>
-            </CardHeader>
-          </Card>
+      <section className="dash-in dash-panel space-y-5" style={{ "--i": 2 }}>
+        <header className="dash-panel-head flex-wrap">
+          <div>
+            <p className="dash-panel-meta">{t("kpis.requestsMeta")}</p>
+            <h2 className="dash-panel-title flex items-center gap-2">
+              <BarChart3 className="size-4 text-primary" />
+              {t("kpis.apiCallsTitle")}
+            </h2>
+          </div>
+        </header>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {requestCards.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.key}
+                className="rounded-2xl border border-outline-variant/20 bg-surface/50 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+              >
+                <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-on-surface-variant/90">
+                  <Icon className="size-4 text-primary" />
+                  {item.label}
+                </div>
+                <p className="mt-3 font-headline text-3xl font-semibold text-on-surface">
+                  {loadingRequestKpis ? "..." : item.value}
+                </p>
+              </div>
+            );
+          })}
         </div>
-        <p className="mt-2 text-xs text-on-surface-variant">
-          {t("kpis.simulatedNote")}
+        <p className="text-sm text-on-surface-variant">
+          {t("kpis.requestsCaption")}
         </p>
       </section>
-    </>
+    </div>
   );
 }
 

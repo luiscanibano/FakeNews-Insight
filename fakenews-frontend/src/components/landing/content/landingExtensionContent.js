@@ -11,7 +11,7 @@ export const landingExtensionContent = {
     eyebrow: "Extension de navegador",
     title: "Verifica afirmaciones sin salir de la web.",
     description:
-      "Selecciona un parrafo en tu medio favorito y un marco morado lo envuelve al instante con un panel para analizarlo o contrastar sus claims. Sin copiar, sin pegar, sin abrir pestanas.",
+      "Selecciona un parrafo en tu medio favorito y un marco lo envuelve al instante con un panel para analizarlo o contrastar sus claims. Sin copiar, sin pegar, sin abrir pestañas.",
     bullets: [
       "Funciona en cualquier sitio HTTP/HTTPS, dentro de tu sesión FakeNews Insight.",
       "Veredicto inline con cuota diaria visible.",
@@ -35,7 +35,7 @@ export const landingExtensionContent = {
     eyebrow: "Browser extension",
     title: "Verify claims without leaving the web.",
     description:
-      "Select a paragraph on your favorite outlet and a purple frame wraps it instantly with a panel to analyze it or check its claims. No copy, no paste, no extra tabs.",
+      "Select a paragraph on your favorite outlet and a frame wraps it instantly with a panel to analyze it or check its claims. No copy, no paste, no extra tabs.",
     bullets: [
       "Works on any HTTP/HTTPS site, inside your FakeNews Insight session.",
       "Inline verdict with visible daily quota.",

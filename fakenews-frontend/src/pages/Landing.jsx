@@ -28,10 +28,26 @@ function Landing() {
     const elements = document.querySelectorAll(".landing-reveal");
     if (!elements.length) return;
 
+    const isElementInViewport = (element) => {
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+
+      return rect.bottom >= 0 && rect.top <= viewportHeight;
+    };
+
     /** Fallback para navegadores sin observer: muestra todos los bloques al instante.
  */
     const revealAll = () => {
       elements.forEach((element) => element.classList.add("in-view"));
+    };
+
+    const revealVisibleElements = () => {
+      elements.forEach((element) => {
+        if (!element.classList.contains("in-view") && isElementInViewport(element)) {
+          element.classList.add("in-view");
+          observer?.unobserve(element);
+        }
+      });
     };
 
     if (!("IntersectionObserver" in window)) {
@@ -61,9 +77,25 @@ function Landing() {
       return;
     }
 
-    elements.forEach((element) => observer.observe(element));
+    revealVisibleElements();
 
-    return () => observer.disconnect();
+    elements.forEach((element) => {
+      if (element.classList.contains("in-view") || isElementInViewport(element)) {
+        element.classList.add("in-view");
+        return;
+      }
+
+      observer.observe(element);
+    });
+
+    window.addEventListener("scroll", revealVisibleElements, { passive: true });
+    window.addEventListener("resize", revealVisibleElements);
+
+    return () => {
+      window.removeEventListener("scroll", revealVisibleElements);
+      window.removeEventListener("resize", revealVisibleElements);
+      observer.disconnect();
+    };
   }, [landingContent]);
 
   return (

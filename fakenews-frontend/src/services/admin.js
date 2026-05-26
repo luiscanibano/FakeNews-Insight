@@ -44,6 +44,12 @@ const applyRoleScope = (query, includeAdmins) => {
   return query.or("role.neq.admin,role.is.null");
 };
 
+const getStartOfTodayIso = () => {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return startOfToday.toISOString();
+};
+
 const countScopedProfiles = async ({ includeAdmins = false, planValues = null }) => {
   const supabase = getSupabaseClient();
   let query = supabase.from("profiles").select("id", { count: "exact", head: true });
@@ -57,6 +63,27 @@ const countScopedProfiles = async ({ includeAdmins = false, planValues = null })
 
   if (error) {
     throw new Error(error.message || "No se pudieron calcular los KPIs de usuarios");
+  }
+
+  return count || 0;
+};
+
+const countVerificationRunsSince = async ({ sinceIso, inputOrigin = null } = {}) => {
+  const supabase = getSupabaseClient();
+  let query = supabase
+    .from("verification_runs")
+    .select("id", { count: "exact", head: true });
+
+  if (inputOrigin) {
+    query = query.eq("input_origin", inputOrigin);
+  }
+
+  query = query.gte("created_at", sinceIso);
+
+  const { count, error } = await query;
+
+  if (error) {
+    throw new Error(error.message || "No se pudieron calcular las peticiones del panel admin");
   }
 
   return count || 0;
@@ -149,6 +176,20 @@ export const getAdminUserKpis = async ({ includeAdmins = false } = {}) => {
     pro,
     ultra,
     free: Math.max(0, total - pro - ultra),
+  };
+};
+
+/** Obtiene peticiones del día separadas entre web y extensión. */
+export const getAdminRequestKpis = async () => {
+  const sinceIso = getStartOfTodayIso();
+  const [totalToday, extensionToday] = await Promise.all([
+    countVerificationRunsSince({ sinceIso }),
+    countVerificationRunsSince({ sinceIso, inputOrigin: "extension" }),
+  ]);
+
+  return {
+    web: Math.max(0, totalToday - extensionToday),
+    extension: extensionToday,
   };
 };
 

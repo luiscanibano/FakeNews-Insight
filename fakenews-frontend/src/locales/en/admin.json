@@ -2,14 +2,26 @@
   "panel": {
     "eyebrow": "Administrator",
     "title": "Administrator panel",
+    "titlePrefix": "Operational control",
+    "titleSoft": "for the admin area",
     "logout": "Sign out",
     "greeting": "Hi, {{name}}. Welcome to the administration panel.",
     "fallbackName": "admin",
     "usersTitle": "User management",
-    "showMore": "Show more"
+    "showMore": "Show more",
+    "backToDashboard": "Go to dashboard",
+    "summaryMeta": "Operational summary",
+    "summaryTitle": "Quick actions",
+    "summaryDescription": "Manage accounts, review request volume and jump into the full listing without leaving the dashboard visual language.",
+    "visibleUsers": "Users visible in this view",
+    "openUsers": "Open full listing"
   },
   "users": {
     "title": "All users",
+    "eyebrow": "User administration",
+    "titlePrefix": "Manage",
+    "titleSoft": "the full user base",
+    "subtitle": "Search by name or full ID, adjust the active plan and deactivate accounts from a view aligned with the main dashboard.",
     "back": "Back to panel",
     "searchPlaceholder": "Search by name or full ID...",
     "found": "{{count}} user(s) found",
@@ -19,6 +31,7 @@
   },
   "usersTable": {
     "defaultTitle": "User management",
+    "meta": "Account status",
     "loading": "Loading users...",
     "empty": "No users to display.",
     "savePlan": "Save plan",
@@ -26,15 +39,16 @@
   },
   "confirmDeactivate": "You are about to deactivate {{name}}. This action removes their profile and analyses. Continue?",
   "kpis": {
-    "usersTitle": "Number of users",
+    "usersTitle": "User distribution",
+    "usersMeta": "Active subscriptions",
     "totalUsers": "Total users",
     "totalFree": "Total FREE users",
     "totalPro": "Total PRO users",
     "totalUltra": "Total ULTRA users",
-    "apiCallsTitle": "API call volume",
+    "apiCallsTitle": "Request volume",
+    "requestsMeta": "Today's activity",
     "webToday": "Total WEB requests TODAY",
     "extensionToday": "Total Extension requests TODAY",
-    "apiToday": "Total API requests TODAY",
-    "simulatedNote": "API call data is temporarily simulated."
+    "requestsCaption": "Live data computed from today's verification_runs records."
   }
 }

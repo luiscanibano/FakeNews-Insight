@@ -14,14 +14,26 @@ describe("resolveProviderState", () => {
     });
   });
 
-  it("mantiene cambio de contraseña para cuentas con email aunque también tengan Google vinculado", () => {
+  it("oculta cambio de contraseña si Google es el proveedor principal aunque exista email vinculado", () => {
     expect(
       resolveProviderState({
         identityProviders: ["email", "google"],
         primaryProvider: "google",
       })
     ).toMatchObject({
-      isOauthOnly: false,
+      isOauthOnly: true,
+      primaryOauthLabel: "Google",
+    });
+  });
+
+  it("oculta cambio de contraseña también cuando email es principal pero Google está vinculado", () => {
+    expect(
+      resolveProviderState({
+        identityProviders: ["email", "google"],
+        primaryProvider: "email",
+      })
+    ).toMatchObject({
+      isOauthOnly: true,
       primaryOauthLabel: "Google",
     });
   });

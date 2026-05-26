@@ -21,6 +21,44 @@ const getErrorMessage = (error, fallbackMessage) => {
   return message;
 };
 
+const mergeAuthUsers = (fallbackUser, canonicalUser) => {
+  if (!fallbackUser) {
+    return canonicalUser || null;
+  }
+
+  if (!canonicalUser) {
+    return fallbackUser;
+  }
+
+  return {
+    ...fallbackUser,
+    ...canonicalUser,
+    app_metadata: {
+      ...(fallbackUser.app_metadata || {}),
+      ...(canonicalUser.app_metadata || {}),
+    },
+    user_metadata: {
+      ...(fallbackUser.user_metadata || {}),
+      ...(canonicalUser.user_metadata || {}),
+    },
+    identities: canonicalUser.identities || fallbackUser.identities || null,
+  };
+};
+
+const getCanonicalAuthUser = async (supabase, fallbackUser = null) => {
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    if (fallbackUser) {
+      return fallbackUser;
+    }
+
+    throw new Error(getErrorMessage(error, "Unable to get authenticated user"));
+  }
+
+  return mergeAuthUsers(fallbackUser, data?.user || null);
+};
+
 /** Inicia sesión por email y contraseña en Supabase Auth. */
 export const login = async ({ email, password }) => {
   const supabase = getSupabaseClient();
@@ -145,7 +183,13 @@ export const getCurrentUser = async () => {
     throw new Error(getErrorMessage(error, "Unable to get current session"));
   }
 
-  return data?.session?.user || null;
+  const sessionUser = data?.session?.user || null;
+
+  if (!sessionUser) {
+    return null;
+  }
+
+  return getCanonicalAuthUser(supabase, sessionUser);
 };
 
 /** Recupera la sesión actual completa para flujos especiales como recovery. */
@@ -195,8 +239,16 @@ export const getProfileByUserId = async (userId) => {
 /** Suscribe cambios de sesión y devuelve una funcion de limpieza de suscripcion. */
 export const onAuthStateChange = (callback) => {
   const supabase = getSupabaseClient();
-  const { data } = supabase.auth.onAuthStateChange((event, session) => {
-    callback(event, session?.user || null);
+  const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const sessionUser = session?.user || null;
+
+    if (!sessionUser) {
+      callback(event, null);
+      return;
+    }
+
+    const user = await getCanonicalAuthUser(supabase, sessionUser);
+    callback(event, user);
   });
 
   return () => {

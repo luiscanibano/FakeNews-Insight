@@ -31,10 +31,10 @@ export const landingValueContent = {
         recommended: true,
         cta: "Suscribirse",
         features: [
+          "Todo lo de FREE",
           "50 contrastes avanzados/día",
           "Hasta 3 claims y 3 evidencias por claim",
-          "Historial completo",
-          "Extensión navegador",
+
         ],
       },
       {
@@ -45,11 +45,10 @@ export const landingValueContent = {
         recommended: false,
         cta: "Suscribirse",
         features: [
+          "Todo lo de PRO",
           "200 contrastes premium/día",
-          "Agente FEVER completo",
           "Hasta 8 claims y 5 evidencias por claim",
           "Análisis masivo por CSV",
-          "Soporte prioritario",
         ],
       },
     ],
@@ -81,10 +80,9 @@ export const landingValueContent = {
         recommended: true,
         cta: "Subscribe",
         features: [
+          "Everything in FREE",
           "50 advanced checks/day",
           "Up to 3 claims and 3 evidence items per claim",
-          "Full history",
-          "Browser extension",
         ],
       },
       {
@@ -95,11 +93,10 @@ export const landingValueContent = {
         recommended: false,
         cta: "Subscribe",
         features: [
+          "Everything in PRO",
           "200 premium checks/day",
-          "Full FEVER agent",
           "Up to 8 claims and 5 evidence items per claim",
           "Bulk CSV analysis",
-          "Priority support",
         ],
       },
     ],

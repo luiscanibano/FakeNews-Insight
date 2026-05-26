@@ -2,12 +2,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const signInWithOAuthMock = vi.fn();
 const signUpMock = vi.fn();
+const getSessionMock = vi.fn();
+const getUserMock = vi.fn();
+const onAuthStateChangeMock = vi.fn();
+const unsubscribeMock = vi.fn();
 
 vi.mock("../supabase", () => ({
   getSupabaseClient: () => ({
     auth: {
       signInWithOAuth: signInWithOAuthMock,
       signUp: signUpMock,
+      getSession: getSessionMock,
+      getUser: getUserMock,
+      onAuthStateChange: onAuthStateChangeMock,
     },
   }),
 }));
@@ -17,14 +24,28 @@ vi.mock("../../lib/authRedirect", () => ({
 }));
 
 import { buildAuthRedirectUrl } from "../../lib/authRedirect";
-import { register, signInWithGoogle } from "../auth";
+import { getCurrentUser, onAuthStateChange, register, signInWithGoogle } from "../auth";
 
 describe("auth service redirects", () => {
   beforeEach(() => {
     signInWithOAuthMock.mockReset();
     signUpMock.mockReset();
+    getSessionMock.mockReset();
+    getUserMock.mockReset();
+    onAuthStateChangeMock.mockReset();
+    unsubscribeMock.mockReset();
     signInWithOAuthMock.mockResolvedValue({ data: { provider: "google" }, error: null });
     signUpMock.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
+    getSessionMock.mockResolvedValue({ data: { session: null }, error: null });
+    getUserMock.mockResolvedValue({ data: { user: null }, error: null });
+    onAuthStateChangeMock.mockImplementation((callback) => ({
+      data: {
+        subscription: {
+          unsubscribe: unsubscribeMock,
+        },
+      },
+      callback,
+    }));
     buildAuthRedirectUrl.mockClear();
   });
 
@@ -53,5 +74,84 @@ describe("auth service redirects", () => {
       provider: "google",
       options: { redirectTo: "https://app.test/dashboard" },
     });
+  });
+
+  it("hydrates the current user with canonical provider data for Google accounts", async () => {
+    getSessionMock.mockResolvedValue({
+      data: {
+        session: {
+          user: {
+            id: "u-google",
+            email: "user@test.com",
+            app_metadata: {},
+          },
+        },
+      },
+      error: null,
+    });
+    getUserMock.mockResolvedValue({
+      data: {
+        user: {
+          id: "u-google",
+          email: "user@test.com",
+          app_metadata: { provider: "google", providers: ["google"] },
+          identities: [{ provider: "google" }],
+        },
+      },
+      error: null,
+    });
+
+    await expect(getCurrentUser()).resolves.toMatchObject({
+      id: "u-google",
+      app_metadata: { provider: "google", providers: ["google"] },
+      identities: [{ provider: "google" }],
+    });
+  });
+
+  it("enriches auth state change callbacks with canonical provider data", async () => {
+    let authCallback;
+    onAuthStateChangeMock.mockImplementation((callback) => {
+      authCallback = callback;
+      return {
+        data: {
+          subscription: {
+            unsubscribe: unsubscribeMock,
+          },
+        },
+      };
+    });
+    getUserMock.mockResolvedValue({
+      data: {
+        user: {
+          id: "u-google",
+          email: "user@test.com",
+          app_metadata: { provider: "google", providers: ["google"] },
+          identities: [{ provider: "google" }],
+        },
+      },
+      error: null,
+    });
+
+    const callback = vi.fn();
+    const unsubscribe = onAuthStateChange(callback);
+
+    await authCallback("SIGNED_IN", {
+      user: {
+        id: "u-google",
+        email: "user@test.com",
+        app_metadata: {},
+      },
+    });
+
+    expect(callback).toHaveBeenCalledWith(
+      "SIGNED_IN",
+      expect.objectContaining({
+        app_metadata: expect.objectContaining({ provider: "google" }),
+        identities: [{ provider: "google" }],
+      })
+    );
+
+    unsubscribe();
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
   });
 });

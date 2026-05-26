@@ -200,6 +200,7 @@
   },
   "password": {
     "title": "Cambiar contraseña",
+    "oauthTitle": "Contraseña gestionada por {{provider}}",
     "oauthIntro": "Tu cuenta se registró con {{provider}}, así que no puedes cambiar la contraseña desde aquí. La contraseña se gestiona directamente en {{provider}} y no está almacenada en nuestra plataforma.",
     "oauthIntroFallbackProvider": "un proveedor externo",
     "oauthOpen": "Abrir seguridad de {{provider}}",
