@@ -25,8 +25,6 @@ export const resolveProviderState = ({ identityProviders = [], primaryProvider =
     .map((value) => String(value || "").toLowerCase())
     .filter(Boolean);
   const normalizedPrimary = String(primaryProvider || "").toLowerCase();
-  const hasEmailIdentity =
-    normalizedProviders.includes("email") || normalizedPrimary === "email";
 
   const oauthProviders = normalizedProviders.filter((value) => value !== "email");
   if (
