@@ -4,7 +4,10 @@
  */
 
 import { getSupabaseClient } from "./supabase";
+import { updatePassword } from "./auth";
 import { resolveApiBaseUrl } from "../lib/apiBaseUrl";
+import { withTimeout } from "../lib/promiseTimeout";
+import { AUTH_REQUEST_TIMEOUT_MS } from "../lib/constants";
 
 const DEFAULT_ACCOUNT_DELETE_PATH = "/account/delete";
 const ACCOUNT_REQUEST_TIMEOUT_MS = 20000;
@@ -44,20 +47,20 @@ export const changeAccountPassword = async ({ email, currentPassword, newPasswor
 
   const supabase = getSupabaseClient();
 
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password: currentPassword,
-  });
+  const { error: signInError } = await withTimeout(
+    supabase.auth.signInWithPassword({
+      email,
+      password: currentPassword,
+    }),
+    AUTH_REQUEST_TIMEOUT_MS,
+    "No se pudo validar tu contraseña actual a tiempo. Reintenta en unos segundos."
+  );
 
   if (signInError) {
     throw new Error("La contraseña actual no es correcta.");
   }
 
-  const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
-
-  if (updateError) {
-    throw new Error(updateError.message || "No se pudo actualizar la contraseña.");
-  }
+  await updatePassword({ password: newPassword });
 
   return { updated: true };
 };
