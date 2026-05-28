@@ -156,12 +156,16 @@ tu dominio (por ejemplo `api.fakenewsinsight.com`).
 2. Clona el repo en `/opt/fakenews-insight`.
 3. Copia [deploy/vps/.env.example](deploy/vps/.env.example) a `deploy/vps/.env`
   y rellena secrets/URLs reales.
+  Ajusta `BACKEND_WORKER_REPLICAS` segun la CPU/RAM del VPS.
 4. Ejecuta:
 
 ```bash
 cd /opt/fakenews-insight
 git lfs pull
 docker compose -f deploy/vps/docker-compose.yml --env-file deploy/vps/.env up -d --build
+
+# Ejemplo: levantar 3 workers FEVER en un VPS de 4 vCores / 8 GB RAM
+docker compose -f deploy/vps/docker-compose.yml --env-file deploy/vps/.env up -d --build --scale backend-worker=3
 ```
 
 ### CI/CD del backend en VPS
@@ -171,7 +175,8 @@ hace esto en cada push a `main` que toque backend/modelo:
 
 1. Se conecta por SSH al VPS.
 2. Ejecuta `deploy/vps/deploy.sh`.
-3. Ese script hace `git pull`, `git lfs pull` y recrea el stack Docker.
+3. Ese script hace `git pull`, `git lfs pull` y recrea el stack Docker,
+   escalando `backend-worker` segun `BACKEND_WORKER_REPLICAS`.
 
 Necesitas configurar en GitHub Actions estos secrets:
 

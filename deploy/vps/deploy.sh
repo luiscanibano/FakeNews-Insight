@@ -3,6 +3,7 @@ set -eu
 
 APP_DIR="${APP_DIR:-/opt/fakenews-insight}"
 BRANCH="${BRANCH:-main}"
+BACKEND_WORKER_REPLICAS="${BACKEND_WORKER_REPLICAS:-3}"
 
 cd "$APP_DIR"
 git fetch origin
@@ -14,4 +15,7 @@ fi
 
 git pull --ff-only origin "$BRANCH"
 git lfs pull
-sudo docker compose -f deploy/vps/docker-compose.yml --env-file deploy/vps/.env up -d --build
+sudo docker compose \
+	-f deploy/vps/docker-compose.yml \
+	--env-file deploy/vps/.env \
+	up -d --build --scale backend-worker="$BACKEND_WORKER_REPLICAS"
