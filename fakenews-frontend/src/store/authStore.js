@@ -228,34 +228,23 @@ export const useAuthStore = create((set) => ({
   /** Cierra sesión en Supabase y limpia estado local.
  */
   logout: async () => {
-    set({ loading: true, error: null });
+    const loggedOutState = {
+      user: null,
+      profile: null,
+      role: USER_ROLE.GUEST,
+      plan: USER_PLAN.FREE,
+      loading: false,
+      error: null,
+      authReady: true,
+    };
+
+    clearSessionActivity();
+    resetAnalysisState();
+    set(loggedOutState);
 
     try {
       await logout();
-      clearSessionActivity();
-      resetAnalysisState();
-      set({
-        user: null,
-        profile: null,
-        role: USER_ROLE.GUEST,
-        plan: USER_PLAN.FREE,
-        loading: false,
-      });
     } catch (error) {
-      /**
-       * Ante fallo remoto de cierre, se limpia estado local para evitar
-       * que el usuario permanezca visualmente autenticado.
-       */
-      clearSessionActivity();
-      resetAnalysisState();
-      set({
-        user: null,
-        profile: null,
-        role: USER_ROLE.GUEST,
-        plan: USER_PLAN.FREE,
-        error: error.message,
-        loading: false,
-      });
       throw error;
     }
   },
