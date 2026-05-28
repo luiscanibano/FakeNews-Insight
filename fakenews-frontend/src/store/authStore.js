@@ -242,11 +242,7 @@ export const useAuthStore = create((set) => ({
     resetAnalysisState();
     set(loggedOutState);
 
-    try {
-      await logout();
-    } catch (error) {
-      throw error;
-    }
+    await logout();
   },
 
   /** Inicia sesión, refleja loading/error y guarda el usuario si todo va bien.
