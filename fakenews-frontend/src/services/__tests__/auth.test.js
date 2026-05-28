@@ -9,6 +9,7 @@ const setSessionMock = vi.fn();
 const updateUserMock = vi.fn();
 const onAuthStateChangeMock = vi.fn();
 const unsubscribeMock = vi.fn();
+const authStateChangeCallbacks = [];
 
 vi.mock("../supabase", () => ({
   getSupabaseClient: () => ({
@@ -52,6 +53,7 @@ describe("auth service redirects", () => {
     updateUserMock.mockReset();
     onAuthStateChangeMock.mockReset();
     unsubscribeMock.mockReset();
+    authStateChangeCallbacks.length = 0;
     signInWithOAuthMock.mockResolvedValue({ data: { provider: "google" }, error: null });
     signUpMock.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
     signOutMock.mockResolvedValue({ error: null });
@@ -59,14 +61,18 @@ describe("auth service redirects", () => {
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });
     setSessionMock.mockResolvedValue({ data: { session: { user: { id: "u-1" } } }, error: null });
     updateUserMock.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
-    onAuthStateChangeMock.mockImplementation((callback) => ({
-      data: {
-        subscription: {
-          unsubscribe: unsubscribeMock,
+    onAuthStateChangeMock.mockImplementation((callback) => {
+      authStateChangeCallbacks.push(callback);
+
+      return {
+        data: {
+          subscription: {
+            unsubscribe: unsubscribeMock,
+          },
         },
-      },
-      callback,
-    }));
+        callback,
+      };
+    });
     buildAuthRedirectUrl.mockClear();
   });
 
@@ -207,7 +213,7 @@ describe("auth service redirects", () => {
       "La verificación del enlace de recuperación tardó demasiado. Solicita uno nuevo o inténtalo otra vez."
     );
 
-    await vi.advanceTimersByTimeAsync(10000);
+    await vi.advanceTimersByTimeAsync(15000);
 
     await recoveryExpectation;
     expect(setSessionMock).toHaveBeenCalledWith({
@@ -225,9 +231,33 @@ describe("auth service redirects", () => {
       "No hemos podido guardar la nueva contraseña a tiempo. Inténtalo de nuevo."
     );
 
-    await vi.advanceTimersByTimeAsync(10000);
+    await vi.advanceTimersByTimeAsync(30000);
 
     await updateExpectation;
+    expect(updateUserMock).toHaveBeenCalledWith({ password: "Password123" });
+  });
+
+  it("resolves password updates from USER_UPDATED events even if the HTTP response hangs", async () => {
+    updateUserMock.mockImplementation(() => new Promise(() => {}));
+
+    const updatePromise = updatePassword({ password: "Password123" });
+    const authCallback = authStateChangeCallbacks.at(-1);
+
+    expect(authCallback).toEqual(expect.any(Function));
+
+    authCallback("USER_UPDATED", {
+      user: {
+        id: "u-1",
+        email: "user@test.com",
+      },
+    });
+
+    await expect(updatePromise).resolves.toMatchObject({
+      user: {
+        id: "u-1",
+        email: "user@test.com",
+      },
+    });
     expect(updateUserMock).toHaveBeenCalledWith({ password: "Password123" });
   });
 

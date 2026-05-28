@@ -22,8 +22,8 @@ const getErrorMessage = (error, fallbackMessage) => {
 };
 
 const SIGN_OUT_TIMEOUT_MS = 4000;
-const RECOVERY_SESSION_TIMEOUT_MS = 10000;
-const UPDATE_PASSWORD_TIMEOUT_MS = 10000;
+const RECOVERY_SESSION_TIMEOUT_MS = 15000;
+const UPDATE_PASSWORD_TIMEOUT_MS = 30000;
 
 const withTimeout = (promise, timeoutMs, timeoutMessage) =>
   new Promise((resolve, reject) => {
@@ -38,6 +38,35 @@ const withTimeout = (promise, timeoutMs, timeoutMessage) =>
         window.clearTimeout(timeoutId);
       });
   });
+
+const waitForAuthResolution = (supabase, shouldResolve) => {
+  let unsubscribe = () => {};
+
+  const promise = new Promise((resolve) => {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!shouldResolve(event, session)) {
+        return;
+      }
+
+      resolve({
+        data: {
+          session: session || null,
+          user: session?.user || null,
+        },
+        error: null,
+      });
+    });
+
+    unsubscribe = () => {
+      data.subscription.unsubscribe();
+    };
+  });
+
+  return {
+    promise,
+    unsubscribe,
+  };
+};
 
 const mergeAuthUsers = (fallbackUser, canonicalUser) => {
   if (!fallbackUser) {
@@ -148,14 +177,35 @@ export const requestPasswordReset = async ({ email, redirectTo }) => {
 /** Establece sesión temporal de recovery usando access_token y refresh_token del enlace. */
 export const setRecoverySession = async ({ accessToken, refreshToken }) => {
   const supabase = getSupabaseClient();
-  const { data, error } = await withTimeout(
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    }),
-    RECOVERY_SESSION_TIMEOUT_MS,
-    "La verificación del enlace de recuperación tardó demasiado. Solicita uno nuevo o inténtalo otra vez."
+  const recoveryResolution = waitForAuthResolution(
+    supabase,
+    (event, session) =>
+      event !== "INITIAL_SESSION" &&
+      Boolean(session?.user) &&
+      (event === "PASSWORD_RECOVERY" ||
+        event === "SIGNED_IN" ||
+        session?.access_token === accessToken ||
+        session?.refresh_token === refreshToken)
   );
+
+  let data;
+  let error;
+
+  try {
+    ({ data, error } = await withTimeout(
+      Promise.race([
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        }),
+        recoveryResolution.promise,
+      ]),
+      RECOVERY_SESSION_TIMEOUT_MS,
+      "La verificación del enlace de recuperación tardó demasiado. Solicita uno nuevo o inténtalo otra vez."
+    ));
+  } finally {
+    recoveryResolution.unsubscribe();
+  }
 
   if (error) {
     throw new Error(getErrorMessage(error, "Unable to validate recovery session"));
@@ -167,11 +217,26 @@ export const setRecoverySession = async ({ accessToken, refreshToken }) => {
 /** Actualiza la contraseña del usuario autenticado en el flujo de recovery. */
 export const updatePassword = async ({ password }) => {
   const supabase = getSupabaseClient();
-  const { data, error } = await withTimeout(
-    supabase.auth.updateUser({ password }),
-    UPDATE_PASSWORD_TIMEOUT_MS,
-    "No hemos podido guardar la nueva contraseña a tiempo. Inténtalo de nuevo."
+  const passwordUpdateResolution = waitForAuthResolution(
+    supabase,
+    (event, session) => event === "USER_UPDATED" && Boolean(session?.user)
   );
+
+  let data;
+  let error;
+
+  try {
+    ({ data, error } = await withTimeout(
+      Promise.race([
+        supabase.auth.updateUser({ password }),
+        passwordUpdateResolution.promise,
+      ]),
+      UPDATE_PASSWORD_TIMEOUT_MS,
+      "No hemos podido guardar la nueva contraseña a tiempo. Inténtalo de nuevo."
+    ));
+  } finally {
+    passwordUpdateResolution.unsubscribe();
+  }
 
   if (error) {
     throw new Error(getErrorMessage(error, "Unable to update password"));
