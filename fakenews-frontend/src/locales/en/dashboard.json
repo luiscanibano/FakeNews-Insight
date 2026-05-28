@@ -208,6 +208,8 @@
     "current": "Current password",
     "new": "New password",
     "confirm": "Confirm password",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
     "submit": "Update password",
     "submitting": "Updating...",
     "errorMismatch": "The new password and its confirmation do not match.",

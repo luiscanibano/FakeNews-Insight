@@ -208,6 +208,8 @@
     "current": "Contraseña actual",
     "new": "Nueva contraseña",
     "confirm": "Confirmar contraseña",
+    "showPassword": "Mostrar",
+    "hidePassword": "Ocultar",
     "submit": "Actualizar contraseña",
     "submitting": "Actualizando...",
     "errorMismatch": "La nueva contraseña y su confirmación no coinciden.",

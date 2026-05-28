@@ -90,4 +90,19 @@ describe("<Login />", () => {
 
     expect(screen.getByRole("alert")).toHaveTextContent("Credenciales invalidas");
   });
+
+  it("permite mostrar y ocultar la contraseña", () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
+
+    const passwordInput = screen.getByLabelText(/contraseña/i);
+    expect(passwordInput).toHaveAttribute("type", "password");
+
+    fireEvent.click(screen.getAllByRole("button", { name: /mostrar|ocultar/i })[0]);
+
+    expect(passwordInput).toHaveAttribute("type", "text");
+  });
 });

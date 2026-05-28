@@ -4,6 +4,7 @@
  */
 
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../store/authStore";
@@ -27,6 +28,7 @@ function Login() {
   const [successMessage, setSuccessMessage] = useState(
     location.state?.successMessage || ""
   );
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleBeforeChange = () => {
     if (successMessage) {
@@ -104,20 +106,41 @@ function Login() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-on-surface">
-            {t("fields.password")}
-          </Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder={t("fields.passwordPlaceholder")}
-            value={password}
-            onChange={handlePasswordChange}
-            autoComplete="current-password"
-            required
-            className="h-11 border-outline-variant/30 bg-surface-container-high/60 text-on-surface placeholder:text-on-surface-variant"
-          />
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="password" className="text-on-surface">
+              {t("fields.password")}
+            </Label>
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              <span>{showPassword ? t("login.hidePassword") : t("login.showPassword")}</span>
+            </button>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder={t("fields.passwordPlaceholder")}
+              value={password}
+              onChange={handlePasswordChange}
+              autoComplete="current-password"
+              required
+              className="h-11 border-outline-variant/30 bg-surface-container-high/60 pr-11 text-on-surface placeholder:text-on-surface-variant"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-on-surface-variant transition-colors hover:text-on-surface"
+              aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
         </div>
 
   <AuthSuccessBanner message={successMessage} />
