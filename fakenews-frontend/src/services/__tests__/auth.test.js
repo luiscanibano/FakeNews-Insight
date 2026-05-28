@@ -5,6 +5,8 @@ const signUpMock = vi.fn();
 const signOutMock = vi.fn();
 const getSessionMock = vi.fn();
 const getUserMock = vi.fn();
+const setSessionMock = vi.fn();
+const updateUserMock = vi.fn();
 const onAuthStateChangeMock = vi.fn();
 const unsubscribeMock = vi.fn();
 
@@ -16,6 +18,8 @@ vi.mock("../supabase", () => ({
       signOut: signOutMock,
       getSession: getSessionMock,
       getUser: getUserMock,
+      setSession: setSessionMock,
+      updateUser: updateUserMock,
       onAuthStateChange: onAuthStateChangeMock,
     },
   }),
@@ -26,7 +30,15 @@ vi.mock("../../lib/authRedirect", () => ({
 }));
 
 import { buildAuthRedirectUrl } from "../../lib/authRedirect";
-import { getCurrentUser, logout, onAuthStateChange, register, signInWithGoogle } from "../auth";
+import {
+  getCurrentUser,
+  logout,
+  onAuthStateChange,
+  register,
+  setRecoverySession,
+  signInWithGoogle,
+  updatePassword,
+} from "../auth";
 
 describe("auth service redirects", () => {
   beforeEach(() => {
@@ -36,6 +48,8 @@ describe("auth service redirects", () => {
     signOutMock.mockReset();
     getSessionMock.mockReset();
     getUserMock.mockReset();
+    setSessionMock.mockReset();
+    updateUserMock.mockReset();
     onAuthStateChangeMock.mockReset();
     unsubscribeMock.mockReset();
     signInWithOAuthMock.mockResolvedValue({ data: { provider: "google" }, error: null });
@@ -43,6 +57,8 @@ describe("auth service redirects", () => {
     signOutMock.mockResolvedValue({ error: null });
     getSessionMock.mockResolvedValue({ data: { session: null }, error: null });
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });
+    setSessionMock.mockResolvedValue({ data: { session: { user: { id: "u-1" } } }, error: null });
+    updateUserMock.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
     onAuthStateChangeMock.mockImplementation((callback) => ({
       data: {
         subscription: {
@@ -177,6 +193,42 @@ describe("auth service redirects", () => {
     await expect(logoutPromise).resolves.toBeUndefined();
     expect(signOutMock).toHaveBeenNthCalledWith(1, { scope: "global" });
     expect(signOutMock).toHaveBeenNthCalledWith(2, { scope: "local" });
+  });
+
+  it("times out recovery session validation when Supabase never responds", async () => {
+    vi.useFakeTimers();
+    setSessionMock.mockImplementation(() => new Promise(() => {}));
+
+    const recoveryPromise = setRecoverySession({
+      accessToken: "access-token",
+      refreshToken: "refresh-token",
+    });
+    const recoveryExpectation = expect(recoveryPromise).rejects.toThrow(
+      "La verificación del enlace de recuperación tardó demasiado. Solicita uno nuevo o inténtalo otra vez."
+    );
+
+    await vi.advanceTimersByTimeAsync(10000);
+
+    await recoveryExpectation;
+    expect(setSessionMock).toHaveBeenCalledWith({
+      access_token: "access-token",
+      refresh_token: "refresh-token",
+    });
+  });
+
+  it("times out password updates when Supabase never responds", async () => {
+    vi.useFakeTimers();
+    updateUserMock.mockImplementation(() => new Promise(() => {}));
+
+    const updatePromise = updatePassword({ password: "Password123" });
+    const updateExpectation = expect(updatePromise).rejects.toThrow(
+      "No hemos podido guardar la nueva contraseña a tiempo. Inténtalo de nuevo."
+    );
+
+    await vi.advanceTimersByTimeAsync(10000);
+
+    await updateExpectation;
+    expect(updateUserMock).toHaveBeenCalledWith({ password: "Password123" });
   });
 
 });
