@@ -21,7 +21,7 @@ const getErrorMessage = (error, fallbackMessage) => {
   return message;
 };
 
-const GLOBAL_SIGN_OUT_TIMEOUT_MS = 4000;
+const SIGN_OUT_TIMEOUT_MS = 4000;
 
 const withTimeout = (promise, timeoutMs, timeoutMessage) =>
   new Promise((resolve, reject) => {
@@ -184,13 +184,17 @@ export const logout = async ({ scope = "global" } = {}) => {
 
   try {
     if (scope === "local") {
-      await runSignOut("local");
+      await withTimeout(
+        runSignOut("local"),
+        SIGN_OUT_TIMEOUT_MS,
+        "Timed out while logging out locally"
+      );
       return;
     }
 
     await withTimeout(
       runSignOut("global"),
-      GLOBAL_SIGN_OUT_TIMEOUT_MS,
+      SIGN_OUT_TIMEOUT_MS,
       "Timed out while logging out globally"
     );
     return;
@@ -202,7 +206,11 @@ export const logout = async ({ scope = "global" } = {}) => {
   }
 
   try {
-    await runSignOut("local");
+    await withTimeout(
+      runSignOut("local"),
+      SIGN_OUT_TIMEOUT_MS,
+      "Timed out while logging out locally"
+    );
   } catch (localError) {
     throw new Error(getErrorMessage(localError, "Unable to log out"));
   }

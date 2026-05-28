@@ -79,6 +79,39 @@ Cada subproyecto tiene su propio `.env.example`:
 - [fakenews-frontend/.env.example](fakenews-frontend/.env.example)
 - [.env.example](.env.example) (raíz, usado por `docker compose`)
 
+Para autenticación por email, el valor de `VITE_AUTH_SITE_URL` es obligatorio en despliegues reales.
+Debe coincidir con la URL pública del frontend y con las `Redirect URLs` configuradas en Supabase para flujos como `reset-password`.
+
+## Auth Emails
+
+Los flujos de autenticación siguen usando Supabase Auth. El código de frontend solo construye los `redirectTo` y consume los enlaces; el envío real del correo y las plantillas activas se configuran en Supabase.
+
+La implementación versionada para SMTP propio y plantillas en inglés está documentada en:
+
+- [docs/auth-email-smtp-setup.md](docs/auth-email-smtp-setup.md)
+- [docs/auth-email-templates/base-guidelines.md](docs/auth-email-templates/base-guidelines.md)
+
+Plantillas incluidas en el repositorio:
+
+- [docs/auth-email-templates/recovery.html](docs/auth-email-templates/recovery.html)
+- [docs/auth-email-templates/recovery.txt](docs/auth-email-templates/recovery.txt)
+- [docs/auth-email-templates/confirmation.html](docs/auth-email-templates/confirmation.html)
+- [docs/auth-email-templates/confirmation.txt](docs/auth-email-templates/confirmation.txt)
+- [docs/auth-email-templates/email-change.html](docs/auth-email-templates/email-change.html)
+- [docs/auth-email-templates/email-change.txt](docs/auth-email-templates/email-change.txt)
+- [docs/auth-email-templates/password-changed.html](docs/auth-email-templates/password-changed.html)
+- [docs/auth-email-templates/password-changed.txt](docs/auth-email-templates/password-changed.txt)
+- [docs/auth-email-templates/email-address-changed.html](docs/auth-email-templates/email-address-changed.html)
+- [docs/auth-email-templates/email-address-changed.txt](docs/auth-email-templates/email-address-changed.txt)
+
+Resumen operativo:
+
+1. Configura un SMTP propio en Supabase, recomendado Resend.
+2. Verifica SPF, DKIM y, si es posible, DMARC en el subdominio remitente.
+3. Configura `Site URL` y `Redirect URLs` en Supabase para local y producción.
+4. Copia las plantillas HTML/texto versionadas en este repositorio dentro de `Auth > Email Templates`.
+5. Mantén los asuntos y el copy en inglés.
+
 ---
 
 ## CI/CD
@@ -103,7 +136,7 @@ Secrets/variables necesarios para despliegue:
 - Frontend Cloudflare: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
   `CLOUDFLARE_PAGES_PROJECT_NAME`.
 - Build frontend: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
-  `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico del VPS.
+  `VITE_AUTH_SITE_URL`, `VITE_ANALYSIS_API_BASE_URL` apuntando al backend publico del VPS.
 
 ### Arquitectura: Cloudflare Pages + VPS
 

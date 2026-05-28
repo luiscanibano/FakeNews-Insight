@@ -178,4 +178,5 @@ describe("auth service redirects", () => {
     expect(signOutMock).toHaveBeenNthCalledWith(1, { scope: "global" });
     expect(signOutMock).toHaveBeenNthCalledWith(2, { scope: "local" });
   });
+
 });

@@ -158,4 +158,44 @@ describe("<ResetPassword />", () => {
       },
     });
   });
+
+  it("redirige al login aunque el logout falle tras actualizar la contraseña", async () => {
+    logoutMock.mockRejectedValueOnce(new Error("Timed out while logging out locally"));
+
+    render(
+      <MemoryRouter>
+        <ResetPassword />
+      </MemoryRouter>
+    );
+
+    const passwordInput = await screen.findByLabelText(/nueva contraseña/i);
+
+    vi.useFakeTimers();
+
+    fireEvent.change(passwordInput, { target: { value: "Password123" } });
+    fireEvent.change(screen.getByLabelText(/confirmar contraseña/i), {
+      target: { value: "Password123" },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /actualizar contraseña/i }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(updatePasswordMock).toHaveBeenCalledWith({ password: "Password123" });
+    expect(logoutMock).toHaveBeenCalled();
+    expect(clearErrorMock).toHaveBeenCalled();
+
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith("/login", {
+      replace: true,
+      state: {
+        successMessage: expect.any(String),
+      },
+    });
+  });
 });

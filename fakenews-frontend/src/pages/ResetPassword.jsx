@@ -110,7 +110,13 @@ function ResetPassword() {
 
     try {
       await updatePassword({ password: submittedPassword });
-      await logout();
+
+      try {
+        await logout();
+      } catch {
+        clearError();
+      }
+
       setSuccessMessage(t("reset.successMessage"));
       setTimeout(() => {
         navigate("/login", {
