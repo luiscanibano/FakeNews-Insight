@@ -107,7 +107,4 @@ Para que la extensión funcione completa al instalarla en local:
 5. Si Google Cloud te lo exige, ese mismo redirect debe estar permitido en el cliente OAuth de Google.
 6. Debes recargar la extensión tras cualquier cambio en `manifest.json`, `popup/` o `lib/`.
 
-## Distribución
 
-Para usuarios finales se distribuye un ZIP de esta carpeta vía GitHub Releases.
-La instalación sigue siendo manual (no está publicada en Chrome Web Store).

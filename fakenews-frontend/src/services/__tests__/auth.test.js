@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const signInWithOAuthMock = vi.fn();
 const signUpMock = vi.fn();
+const signOutMock = vi.fn();
 const getSessionMock = vi.fn();
 const getUserMock = vi.fn();
 const onAuthStateChangeMock = vi.fn();
@@ -12,6 +13,7 @@ vi.mock("../supabase", () => ({
     auth: {
       signInWithOAuth: signInWithOAuthMock,
       signUp: signUpMock,
+      signOut: signOutMock,
       getSession: getSessionMock,
       getUser: getUserMock,
       onAuthStateChange: onAuthStateChangeMock,
@@ -24,18 +26,21 @@ vi.mock("../../lib/authRedirect", () => ({
 }));
 
 import { buildAuthRedirectUrl } from "../../lib/authRedirect";
-import { getCurrentUser, onAuthStateChange, register, signInWithGoogle } from "../auth";
+import { getCurrentUser, logout, onAuthStateChange, register, signInWithGoogle } from "../auth";
 
 describe("auth service redirects", () => {
   beforeEach(() => {
+    vi.useRealTimers();
     signInWithOAuthMock.mockReset();
     signUpMock.mockReset();
+    signOutMock.mockReset();
     getSessionMock.mockReset();
     getUserMock.mockReset();
     onAuthStateChangeMock.mockReset();
     unsubscribeMock.mockReset();
     signInWithOAuthMock.mockResolvedValue({ data: { provider: "google" }, error: null });
     signUpMock.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
+    signOutMock.mockResolvedValue({ error: null });
     getSessionMock.mockResolvedValue({ data: { session: null }, error: null });
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });
     onAuthStateChangeMock.mockImplementation((callback) => ({
@@ -153,5 +158,24 @@ describe("auth service redirects", () => {
 
     unsubscribe();
     expect(unsubscribeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to local sign-out when global sign-out times out", async () => {
+    vi.useFakeTimers();
+    signOutMock.mockImplementation(({ scope }) => {
+      if (scope === "global") {
+        return new Promise(() => {});
+      }
+
+      return Promise.resolve({ error: null });
+    });
+
+    const logoutPromise = logout();
+
+    await vi.advanceTimersByTimeAsync(4000);
+
+    await expect(logoutPromise).resolves.toBeUndefined();
+    expect(signOutMock).toHaveBeenNthCalledWith(1, { scope: "global" });
+    expect(signOutMock).toHaveBeenNthCalledWith(2, { scope: "local" });
   });
 });

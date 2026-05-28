@@ -21,6 +21,22 @@ const getErrorMessage = (error, fallbackMessage) => {
   return message;
 };
 
+const GLOBAL_SIGN_OUT_TIMEOUT_MS = 4000;
+
+const withTimeout = (promise, timeoutMs, timeoutMessage) =>
+  new Promise((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(new Error(timeoutMessage));
+    }, timeoutMs);
+
+    promise
+      .then(resolve)
+      .catch(reject)
+      .finally(() => {
+        window.clearTimeout(timeoutId);
+      });
+  });
+
 const mergeAuthUsers = (fallbackUser, canonicalUser) => {
   if (!fallbackUser) {
     return canonicalUser || null;
@@ -155,21 +171,39 @@ export const updatePassword = async ({ password }) => {
 };
 
 /** Cierra sesión en Supabase y revoca el contexto de autenticación local. */
-export const logout = async () => {
+export const logout = async ({ scope = "global" } = {}) => {
   const supabase = getSupabaseClient();
-  const { error } = await supabase.auth.signOut({ scope: "global" });
 
-  if (!error) {
+  const runSignOut = async (signOutScope) => {
+    const { error } = await supabase.auth.signOut({ scope: signOutScope });
+
+    if (error) {
+      throw error;
+    }
+  };
+
+  try {
+    if (scope === "local") {
+      await runSignOut("local");
+      return;
+    }
+
+    await withTimeout(
+      runSignOut("global"),
+      GLOBAL_SIGN_OUT_TIMEOUT_MS,
+      "Timed out while logging out globally"
+    );
     return;
+  } catch {
+    /**
+     * Fallback local para evitar sesiones zombis cuando el sign-out global falla
+     * o no responde (ej. red intermitente, timeout o backend de auth temporalmente no disponible).
+     */
   }
 
-  /**
-   * Fallback local para evitar sesiones zombis cuando el sign-out global falla
-   * (ej. red intermitente, timeout o backend de auth temporalmente no disponible).
-   */
-  const { error: localError } = await supabase.auth.signOut({ scope: "local" });
-
-  if (localError) {
+  try {
+    await runSignOut("local");
+  } catch (localError) {
     throw new Error(getErrorMessage(localError, "Unable to log out"));
   }
 };
